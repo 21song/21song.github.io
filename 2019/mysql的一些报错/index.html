@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2018/scrapy%E7%9A%84%E4%BD%BF%E7%94%A8/" />
+  <link rel="next" href="/2019/nginx%E7%9A%84%E5%90%AF%E5%8A%A8%E4%B8%8E%E5%AE%89%E8%A3%85/" />
+  <link rel="canonical" href="/2019/mysql%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%A5%E9%94%99/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Mysql的一些报错 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Mysql的一些报错 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Mysql的一些报错",
+    "headline" : "Mysql的一些报错",
+    "description" : "MySQL 连接错误Can\x26rsquo;t connect to MySQL server on (61) 链接数据库时忽然遇到一个问题。Mac Navicat链接时报错Can’t connect to MySQL server on ‘xx.xx.xx.xx’ (61)。\nPS. win版Navicat 报错Can’t connect to MySQL server on ‘xx.xx.xx.xx’ (10038)\n其中xx.xx.xx.xx是ip地址。\n1、查看该用户是否有远程登录的权限 ===\nmysql\x26gt; SELECT * FROM mysql.user; \x2b-----------\x2b-----------\x2b | User | Host | \x2b-----------\x2b-----------\x2b | M | % | | mysql.sys | localhost | | root | localhost | | tommy | ％ | | showhilllee | ％ | \x2b-----------\x2b-----------\x2b 5 rows in set (0.",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2019",
+    "datePublished": "2019-04-19 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2019-04-19 00:00:00 \x2b0000 UTC",
+    "url" : "\/2019\/mysql%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%A5%E9%94%99\/",
+    "wordCount" : "193",
+    "keywords" : [ "Python", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Mysql的一些报错</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2019-04-19 itemprop="datePublished">April 19, 2019</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/database/"> Database </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h1 id="mysql-连接错误can-t-connect-to-mysql-server-on-61-https-www-cnblogs-com-xinjie10001-p-6279255-html"><a href="https://www.cnblogs.com/xinjie10001/p/6279255.html" rel="nofollow noreferrer" target="_blank">MySQL 连接错误Can&rsquo;t connect to MySQL server on (61)</a></h1>
+
+<p>链接数据库时忽然遇到一个问题。Mac Navicat链接时报错Can’t connect to MySQL server on ‘xx.xx.xx.xx’ (61)。</p>
+
+<p>PS. win版Navicat 报错Can’t connect to MySQL server on ‘xx.xx.xx.xx’ (10038)</p>
+
+<p>其中xx.xx.xx.xx是ip地址。</p>
+
+<h3 id="1-查看该用户是否有远程登录的权限">1、查看该用户是否有远程登录的权限</h3>
+
+<p>===</p>
+
+<pre><code class="language-python">mysql&gt; SELECT * FROM mysql.user;
++-----------+-----------+
+| User | Host |
++-----------+-----------+
+| M | % |
+| mysql.sys | localhost |
+| root | localhost |
+| tommy | ％ |
+| showhilllee | ％ |
++-----------+-----------+
+5 rows in set (0.00 sec)
+</code></pre>
+
+<p>很显然，M是允许从其它服务器登陆的。</p>
+
+<h3 id="2-查看-mysql-server-是不是监听了-3306-端口">2、查看 MySQL Server 是不是监听了 3306 端口</h3>
+
+<p>===</p>
+
+<p>执行命令<code>netstat -tulpen</code></p>
+
+<pre><code class="language-python">netstat -tulpen
+
+Active Internet connections (only servers)
+Proto Recv-Q Send-Q Local Address Foreign Address State User Inode PID/Program name
+tcp 0 0 0.0.0.0:22 0.0.0.0:* LISTEN 0 16801 1507/sshd
+tcp 0 0 127.0.0.1:25 0.0.0.0:* LISTEN 0 17222 1970/master
+tcp6 0 0 :::3306 :::* LISTEN 27 46396 22054/mysqld
+tcp6 0 0 :::22 :::* LISTEN 0 16803 1507/sshd
+tcp6 0 0 ::1:25 :::* LISTEN 0 17223 1970/master
+udp 0 0 0.0.0.0:68 0.0.0.0:* 0 49600 22999/dhclient
+udp 0 0 0.0.0.0:43504 0.0.0.0:* 0 48850 22999/dhclient
+udp6 0 0 :::47875 :::* 0 48851 22999/dhclient
+</code></pre>
+
+<p>我在这里也没有问题。</p>
+
+<p>这里如果没有监听3306端口或者只监听了<code>localhost</code>（0.0.0.0表示监听所有），则在<code>my.cnf</code>添加下面这一行</p>
+
+<pre><code class="language-python">bind-address = 0.0.0.0
+</code></pre>
+
+<h3 id="3-如果服务器是-centos7-将-mysql-服务加入防火墙">3、如果服务器是 CentOS7，将 MySQL 服务加入防火墙</h3>
+
+<p>===</p>
+
+<p>执行命令</p>
+
+<pre><code class="language-python">sudo firewall-cmd --zone=public --permanent --add-service=mysql
+</code></pre>
+
+<p>返回success。然后继续执行</p>
+
+<pre><code class="language-python">sudo systemctl restart firewalld
+</code></pre>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2019/mysql%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%A5%E9%94%99/>/2019/mysql%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%A5%E9%94%99/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2018/scrapy%E7%9A%84%E4%BD%BF%E7%94%A8/" class="prev" rel="prev" title="scrapy是什么"><i class="iconfont icon-left"></i>&nbsp;scrapy是什么</a>
+         
+        
+        <a href="/2019/nginx%E7%9A%84%E5%90%AF%E5%8A%A8%E4%B8%8E%E5%AE%89%E8%A3%85/" class="next" rel="next" title="Nginx的启动与安装">Nginx的启动与安装&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

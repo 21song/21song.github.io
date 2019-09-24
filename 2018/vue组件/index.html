@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2018/vue%E8%BF%87%E6%BB%A4%E5%99%A8/" />
+  <link rel="next" href="/2018/%E5%88%86%E9%A1%B5%E4%BC%98%E5%8C%96/" />
+  <link rel="canonical" href="/2018/vue%E7%BB%84%E4%BB%B6/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Vue 组件 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Vue 组件 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Vue 组件",
+    "headline" : "Vue 组件",
+    "description" : "基本示例\n这里有一个 Vue 组件的示例：\n\/\/ 定义一个名为 button-counter 的新组件 Vue.component(\x26lsquo;button-counter\x26rsquo;, { data: function () { return { count: 0 } }, template: \x26lsquo;You clicked me {{ count }} times.\x26rsquo; })\n组件是可复用的 Vue 实例，且带有一个名字：在这个例子中是 。我们可以在一个通过 new Vue 创建的 Vue 根实例中，把这个组件作为自定义元素来使用：\n  new Vue({ el: \x26lsquo;#components-demo\x26rsquo; })\nYou clicked me 0 times.\n因为组件是可复用的 Vue 实例，所以它们与 new Vue 接收相同的选项，例如 data、computed、watch、methods 以及生命周期钩子等。仅有的例外是像 el这样根实例特有的选项。\n组件的复用\n你可以将组件进行任意次数的复用：\n    You clicked me 0 times. You clicked me 0 times.",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-02-16 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2018-02-16 00:00:00 \x2b0000 UTC",
+    "url" : "\/2018\/vue%E7%BB%84%E4%BB%B6\/",
+    "wordCount" : "165",
+    "keywords" : [ "Vue", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Vue 组件</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2018-02-16 itemprop="datePublished">February 16, 2018</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/web-design/"> Web Design </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p>基本示例</p>
+
+<p>这里有一个 Vue 组件的示例：</p>
+
+<p>// 定义一个名为 button-counter 的新组件 Vue.component(&lsquo;button-counter&rsquo;, {   data: function () {     return {       count: 0     }   },   template: &lsquo;<button v-on:click="count++">You clicked me {{ count }} times.</button>&rsquo; })</p>
+
+<p>组件是可复用的 Vue 实例，且带有一个名字：在这个例子中是 <button-counter>。我们可以在一个通过 new Vue 创建的 Vue 根实例中，把这个组件作为自定义元素来使用：</p>
+
+<div id="components-demo">   <button-counter></button-counter> </div>
+
+<p>new Vue({ el: &lsquo;#components-demo&rsquo; })</p>
+
+<p>You clicked me 0 times.</p>
+
+<p>因为组件是可复用的 Vue 实例，所以它们与 new Vue 接收相同的选项，例如 data、computed、watch、methods 以及生命周期钩子等。仅有的例外是像 el这样根实例特有的选项。</p>
+
+<p><a href="#%E7%BB%84%E4%BB%B6%E7%9A%84%E5%A4%8D%E7%94%A8"><strong>组件的复用</strong></a></p>
+
+<p>你可以将组件进行任意次数的复用：</p>
+
+<div id="components-demo">   <button-counter></button-counter>   <button-counter></button-counter>   <button-counter></button-counter> </div>
+
+<p>You clicked me 0 times. You clicked me 0 times. You clicked me 0 times.</p>
+
+<p>注意当点击按钮时，每个组件都会各自独立维护它的 count。因为你每用一次组件，就会有一个它的新<strong>实例</strong>被创建。</p>
+
+<p>Es6 新特性</p>
+
+<p>1.const定义的变量不可以修改，而且必须初始化。</p>
+
+<p>1 const b = 2;//正确 2 // const b;//错误，必须初始化  3 console.log(&lsquo;函数外const定义b：&rsquo; + b);//有输出值 4 // b = 5; 5 // console.log(&lsquo;函数外修改const定义b：&rsquo; + b);//无法输出</p>
+
+<p>2.var定义的变量可以修改，如果不初始化会输出undefined，不会报错。</p>
+
+<p>1 var a = 1; 2 // var a;//不会报错 3 console.log(&lsquo;函数外var定义a：&rsquo; + a);//可以输出a=1 4 function change(){ 5 a = 4; 6 console.log(&lsquo;函数内var定义a：&rsquo; + a);//可以输出a=4 7 }  8 change(); 9 console.log(&lsquo;函数调用后var定义a为函数内部修改值：&rsquo; + a);//可以输出a=4</p>
+
+<p>3.let是块级作用域，函数内部使用let定义后，对函数外部无影响。</p>
+
+<p>1 let c = 3; 2 console.log(&lsquo;函数外let定义c：&rsquo; + c);//输出c=3 3 function change(){ 4 let c = 6; 5 console.log(&lsquo;函数内let定义c：&rsquo; + c);//输出c=6 6 }  7 change(); 8 console.log(&lsquo;函数调用后let定义c不受函数内部定义影响：&rsquo; + c);//输出c=3</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2018/vue%E7%BB%84%E4%BB%B6/>/2018/vue%E7%BB%84%E4%BB%B6/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/vue/">
+                    #Vue</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2018/vue%E8%BF%87%E6%BB%A4%E5%99%A8/" class="prev" rel="prev" title="Vue 过滤器"><i class="iconfont icon-left"></i>&nbsp;Vue 过滤器</a>
+         
+        
+        <a href="/2018/%E5%88%86%E9%A1%B5%E4%BC%98%E5%8C%96/" class="next" rel="next" title="分页优化">分页优化&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

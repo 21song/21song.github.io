@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2018/%E6%AD%A3%E5%90%91%E8%B7%AF%E7%94%B1%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B7%AF%E7%94%B1/" />
+  <link rel="next" href="/2019/mysql%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%A5%E9%94%99/" />
+  <link rel="canonical" href="/2018/scrapy%E7%9A%84%E4%BD%BF%E7%94%A8/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           scrapy是什么 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="scrapy是什么 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "scrapy是什么",
+    "headline" : "scrapy是什么",
+    "description" : "Scrapy 是用 Python 实现的一个为了爬取网站数据、提取结构性数据而编写的应用框架。\nScrapy 常应用在包括数据挖掘，信息处理或存储历史数据等一系列的程序中。\n通常我们可以很简单的通过 Scrapy 框架实现一个爬虫，抓取指定网站的内容或图片。\nScrapy架构图(绿线是数据流向)\nScrapy Engine(引擎): 负责Spider、ItemPipeline、Downloader、Scheduler中间的通讯，信号、数据传递等。\nScheduler(调度器): 它负责接受引擎发送过来的Request请求，并按照一定的方式进行整理排列，入队，当引擎需要时，交还给引擎。\nDownloader（下载器）：负责下载Scrapy Engine(引擎)发送的所有Requests请求，并将其获取到的Responses交还给Scrapy Engine(引擎)，由引擎交给Spider来处理，\nSpider（爬虫）：它负责处理所有Responses,从中分析提取数据，获取Item字段需要的数据，并将需要跟进的URL提交给引擎，再次进入Scheduler(调度器).\nItem Pipeline(管道)：它负责处理Spider中获取到的Item，并进行进行后期处理（详细分析、过滤、存储等）的地方。\nDownloader Middlewares（下载中间件）：你可以当作是一个可以自定义扩展下载功能的组件。\nSpider Middlewares（Spider中间件）：你可以理解为是一个可以自定扩展和操作引擎和Spider中间通信的功能组件（比如进入Spider的Responses;和从Spider出去的Requests）",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-12-09 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2018-12-09 00:00:00 \x2b0000 UTC",
+    "url" : "\/2018\/scrapy%E7%9A%84%E4%BD%BF%E7%94%A8\/",
+    "wordCount" : "25",
+    "keywords" : [ "spider", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">scrapy是什么</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2018-12-09 itemprop="datePublished">December 9, 2018</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/spider/"> spider </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p>Scrapy 是用 Python 实现的一个为了爬取网站数据、提取结构性数据而编写的应用框架。</p>
+
+<p>Scrapy 常应用在包括数据挖掘，信息处理或存储历史数据等一系列的程序中。</p>
+
+<p>通常我们可以很简单的通过 Scrapy 框架实现一个爬虫，抓取指定网站的内容或图片。</p>
+
+<p>Scrapy架构图(绿线是数据流向)</p>
+
+<p>Scrapy Engine(引擎): 负责Spider、ItemPipeline、Downloader、Scheduler中间的通讯，信号、数据传递等。</p>
+
+<p>Scheduler(调度器): 它负责接受引擎发送过来的Request请求，并按照一定的方式进行整理排列，入队，当引擎需要时，交还给引擎。</p>
+
+<p>Downloader（下载器）：负责下载Scrapy Engine(引擎)发送的所有Requests请求，并将其获取到的Responses交还给Scrapy Engine(引擎)，由引擎交给Spider来处理，</p>
+
+<p>Spider（爬虫）：它负责处理所有Responses,从中分析提取数据，获取Item字段需要的数据，并将需要跟进的URL提交给引擎，再次进入Scheduler(调度器).</p>
+
+<p>Item Pipeline(管道)：它负责处理Spider中获取到的Item，并进行进行后期处理（详细分析、过滤、存储等）的地方。</p>
+
+<p>Downloader Middlewares（下载中间件）：你可以当作是一个可以自定义扩展下载功能的组件。</p>
+
+<p>Spider Middlewares（Spider中间件）：你可以理解为是一个可以自定扩展和操作引擎和Spider中间通信的功能组件（比如进入Spider的Responses;和从Spider出去的Requests）</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2018/scrapy%E7%9A%84%E4%BD%BF%E7%94%A8/>/2018/scrapy%E7%9A%84%E4%BD%BF%E7%94%A8/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/spider/">
+                    #spider</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2018/%E6%AD%A3%E5%90%91%E8%B7%AF%E7%94%B1%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B7%AF%E7%94%B1/" class="prev" rel="prev" title="正向路由与普通路由"><i class="iconfont icon-left"></i>&nbsp;正向路由与普通路由</a>
+         
+        
+        <a href="/2019/mysql%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%A5%E9%94%99/" class="next" rel="next" title="Mysql的一些报错">Mysql的一些报错&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

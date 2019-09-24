@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/flask%E7%9A%84%E9%97%AA%E7%8E%B0/" />
+  <link rel="next" href="/2017/mysql%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F/" />
+  <link rel="canonical" href="/2017/flask%E7%9A%84csrf/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Flask的csrf | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Flask的csrf | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Flask的csrf",
+    "headline" : "Flask的csrf",
+    "description" : "CSRF：从一个网站A中发起一个到网站B的请求，而这个请求是经过了伪装的，伪装操作达到的目的就是让请求看起来像是从网站B中发起的，也就是说，让B网站所在的服务器端误以为该请求是从自己网站发起的，而不是从A网站发起的。当然，请求一般都是恶意的。\n一、什么是CSRF？\nCSRF是Cross Site Request Forgery的缩写，翻译过来就是跨站请求伪造。那么什么是跨站请求伪造呢？让我一个词一个词的解释：\n1、跨站：顾名思义，就是从一个网站到另一个网站。\n2、请求：即HTTP请求。\n3、伪造：在这里可以理解为仿造、伪装。\n综合起来的意思就是：从一个网站A中发起一个到网站B的请求，而这个请求是经过了伪装的，伪装操作达到的目的就是让请求看起来像是从网站B中发起的，也就是说，让B网站所在的服务器端误以为该请求是从自己网站发起的，而不是从A网站发起的。当然，请求一般都是恶意的。\n看到这里，你可能会问：为什么要伪装成从B网站发起的呢？从网站A直接向B网站服务器发起请求不可以吗？\n要回答这个问题，就需要我们对Cookie机制有一定的认识。关于Cookie机制我会单独写一篇文章，这里不做详细介绍。这里你只需要知道：之所以要伪装成从B网站发起的，是因为Cookie是不能跨域发送的。结合上面这个例子来说就是：如果从A网站直接发送请求到B网站服务器的话，是无法将B网站中产生的Cookie一起发给B服务器的。\n可能你还会问，为什么非要发送Cookie呢？这是因为服务器在用户登录后会将用户的一些信息放到Cookie中返回给客户端，然后客户端在请求一些需要认证的资源的时候会把Cookie一起发给服务器，服务器通过读取Cookie中的信息来进行用户认证，认证通过后才会做出正确的响应。\nA网站访问B网站服务器的一些需要认证的资源的时候，如果没有Cookie信息，服务器是拒绝访问的，那么A网站就无法进行恶意操作。而伪造成B网站的请求，就可以将B网站的Cookie一起发到B服务器，这个时候就服务器就认为该请求是合法的，就会给出正确的响应，这个时候，A网站就达到目的了。\n简单一句话就是：攻击者盗用了你的身份，以你的名义发送恶意请求。\n那么，A网站通过CSRF能够做那些操作呢？\n二、CSRF能够做什么呢？\nCSRF能够做的事情包括：以你名义发送邮件，发消息，盗取你的账号，甚至于购买商品，虚拟货币转账……造成的问题包括：个人隐私泄露以及财产安全。等等等等。",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-08-14 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-08-14 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/flask%E7%9A%84csrf\/",
+    "wordCount" : "18",
+    "keywords" : [ "Python","Flask", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Flask的csrf</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-08-14 itemprop="datePublished">August 14, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/python/"> Python </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p>CSRF：从一个网站A中发起一个到网站B的请求，而这个请求是经过了伪装的，伪装操作达到的目的就是让请求看起来像是从网站B中发起的，也就是说，让B网站所在的服务器端误以为该请求是从自己网站发起的，而不是从A网站发起的。当然，请求一般都是恶意的。</p>
+
+<p><strong>一、什么是CSRF？</strong></p>
+
+<p>CSRF是Cross Site Request Forgery的缩写，翻译过来就是跨站请求伪造。那么什么是跨站请求伪造呢？让我一个词一个词的解释：</p>
+
+<p>1、跨站：顾名思义，就是从一个网站到另一个网站。</p>
+
+<p>2、请求：即HTTP请求。</p>
+
+<p>3、伪造：在这里可以理解为仿造、伪装。</p>
+
+<p>综合起来的意思就是：从一个网站A中发起一个到网站B的请求，而这个请求是经过了伪装的，伪装操作达到的目的就是让请求看起来像是从网站B中发起的，也就是说，让B网站所在的服务器端误以为该请求是从自己网站发起的，而不是从A网站发起的。当然，请求一般都是恶意的。</p>
+
+<p>看到这里，你可能会问：为什么要伪装成从B网站发起的呢？从网站A直接向B网站服务器发起请求不可以吗？</p>
+
+<p>要回答这个问题，就需要我们对Cookie机制有一定的认识。关于Cookie机制我会单独写一篇文章，这里不做详细介绍。这里你只需要知道：之所以要伪装成从B网站发起的，是因为Cookie是不能跨域发送的。结合上面这个例子来说就是：如果从A网站直接发送请求到B网站服务器的话，是无法将B网站中产生的Cookie一起发给B服务器的。</p>
+
+<p>可能你还会问，为什么非要发送Cookie呢？这是因为服务器在用户登录后会将用户的一些信息放到Cookie中返回给客户端，然后客户端在请求一些需要认证的资源的时候会把Cookie一起发给服务器，服务器通过读取Cookie中的信息来进行用户认证，认证通过后才会做出正确的响应。</p>
+
+<p>A网站访问B网站服务器的一些需要认证的资源的时候，如果没有Cookie信息，服务器是拒绝访问的，那么A网站就无法进行恶意操作。而伪造成B网站的请求，就可以将B网站的Cookie一起发到B服务器，这个时候就服务器就认为该请求是合法的，就会给出正确的响应，这个时候，A网站就达到目的了。</p>
+
+<p>简单一句话就是：攻击者盗用了你的身份，以你的名义发送恶意请求。</p>
+
+<p>那么，A网站通过CSRF能够做那些操作呢？</p>
+
+<p><strong>二、CSRF能够做什么呢？</strong></p>
+
+<p>CSRF能够做的事情包括：以你名义发送邮件，发消息，盗取你的账号，甚至于购买商品，虚拟货币转账……造成的问题包括：个人隐私泄露以及财产安全。等等等等。</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/flask%E7%9A%84csrf/>/2017/flask%E7%9A%84csrf/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            <span class="tag"><a href="/tags/flask/">
+                    #Flask</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/flask%E7%9A%84%E9%97%AA%E7%8E%B0/" class="prev" rel="prev" title="Flask的闪现"><i class="iconfont icon-left"></i>&nbsp;Flask的闪现</a>
+         
+        
+        <a href="/2017/mysql%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F/" class="next" rel="next" title="Mysql 外键约束">Mysql 外键约束&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

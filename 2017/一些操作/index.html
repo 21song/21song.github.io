@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/djangomysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A5%E5%BF%97/" />
+  <link rel="next" href="/2017/django%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86/" />
+  <link rel="canonical" href="/2017/%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           docker操作 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="docker操作 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "docker操作",
+    "headline" : "docker操作",
+    "description" : "重新启动storage容器\n[root@localhost ~]# docker stop storage [root@localhost ~]# docker start storage\n查看tracker容器和storage容器的关联\n[root@localhost ~]# docker exec -it storage bash root@localhost:\/# cd fdfs_conf root@localhost:\/fdfs_conf# fdfs_monitor storage.conf\n查看docker运行的盒子\ndocker container ls\ndicker images\n重启nginx,开始\nsystemctl status nginx.service\nsystemctl status nginx.service",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-12-06 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-12-06 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C\/",
+    "wordCount" : "38",
+    "keywords" : [ "Python", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">docker操作</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-12-06 itemprop="datePublished">December 6, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/docker/"> Docker </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p>重新启动storage容器</p>
+
+<p>[root@localhost ~]# docker stop storage
+[root@localhost ~]# docker start storage</p>
+
+<p>查看tracker容器和storage容器的关联</p>
+
+<p>[root@localhost ~]# docker exec -it storage bash
+root@localhost:/# cd fdfs_conf
+root@localhost:/fdfs_conf# fdfs_monitor storage.conf</p>
+
+<p>查看docker运行的盒子</p>
+
+<p>docker container ls</p>
+
+<p>dicker images</p>
+
+<p>重启nginx,开始</p>
+
+<p>systemctl status nginx.service</p>
+
+<p>systemctl status nginx.service</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/>/2017/%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/djangomysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A5%E5%BF%97/" class="prev" rel="prev" title="Django增删改查（CUSD）"><i class="iconfont icon-left"></i>&nbsp;Django增删改查（CUSD）</a>
+         
+        
+        <a href="/2017/django%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86/" class="next" rel="next" title="django密码加密">django密码加密&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

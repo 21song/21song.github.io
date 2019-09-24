@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/mysql%E7%B4%A2%E5%BC%95/" />
+  <link rel="next" href="/2017/django%E7%9A%84%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E7%B1%BB/" />
+  <link rel="canonical" href="/2017/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Django项目是如何开始的 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Django项目是如何开始的 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Django项目是如何开始的",
+    "headline" : "Django项目是如何开始的",
+    "description" : "1.创建项目\n django-admin startproject bookmanager   2.创建应用  python manager.py startapp book  3.更换python解释器：按需选择\n  # 进入指定虚拟环境 which python # python2 \/home\/python\/.virtualenvs\/py_django\/bin\/python # python3 \/home\/python\/.virtualenvs\/py3_django\/bin\/python   4.安装应用  INSTALLED_APPS = [ \x27django.contrib.admin\x27, \x27django.contrib.auth\x27, \x27django.contrib.contenttypes\x27, \x27django.contrib.sessions\x27, \x27django.contrib.messages\x27, \x27django.contrib.staticfiles\x27, #添加子应用 \x27book.apps.BookConfig\x27 ]   5.本地化  #设置中文 LANGUAGE_CODE = \x27zh-Hans\x27 #亚洲上海时区 TIME_ZONE = \x27Asia\/Shanghai\x27   6.模板路径\n 在应用同级目录下,创建templates模板文件夹  TEMPLATES = [ { \x27BACKEND\x27: \x27django.template.backends.django.DjangoTemplates\x27, \x27DIRS\x27: [os.path.join(BASE_DIR,\x27templates\x27)], \x27APP_DIRS\x27: True, \x27OPTIONS\x27: { \x27context_processors\x27: [ \x27django.",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-10-29 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-10-29 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B\/",
+    "wordCount" : "127",
+    "keywords" : [ "Python","Django", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Django项目是如何开始的</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-10-29 itemprop="datePublished">October 29, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/python/"> Python </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p>1.创建项目</p>
+
+<ul>
+<li><pre><code class="language-python">django-admin startproject bookmanager
+</code></pre>
+
+<ul>
+<li>2.创建应用</li>
+</ul>
+
+<pre><code class="language-python">python manager.py startapp book
+</code></pre></li>
+
+<li><p>3.更换python解释器：按需选择</p></li>
+</ul>
+
+<pre><code class="language-python">    # 进入指定虚拟环境
+    which python
+  
+    # python2
+    /home/python/.virtualenvs/py_django/bin/python
+  
+    # python3
+    /home/python/.virtualenvs/py3_django/bin/python
+</code></pre>
+
+<ul>
+<li>4.安装应用</li>
+</ul>
+
+<pre><code class="language-python">  INSTALLED_APPS = [
+      'django.contrib.admin',
+      'django.contrib.auth',
+      'django.contrib.contenttypes',
+      'django.contrib.sessions',
+      'django.contrib.messages',
+      'django.contrib.staticfiles',
+      #添加子应用
+      'book.apps.BookConfig'
+  ]
+</code></pre>
+
+<ul>
+<li>5.本地化</li>
+</ul>
+
+<pre><code class="language-python">  #设置中文
+  LANGUAGE_CODE = 'zh-Hans'
+  #亚洲上海时区
+  TIME_ZONE = 'Asia/Shanghai'
+</code></pre>
+
+<ul>
+<li><p>6.模板路径</p>
+
+<ul>
+<li>在应用同级目录下,创建<code>templates</code>模板文件夹</li>
+</ul>
+
+<pre><code class="language-python">TEMPLATES = [
+    {
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'DIRS': [os.path.join(BASE_DIR,'templates')],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+            ],
+        },
+    },
+]
+</code></pre>
+
+<ul>
+<li><p>7.项目中匹配urls</p></li>
+
+<li><p>正则 : 路径只要不是<code>admin/</code>就算匹配成功。并包含到应用中的<code>urls.py</code></p></li>
+</ul>
+
+<pre><code class="language-python">from django.conf.urls import url,include
+from django.contrib import admin
+    
+urlpatterns = [
+    url(r'^admin/', admin.site.urls),
+    #正则为：只要不是 admin/ 就算匹配成功
+    url(r'^',include('book.urls'))
+]
+</code></pre></li>
+
+<li><p>8.应用中匹配<code>urls.py</code></p>
+
+<ul>
+<li><p>应用中创建 <code>urls.py</code></p></li>
+
+<li><p>正则 : 路径中包含<code>booklist/</code>，就调用视图中对应的<code>bookList</code>函数</p></li>
+</ul>
+
+<pre><code class="language-python">from django.conf.urls import url
+from book.views import bookList
+    
+urlpatterns = [
+    
+    # 匹配书籍列表信息的URL,调用对应的bookList视图
+    url(r'^booklist/$',bookList)
+]
+</code></pre>
+
+<ul>
+<li>9.准备视图</li>
+</ul>
+
+<pre><code class="language-python"># 定义视图：提供书籍列表信息
+def bookList(request):
+  
+  return HttpResponse('OK!')
+</code></pre></li>
+
+<li><p>10.开启服务器, 测试项目</p></li>
+</ul>
+
+<pre><code class="language-python">   # 进入项目文件中, 开启项目对应的服务器
+   python manage.py runserver
+  
+   # 浏览器中输入网址
+   http://127.0.0.1:8000/booklist/
+</code></pre>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B/>/2017/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            <span class="tag"><a href="/tags/django/">
+                    #Django</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/mysql%E7%B4%A2%E5%BC%95/" class="prev" rel="prev" title="Mysql索引"><i class="iconfont icon-left"></i>&nbsp;Mysql索引</a>
+         
+        
+        <a href="/2017/django%E7%9A%84%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E7%B1%BB/" class="next" rel="next" title="Django的定义模型类">Django的定义模型类&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

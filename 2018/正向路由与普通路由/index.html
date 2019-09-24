@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2018/redis%E5%92%8Cmemeuche/" />
+  <link rel="next" href="/2018/scrapy%E7%9A%84%E4%BD%BF%E7%94%A8/" />
+  <link rel="canonical" href="/2018/%E6%AD%A3%E5%90%91%E8%B7%AF%E7%94%B1%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B7%AF%E7%94%B1/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           正向路由与普通路由 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="正向路由与普通路由 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "正向路由与普通路由",
+    "headline" : "正向路由与普通路由",
+    "description" : "什么是路由？ ​ URL是Web服务的入口，用户通过浏览器发送过来的任何请求，都是发送到一个指定的URL地址，然后被响应。\n在项目中编写路由，就是向外暴露我们接收哪些URL的请求，除此之外的任何URL都不被处理，也没有返回。通俗地理解，不恰当的形容，URL路由是你的Web服务对外暴露的API。\ndjango使用反向解析需要添加应用的命名空间，例如上图的 app_name = “booktest” booktest是你应用的名字 使用反向解析需要在url匹配后添加自己定义的name\n反向解析传递参数空格就行，这里的2就表示需要传递的参数，booktest就是你当前的这个应用的名字，fortest2就是你需要之前定义的名字\n什么是正则路由？ 在开发过程中，可能会出现限制用户访问规则的场景，那么这个时候就需要用到正则匹配，根据自己的规则去限定请求参数再进行访问。\n例子：\n url(r\x26rsquo;^index\x26rsquo;,views.index) #默认的 url(r\x26rsquo;^home\x26rsquo;,views.Home.as_view()) # CBV 形式 也就是说 class\n url(r\x26rsquo;^detail-(\\d\x2b).html\x26rsquo;, views.detail), # 在views里 def home(request, nid, uid) 这两个参数不能调换循序\n  ### # http: \/\/www.baidu.com\/detail-2-8.html 2是nid 8是uid\n url (r\x26rsquo;^detail-(?P\x26lt; nid\x26gt;\\d\x2b)-(?P\x26lt; uid\x26gt;\\d\x2b) .html\x26rsquo;, views.detail) #多个正则 在views里 def home(request, nid, uid) 这两个参数可以没有顺序  什么情况下使用反向解析？ 所谓反向解析就是根据命名来调到指定的页面，这里表示的是跳转到booktest模板下面的fortest2这个视图里面， 而这个fortest2正是我们定义的名字，后面的2表示需要传递过去的参数\n一、urls硬编码 在反向解析和命名空间之前我们先来说说URLS硬编码，用django 开发应用的时候，可以完全是在urls.py 中硬编码配置地址,在views.py中HttpResponseRedirect()也是硬编码转向地址，当然在template 中也是一样了，这样带来一个问题，如果在urls.py 中修改了某个页面的地址（也就是说更改路由系统中对应的路由分发），那么所有的地方(views.py和template中)都要修改。问题出在硬编码，紧耦合使得在大量的模板中修改 URLs 成为富有挑战性的项目。来看下面的模板文件index.html中，我们到的链接硬编码成这样子：\n\x26lt;li\x26gt;\x26lt;a href=\x26quot;\/goods\/index\/\x26quot;\x26gt;url硬编码\x26lt;\/a\x26gt;\x26lt;\/li\x26gt;  如果使用软编码之后，无论怎么更改路由系统中的路由分发，只有对应的namespace与name属性值不变，就不必修改在views.",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-12-02 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2018-12-02 00:00:00 \x2b0000 UTC",
+    "url" : "\/2018\/%E6%AD%A3%E5%90%91%E8%B7%AF%E7%94%B1%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B7%AF%E7%94%B1\/",
+    "wordCount" : "341",
+    "keywords" : [ "Python", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">正向路由与普通路由</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2018-12-02 itemprop="datePublished">December 2, 2018</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/django/"> Django </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h3 id="什么是路由">什么是路由？</h3>
+
+<p>​   URL是Web服务的入口，用户通过浏览器发送过来的任何请求，都是发送到一个指定的URL地址，然后被响应。</p>
+
+<p>在项目中编写路由，就是向外暴露我们接收哪些URL的请求，除此之外的任何URL都不被处理，也没有返回。通俗地理解，不恰当的形容，URL路由是你的Web服务对外暴露的API。</p>
+
+<p>django使用反向解析需要添加应用的命名空间，例如上图的 app_name = “booktest” booktest是你应用的名字
+使用反向解析需要在url匹配后添加自己定义的name</p>
+
+<p>反向解析传递参数空格就行，这里的2就表示需要传递的参数，booktest就是你当前的这个应用的名字，fortest2就是你需要之前定义的名字</p>
+
+<h3 id="什么是正则路由">什么是正则路由？</h3>
+
+<p>在开发过程中，可能会出现限制用户访问规则的场景，那么这个时候就需要用到正则匹配，根据自己的规则去限定请求参数再进行访问。</p>
+
+<p>例子：</p>
+
+<ol>
+<li><p>url(r&rsquo;^index&rsquo;,views.index) #默认的                  url(r&rsquo;^home&rsquo;,views.Home.as_view()) # CBV 形式 也就是说 class</p></li>
+
+<li><p>url(r&rsquo;^detail-(\d+).html&rsquo;, views.detail),       # 在views里 def  home(request, nid, uid) 这两个参数不能调换循序</p></li>
+</ol>
+
+<p>### # http: //www.baidu.com/detail-2-8.html   2是nid   8是uid</p>
+
+<ol>
+<li>url (r&rsquo;^detail-(?P&lt; nid&gt;\d+)-(?P&lt; uid&gt;\d+) .html&rsquo;, views.detail)   #多个正则  在views里 def  home(request, nid, uid) 这两个参数可以没有顺序</li>
+</ol>
+
+<h3 id="什么情况下使用反向解析">什么情况下使用反向解析？</h3>
+
+<p>所谓反向解析就是根据命名来调到指定的页面，这里表示的是跳转到booktest模板下面的fortest2这个视图里面， 而这个fortest2正是我们定义的名字，后面的2表示需要传递过去的参数</p>
+
+<h2 id="一-urls硬编码">一、urls硬编码</h2>
+
+<p>在反向解析和命名空间之前我们先来说说URLS硬编码，用django 开发应用的时候，可以完全是在urls.py 中硬编码配置地址,在views.py中HttpResponseRedirect()也是硬编码转向地址，当然在template 中也是一样了，这样带来一个问题，如果在urls.py 中修改了某个页面的地址（也就是说更改路由系统中对应的路由分发），那么所有的地方(views.py和template中)都要修改。问题出在硬编码，紧耦合使得在大量的模板中修改 URLs 成为富有挑战性的项目。来看下面的模板文件index.html中，我们到的链接硬编码成这样子：</p>
+
+<pre><code class="language-html">&lt;li&gt;&lt;a href=&quot;/goods/index/&quot;&gt;url硬编码&lt;/a&gt;&lt;/li&gt;
+</code></pre>
+
+<p>如果使用软编码之后，无论怎么更改路由系统中的路由分发，只有对应的namespace与name属性值不变，就不必修改在views.py和template中的url，也就是说</p>
+
+<pre><code class="language-html">&lt;li&gt;&lt;a href=&quot;{% url &quot;good:index&quot; %}&quot;&gt;url软编码&lt;/a&gt;&lt;/li&gt;
+</code></pre>
+
+<p>在templates中更改为软编码之后，其实在templates，index.html文件生成的时候，仍然是</p>
+
+<pre><code class="language-html">&lt;li&gt;&lt;a href=&quot;/goods/index/&quot;&gt;url软编码&lt;/a&gt;&lt;/li&gt;
+</code></pre>
+
+<h2 id="二-url的反向解析">二、URL的反向解析</h2>
+
+<p>在使用Django 项目时，一个常见的需求是获得URL 的最终形式，以用于嵌入到生成的内容中（视图中和显示给用户的URL等）或者用于处理服务器端的导航（重定向等）。
+人们强烈希望不要硬编码这些URL（费力、不可扩展且容易产生错误）或者设计一种与URLconf 毫不相关的专门的URL 生成机制，因为这样容易导致一定程度上产生过期的URL。</p>
+
+<p>获取一个URL 最开始想到的信息是处理它视图的标识（例如名字），查找正确的URL 的其它必要的信息有视图参数的类型（位置参数、关键字参数）和值。
+Django 提供一个办法是让URL 映射是URL 设计唯一的地方。你填充你的URLconf，然后可以双向使用它：
+1、根据用户/浏览器发起的URL 请求，它调用正确的Django 视图，并从URL 中提取它的参数需要的值。
+2、根据Django 视图的标识和将要传递给它的参数的值，获取与之关联的URL。</p>
+
+<p>第一种方式是我们常说的<strong>根据地址定位URL。</strong></p>
+
+<p>第二种方式叫做<strong>反向解析URL、反向URL 匹配、反向URL 查询或者简单的URL 反查</strong>。</p>
+
+<p>在需要URL 的地方，对于不同层级，Django 提供不同的工具用于URL 反查：
+1、在模板中：使用url 模板标签。
+2、在Python 代码中：使用 django.core.urlresolvers.<strong>reverse()</strong> 函数。
+3、在更高层的与处理Django 模型实例相关的代码中：使用 get_absolute_url() 方法。</p>
+
+<h3 id="1-命名空间">1、命名空间：</h3>
+
+<p>URL 命名空间允许你反查到唯一的命名URL 模式，即使不同的应用使用相同的URL 名称。第三方应用始终使用带命名空间的URL 是一个很好的实践。类似地，它还允许你在一个应用有多个实例部署的情况下反查URL。换句话讲，因为一个应用的多个实例共享相同的命名URL，命名空间将提供一种区分这些命名URL 的方法。</p>
+
+<p>一个URL 命名空间有两个部分，它们都是字符串：</p>
+
+<h4 id="1-应用命名空间"><1>、应用命名空间:</h4>
+
+<p>它表示正在部署的应用的名称。一个应用的每个实例具有相同的应用命名空间。例如，可以预见Django 的管理站点的应用命名空间是&rsquo; admin &lsquo;。</p>
+
+<h4 id="2-实例命名空间"><2>、实例命名空间:</h4>
+
+<p>它表示应用的一个特定的实例。实例的命名空间在你的全部项目中应该是唯一的。但是，一个实例的命名空间可以和应用的命名空间相同。它用于表示一个应用的默认实例。例如，Django 管理站点实例具有一个默认的实例命名空间&rsquo;admin&rsquo;。 URL的命名空间使用&rsquo;:&rsquo; 操作符指定。例如，管理站点应用的主页使用&rsquo; admin:index &lsquo;。它表示&rsquo; admin &lsquo; 的一个命名空间和&rsquo; index &lsquo; 的一个命名URL.</p>
+
+<pre><code class="language-python">＃ include函数的API
+include(arg, namespace=None, app_name=None)
+＃ namespace设置实例命名空间，app_name设置应用命名空间
+＃ 不能只设置app_name，否则会报错，以下是报错的源码
+if app_name and not namespace:
+    raise ValueError('Must specify a namespace if specifying app_name.')
+</code></pre>
+
+<p>一般来说，同一应用下的不同实例应该具有相同的应用命名空间，但是，这并不意味着不同应用可以使用相同的实例命名空间，因为实例命名空间在你所有项目中都是唯一的。</p>
+
+<p><strong>问题：</strong> 另外在添加命名空间 namespace时可能会出现以下这个问题：</p>
+
+<pre><code class="language-python">    'Specifying a namespace in include() without providing an app_name '
+django.core.exceptions.ImproperlyConfigured: Specifying a namespace in include() without providing an app_name is not supported. Set the app_name attribute in the included module, or pass a 2-tuple containing the list of patterns and app_name instead.
+</code></pre>
+
+<p>解决方案为：</p>
+
+<p>在对应的app应用的urls.py中添加app_name = &lsquo;[应用名称]&lsquo;如下</p>
+
+<pre><code class="language-python">from django.conf.urls import url
+from . import views
+
+app_name = 'users'
+# users为当前应用的名称
+
+urlpatterns = [
+    url('^$', views.index),
+    url('^(\d+)/$', views.detail),
+]
+</code></pre>
+
+<h3 id="反向解析">反向解析</h3>
+
+<p>1.定义：</p>
+
+<p>​   随着功能的增加会出现更多的视图，可能之前配置的正则表达式不够准确，于是就要修改正则表达式，但是正则表达式一旦修改了，之前所有对应的超链接都要修改，真是一件麻烦的事情，而且可能还会漏掉一些超链接忘记修改，有办法让链接根据正则表达式动态生成吗？ 就是用反向解析的办法。</p>
+
+<p>2.应用范围：</p>
+
+<ul>
+<li>模板中的超链接</li>
+<li>视图中的重定向</li>
+</ul>
+
+<p>3.使用方法：</p>
+
+<ul>
+<li>定义url时，需要为include定义namespace属性(就是命名空间)，为url定义name属性</li>
+<li>使用时，在模板中使用url标签，在视图中使用reverse函数，根据正则表达式动态生成地址，减轻后期维护成本。</li>
+</ul>
+
+<h2 id="4-视图中的重定向">4,视图中的重定向：</h2>
+
+<pre><code class="language-python">from django.shortcuts import redirect
+from django.core.urlresolvers import reverse
+
+return redirect(reverse('booktest:fan2'))
+</code></pre>
+
+<h2 id="5-反向解析中url的参数">5,反向解析中URL的参数</h2>
+
+<p>位置参数</p>
+
+<p>1）在booktest/urls.py中，修改fan2如下：</p>
+
+<pre><code class="language-python">url(r’^fan(\d+)_(\d+)/$’, views.fan2,name=’fan2’),
+</code></pre>
+
+<p>2）修改templates/booktest/fan1.html文件如下：</p>
+
+<pre><code class="language-html">&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;反向解析&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+普通链接：&lt;a href=&quot;/fan2_3/&quot;&gt;fan2&lt;/a&gt;
+&lt;hr&gt;
+反向解析：&lt;a href=&quot;{%url 'booktest:fan2' 2 3%}&quot;&gt;fan2&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>3）回到浏览器中，刷新：</p>
+
+<ul>
+<li>使用重定向传递位置参数格式如下：</li>
+</ul>
+
+<blockquote>
+<p>return redirect(reverse(‘booktest:fan’, args=(2,3)))</p>
+</blockquote>
+
+<p>关键字参数</p>
+
+<p>1）在booktest/urls.py中，修改fan2如下：</p>
+
+<pre><code class="language-Python"> url(r'^fan(?P&lt;id&gt;\d+)_(?P&lt;age&gt;\d+)/$', views.fan2,name='fan2'),
+</code></pre>
+
+<ul>
+<li>1</li>
+</ul>
+
+<p>2）修改templates/booktest/fan1.html文件如下：</p>
+
+<pre><code class="language-html">&lt;html&gt;
+&lt;head&gt;
+    &lt;title&gt;反向解析&lt;/title&gt;
+&lt;/head&gt;
+&lt;body&gt;
+普通链接：&lt;a href=&quot;/fan100_18/&quot;&gt;fan2&lt;/a&gt;
+&lt;hr&gt;
+反向解析：&lt;a href=&quot;{%url 'booktest:fan2' id=100 age=18%}&quot;&gt;fan2&lt;/a&gt;
+&lt;/body&gt;
+&lt;/html&gt;
+</code></pre>
+
+<p>3）回到浏览器中，刷新：</p>
+
+<ul>
+<li>使用重定向传递关键字参数格式如下：</li>
+</ul>
+
+<blockquote>
+<p>return redirect(reverse(‘booktest:fan2’, kwargs={‘id’:110,’age’:26}))</p>
+</blockquote>
+
+<h4 id="最后加一点自己的理解">最后加一点自己的理解：</h4>
+
+<p>感觉反向解析其实也是也是对路由的运用，只不过区别在于更加的灵活，首先，要对主路由增加命名空间，对app里面的路由加上别名（即是给name赋值），然后无论是在view视图中的反定向也好，模板中的反向解析也好，都是在用命名空间和别名来操作的，无论路由中的正则表达式怎么变化，都不会影响到别名，也就是说别名是固定的，改变正则表达式时别名不变，这样就无需改变代码里用到的路由的地方，否则就要花很大的功夫来修改里面的每一个。</p>
+
+<p>注意:一点就是关于在路由中传参的操作，想要在路由中传参一定要记得修改正则表达式</p>
+
+<p>所谓反向解析就是根据命名来调到指定的页面，这里表示的是跳转到booktest模板下面的fortest2这个视图里面， 而这个fortest2正是我们定义的名字，后面的2表示需要传递过去的参数</p>
+
+<p>1.django使用反向解析需要添加应用的命名空间,需要在url匹配后添加自己定义的name</p>
+
+<p>2.反向解析传递参数空格就行</p>
+
+<pre><code class="language-html">&lt;a href=&quot;{% url 'booktest:fortest2' 2 %}&quot; rel=&quot;external nofollow&quot; rel=&quot;external nofollow&quot; &gt;
+</code></pre>
+
+<p>3.这样一来通过命名空间，无论在templates文件中有多庞大的url地址映射，只要使用url软编码，在更改路由系统的时候，都能自动生成。而如果使用硬链接硬编码 ，就只能在views.py和静态文件中逐个修改url地址，不仅耗费时间，更容易产生错误。</p>
+
+<p>——————————————————————————————————————————————</p>
+
+<h5 id="什么是路由-路由是用来干什么的">什么是路由？路由是用来干什么的？</h5>
+
+<p>对一个给定的url进行定义，转换，传参，命名之后，找到相应处理函数的过程，也就是关联URL和处理函数的过程。</p>
+
+<h5 id="那么路由流程是什么">那么路由流程是什么？</h5>
+
+<p>1.查找全局路由文件中的urlpatterns变量</p>
+
+<p>2.根据先后顺序，对URL逐一匹配urlpatterns中的元素。</p>
+
+<p>3.找到第一个匹配的元素后，<strong>将停止查找</strong>，并根据匹配结果执行处理函数。</p>
+
+<p>4.如果没有找到匹配，或者出现异常。Django将进行错误处理。</p>
+
+<h5 id="django的路由配置">django的路由配置</h5>
+
+<p>在settings.py文件中ROOT_URLCONF变量指定了全局路由文件名称。也就是工程的入口路由文件。</p>
+
+<p>ROOT_URLCONF = &ldquo;&lt;工程名称&gt;.urls&rdquo;
+在urls.py文件中使用urlpatterns变量表示路由，该变量是列表类型，元素由path()或re_path()组成。</p>
+
+<p>path()处理字符串路由。re_path()处理正则表达式路由。</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2018/%E6%AD%A3%E5%90%91%E8%B7%AF%E7%94%B1%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B7%AF%E7%94%B1/>/2018/%E6%AD%A3%E5%90%91%E8%B7%AF%E7%94%B1%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B7%AF%E7%94%B1/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2018/redis%E5%92%8Cmemeuche/" class="prev" rel="prev" title="redis和memeuche"><i class="iconfont icon-left"></i>&nbsp;redis和memeuche</a>
+         
+        
+        <a href="/2018/scrapy%E7%9A%84%E4%BD%BF%E7%94%A8/" class="next" rel="next" title="scrapy是什么">scrapy是什么&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

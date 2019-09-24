@@ -1,0 +1,812 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on 宋军亮的技术博客</title>
+    <link>/tags/python/</link>
+    <description>Recent content in Python on 宋军亮的技术博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 23 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>pywin32控制你的打印机</title>
+      <link>/2019/%E9%87%87%E7%94%A8pywin32%E6%8E%A7%E5%88%B6%E4%BD%A0%E7%9A%84%E6%89%93%E5%8D%B0%E6%9C%BA/</link>
+      <pubDate>Mon, 23 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/%E9%87%87%E7%94%A8pywin32%E6%8E%A7%E5%88%B6%E4%BD%A0%E7%9A%84%E6%89%93%E5%8D%B0%E6%9C%BA/</guid>
+      <description>pywin23控制打印机</description>
+    </item>
+    
+    <item>
+      <title>多线程cpu/gil</title>
+      <link>/2019/%E5%A4%9A%E7%BA%BF%E7%A8%8Bcpu%E4%B8%8Egil/</link>
+      <pubDate>Fri, 02 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/%E5%A4%9A%E7%BA%BF%E7%A8%8Bcpu%E4%B8%8Egil/</guid>
+      <description>多线程与CPU： 1.单核CPU CPU密集型的程序（做计算操作的程序） 单线程即可（ 此时的任务已经把CPU资源100%消耗了，就没必要也不可能使用多线程来提高计算效率） 2.单核CPU IO密集型的程序（做IO操作的程序 ） 多线程&amp;gt;单线程（多线程可以阻塞，但并不是并行，是“伪并行”，实际上还是一个CPU在执行一切事物，只是切换的太快，没法察觉） 3.多核CPU 做计算操作的程序 多线程&amp;gt;&amp;gt;单线程 （每个核心执行一个线程，每个核心的线程并发执行计算，以提高任务执行效率，例如加密解密，数据压缩解压缩（视频、音频、普通数据），否则只能使一个核心满载，而其他核心闲置。）
+4.多核CPU IO密集型任务 多线程&amp;gt;单线程
+但是在PYTHON里：
+由于GIL的机制就变得不完全一样了：单核CPU CPU密集型程序 单线程耗时&amp;lt;多线程。多核CPU CPU密集型程序 单线程耗时&amp;lt;多线程，也就是说只要是CPU密集型程序 不要只单独的使用多线程。
+一、先说为什么会有GIL ，GIL是干什么的：
+多线程之间数据完整性和状态同步的最简单方法自然就是加锁，于是python解释器有了GIL这把超级大锁，就默认python内部对象是thread-safe的，无需在实现时考虑额外的内存锁和同步操作。
+也就是说 如果不释放这把锁，线程都是串行的。
+但PYTHON的多线程并不是一无是处
+二、GIL锁的释放机制：
+先解释什么是IO密集型和计算密集型：
+计算密集型任务的特点是要进行大量的计算，消耗CPU资源，比如计算圆周率、对视频进行高清解码等等，全靠CPU的运算能力。这种计算密集型任务虽然也可以用多任务完成，但是任务越多，花在任务切换的时间就越多，CPU执行任务的效率就越低，所以，要最高效地利用CPU，计算密集型任务同时进行的数量应当等于CPU的核心数。
+计算密集型任务由于主要消耗CPU资源，因此，代码运行效率至关重要。Python这样的脚本语言运行效率很低，完全不适合计算密集型任务。对于计算密集型任务，最好用C语言编写。
+第二种任务的类型是IO密集型，涉及到网络、磁盘IO的任务都是IO密集型任务，这类任务的特点是CPU消耗很少，任务的大部分时间都在等待IO操作完成（因为IO的速度远远低于CPU和内存的速度）。对于IO密集型任务，任务越多，CPU效率越高，但也有一个限度。常见的大部分任务都是IO密集型任务，比如Web应用。
+IO密集型任务执行期间，99%的时间都花在IO上，花在CPU上的时间很少，因此，用运行速度极快的C语言替换用Python这样运行速度极低的脚本语言，完全无法提升运行效率。对于IO密集型任务，最合适的语言就是开发效率最高（代码量最少）的语言，脚本语言是首选，C语言最差。
+GIL对于IO密集型和计算密集型：
+IO密集型（网络传输、磁盘读写等）： 线程遇到I/O阻塞时，会自动释放GIL。（阻塞等待时，就释放GIL，给另一个线程执行的机会）
+cpu密集型（编解码，解压缩等）： 解释器会周期性的让线程释放锁
+由上面可知，至少有两种情况python会做线程切换，一是一但有IO操作时，会有线程切换，二是当一个线程连续执行了一定数量的指令时，会出现线程切换。
+再加上每次操作系统执行线程的调度都需要消耗时间，这样，就可以理解为什么在多核+cpu密集型程序时不要单独的使用多线程，会比单线程更耗时。
+即使是多核CPU，如果没有GIL 不同核的CPU执行不同的线程，但是有了GIL这把锁，某个核心上的CPU即使被唤醒也没有获得GIL锁，无法执行。
+在不使用别的库的情况下，python多线程最好只用于IO密集型的操作.</description>
+    </item>
+    
+    <item>
+      <title>python面试题收藏</title>
+      <link>/2019/python%E9%9D%A2%E8%AF%95%E9%A2%98/</link>
+      <pubDate>Fri, 28 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/python%E9%9D%A2%E8%AF%95%E9%A2%98/</guid>
+      <description>git上的面试题 https://github.com/kenwoodjw/python_interview_question https://github.com/taizilongxu/interview_python
+一些简单的Python测试题 http://www.wklken.me/posts/2015/08/26/python-some-test-questions.html https://baijiahao.baidu.com/s?id=1607651363840614527&amp;amp;wfr=spider&amp;amp;for=pc
+面试Python后端的技巧 https://blog.csdn.net/yueguanghaidao/article/details/49638261
+一个python面试经历 https://mp.weixin.qq.com/s?__biz=MzU0ODczMTEwOQ==&amp;amp;mid=2247486666&amp;amp;idx=1&amp;amp;sn=709653e9cb60ca65ea6636bf7cdd8381&amp;amp;source=41#wechat_redirect</description>
+    </item>
+    
+    <item>
+      <title>Nginx的启动与安装</title>
+      <link>/2019/nginx%E7%9A%84%E5%90%AF%E5%8A%A8%E4%B8%8E%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Fri, 24 May 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/nginx%E7%9A%84%E5%90%AF%E5%8A%A8%E4%B8%8E%E5%AE%89%E8%A3%85/</guid>
+      <description>启动 启动代码格式：nginx安装目录地址 -c nginx配置文件地址
+例如：
+[root@LinuxServer sbin]# /usr/local/nginx/sbin/nginx -c /usr/local/nginx/conf/nginx.conf
+停止 nginx的停止有三种方式：
+ ## 从容停止  　1、查看进程号
+[root@LinuxServer ~]# ps -ef|grep nginx
+　2、杀死进程
+[root@LinuxServer ~]# kill -QUIT 2072
+ ## 快速停止  1、查看进程号
+[root@LinuxServer ~]# ps -ef|grep nginx
+2、杀死进程
+[root@LinuxServer ~]# kill -TERM 2132 或 [root@LinuxServer ~]# kill -INT 2132
+- ## 强制停止
+[root@LinuxServer ~]# pkill -9 nginx
+重启 1、验证nginx配置文件是否正确 方法一：进入nginx安装目录sbin下，输入命令./nginx -t 看到如下显示nginx.conf syntax is ok
+nginx.conf test is successful</description>
+    </item>
+    
+    <item>
+      <title>Mysql的一些报错</title>
+      <link>/2019/mysql%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%A5%E9%94%99/</link>
+      <pubDate>Fri, 19 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/mysql%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%A5%E9%94%99/</guid>
+      <description>MySQL 连接错误Can&amp;rsquo;t connect to MySQL server on (61) 链接数据库时忽然遇到一个问题。Mac Navicat链接时报错Can’t connect to MySQL server on ‘xx.xx.xx.xx’ (61)。
+PS. win版Navicat 报错Can’t connect to MySQL server on ‘xx.xx.xx.xx’ (10038)
+其中xx.xx.xx.xx是ip地址。
+1、查看该用户是否有远程登录的权限 ===
+mysql&amp;gt; SELECT * FROM mysql.user; +-----------+-----------+ | User | Host | +-----------+-----------+ | M | % | | mysql.sys | localhost | | root | localhost | | tommy | ％ | | showhilllee | ％ | +-----------+-----------+ 5 rows in set (0.</description>
+    </item>
+    
+    <item>
+      <title>正向路由与普通路由</title>
+      <link>/2018/%E6%AD%A3%E5%90%91%E8%B7%AF%E7%94%B1%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B7%AF%E7%94%B1/</link>
+      <pubDate>Sun, 02 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/%E6%AD%A3%E5%90%91%E8%B7%AF%E7%94%B1%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B7%AF%E7%94%B1/</guid>
+      <description>什么是路由？ ​ URL是Web服务的入口，用户通过浏览器发送过来的任何请求，都是发送到一个指定的URL地址，然后被响应。
+在项目中编写路由，就是向外暴露我们接收哪些URL的请求，除此之外的任何URL都不被处理，也没有返回。通俗地理解，不恰当的形容，URL路由是你的Web服务对外暴露的API。
+django使用反向解析需要添加应用的命名空间，例如上图的 app_name = “booktest” booktest是你应用的名字 使用反向解析需要在url匹配后添加自己定义的name
+反向解析传递参数空格就行，这里的2就表示需要传递的参数，booktest就是你当前的这个应用的名字，fortest2就是你需要之前定义的名字
+什么是正则路由？ 在开发过程中，可能会出现限制用户访问规则的场景，那么这个时候就需要用到正则匹配，根据自己的规则去限定请求参数再进行访问。
+例子：
+ url(r&amp;rsquo;^index&amp;rsquo;,views.index) #默认的 url(r&amp;rsquo;^home&amp;rsquo;,views.Home.as_view()) # CBV 形式 也就是说 class
+ url(r&amp;rsquo;^detail-(\d+).html&amp;rsquo;, views.detail), # 在views里 def home(request, nid, uid) 这两个参数不能调换循序
+  ### # http: //www.baidu.com/detail-2-8.html 2是nid 8是uid
+ url (r&amp;rsquo;^detail-(?P&amp;lt; nid&amp;gt;\d+)-(?P&amp;lt; uid&amp;gt;\d+) .html&amp;rsquo;, views.detail) #多个正则 在views里 def home(request, nid, uid) 这两个参数可以没有顺序  什么情况下使用反向解析？ 所谓反向解析就是根据命名来调到指定的页面，这里表示的是跳转到booktest模板下面的fortest2这个视图里面， 而这个fortest2正是我们定义的名字，后面的2表示需要传递过去的参数
+一、urls硬编码 在反向解析和命名空间之前我们先来说说URLS硬编码，用django 开发应用的时候，可以完全是在urls.py 中硬编码配置地址,在views.py中HttpResponseRedirect()也是硬编码转向地址，当然在template 中也是一样了，这样带来一个问题，如果在urls.py 中修改了某个页面的地址（也就是说更改路由系统中对应的路由分发），那么所有的地方(views.py和template中)都要修改。问题出在硬编码，紧耦合使得在大量的模板中修改 URLs 成为富有挑战性的项目。来看下面的模板文件index.html中，我们到的链接硬编码成这样子：
+&amp;lt;li&amp;gt;&amp;lt;a href=&amp;quot;/goods/index/&amp;quot;&amp;gt;url硬编码&amp;lt;/a&amp;gt;&amp;lt;/li&amp;gt;  如果使用软编码之后，无论怎么更改路由系统中的路由分发，只有对应的namespace与name属性值不变，就不必修改在views.</description>
+    </item>
+    
+    <item>
+      <title>redis和memeuche</title>
+      <link>/2018/redis%E5%92%8Cmemeuche/</link>
+      <pubDate>Fri, 25 May 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/redis%E5%92%8Cmemeuche/</guid>
+      <description>redis是什么？ Redis 是完全开源免费的，遵守BSD协议，是一个高性能的key-value数据库。
+是当前最热门的的的NoSql数据库之一，也被人们称为数据结构服务器。
+为什么要用redis? 原因很简单：快、性能好、支持并发
+这个问题在大并发，高负载的网站中必须考虑.redis数据库中的所有数据都存储在内存中。由于内存的读写速度远快于硬盘，因此Redis的的的在性能上对比其他基于硬盘存储的数据库有非常明显的优势。
+性能 我们在碰到需要执行耗时特别久，且结果不频繁变动的SQL，就特别适合将运行结果放入缓存，这样，后面的请求就去缓存中读取，请求使得能够迅速响应。
+并发 在大并发的情况下，所有的请求直接访问数据库，数据库会出现连接异常。这个时候，就需要使用的的Redis的做一个缓冲操作，让请求先访问到的Redis的的，而不是直接访问数据库。
+redis的优点： 1，运行在内存，速度快官方号称支持并发11万特读操作，并发8万特写操作。
+2，数据虽在内存，但是提供了持久化的支持，即可以将内存中的数据异步写入到硬盘中，同时不影响继续提供服务。
+3，支持数据结构丰富（string（字符串），list（链表），set（集合），zset（sorted set - 有序集合））和Hash（哈希类型，md5加密出来的那个串）
+——————————————————————————————————————
+Memcached介绍 Memcached 是一个高性能的分布式内存对象缓存系统，用于动态Web应用以减轻数据库负载。它通过在内存中缓存数据和对象来减少读取数据库的次数，从而提供动态、数据库驱动网站的速度，现在已被LiveJournal、hatena、Facebook、Vox、LiveJournal等公司所使用。
+Memcached工作方式分析 许多Web应用都将数据保存到 RDBMS中，应用服务器从中读取数据并在浏览器中显示。 但随着数据量的增大、访问的集中，就会出现RDBMS的负担加重、数据库响应恶化、 网站显示延迟等重大影响。Memcached是高性能的分布式内存缓存服务器,通过缓存数据库查询结果，减少数据库访问次数，以提高动态Web等应用的速度、 提高可扩展性。下图展示了memcache与数据库端协同工作情况： 其中的过程是这样的： 1.检查用户请求的数据是缓存中是否有存在，如果有存在的话，只需要直接把请求的数据返回，无需查询数据库。 2.如果请求的数据在缓存中找不到，这时候再去查询数据库。返回请求数据的同时，把数据存储到缓存中一份。 3.保持缓存的“新鲜性”，每当数据发生变化的时候（比如，数据有被修改，或被删除的情况下），要同步的更新缓存信息，确保用户不会在缓存取到旧的数据。
+Memcached作为高速运行的分布式缓存服务器，具有以下的特点： 1.协议简单 2.基于libevent的事件处理 3.内置内存存储方式 4.memcached不互相通信的分布式
+如何实现分布式可拓展性？ Memcached的分布式不是在服务器端实现的，而是在客户端应用中实现的，即通过内置算法制定目标数据的节点，如下图所示： ——————————————————————————————————————
+Redis 介绍 Redis是一个key-value存储系统。和Memcached类似，它支持存储的value类型相对更多，包括string(字符串)、 list(链表)、set(集合)和zset(有序集合)。这些数据类型都支持push/pop、add/remove及取交集并集和差集及更丰富的操作，而且这些操作都是原子性的。在此基础上，redis支持各种不同方式的排序。与memcached一样，为了保证效率，数据都是缓存在内存中。区别的是redis会周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录文件，并且在此基础上实现了master-slave(主从)同步,当前 Redis的应用已经非常广泛，国内像新浪、淘宝，国外像 Flickr、Github等均在使用Redis的缓存服务。
+Redis 工作方式分析 Redis作为一个高性能的key-value数据库具有以下特征： 1.多样的数据模型 2.持久化 3.主从同步 Redis支持丰富的数据类型，最为常用的数据类型主要由五种：String、Hash、List、Set和Sorted Set。Redis通常将数据存储于内存中，或被配置为使用虚拟内存。Redis有一个很重要的特点就是它可以实现持久化数据，通过两种方式可以实现数据持久化：使用RDB快照的方式，将内存中的数据不断写入磁盘；或使用类似MySQL的AOF日志方式，记录每次更新的日志。前者性能较高，但是可能会引起一定程度的数据丢失；后者相反。 Redis支持将数据同步到多台从数据库上，这种特性对提高读取性能非常有益。
+Redis如何实现分布式可拓展性？ 2.8以前的版本：与Memcached一致，可以在客户端实现，也可以使用代理，twitter已开发出用于Redis和Memcached的代理Twemproxy 。 3.0 以后的版本：相较于Memcached只能采用客户端实现分布式存储，Redis则在服务器端构建分布式存储。Redis Cluster是一个实现了分布式且允许单点故障的Redis高级版本，它没有中心节点，各个节点地位一致，具有线性可伸缩的功能。如图给出Redis Cluster的分布式存储架构，其中节点与节点之间通过二进制协议进行通信，节点与客户端之间通过ascii协议进行通信。在数据的放置策略上，Redis Cluster将整个 key的数值域分成16384个哈希槽，每个节点上可以存储一个或多个哈希槽，也就是说当前Redis Cluster支持的最大节点数就是16384。 ——————————————————————————————————————
+1、 Redis和Memcache都是将数据存放在内存中，都是内存数据库。不过memcache还可用于缓存其他东西，例如图片、视频等等。 2、Redis不仅仅支持简单的k/v类型的数据，同时还提供list，set，hash等数据结构的存储。 3、虚拟内存–Redis当物理内存用完时，可以将一些很久没用到的value 交换到磁盘 4、过期策略–memcache在set时就指定，例如set key1 0 0 8,即永不过期。Redis可以通过例如expire 设定，例如expire name 10 5、分布式–设定memcache集群，利用magent做一主多从;redis可以做一主多从。都可以一主一从 6、存储数据安全–memcache挂掉后，数据没了；redis可以定期保存到磁盘（持久化） 7、灾难恢复–memcache挂掉后，数据不可恢复; redis数据丢失后可以通过aof恢复 8、Redis支持数据的备份，即master-slave模式的数据备份。</description>
+    </item>
+    
+    <item>
+      <title>装饰器</title>
+      <link>/2018/%E8%A3%85%E9%A5%B0%E5%99%A8/</link>
+      <pubDate>Wed, 18 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/%E8%A3%85%E9%A5%B0%E5%99%A8/</guid>
+      <description>Kafka的消息是保存或缓存在磁盘上的，一般认为在磁盘上读写数据是会降低性能的，因为寻址会比较消耗时间，但是实际上，Kafka的特性之一就是高吞吐率。
+即使是普通的服务器，Kafka也可以轻松支持每秒百万级的写入请求，超过了大部分的消息中间件，这种特性也使得Kafka在日志处理等海量数据场景广泛应用。
+针对Kafka的基准测试可以参考，Apache Kafka基准测试：每秒写入2百万（在三台廉价机器上）
+下面从数据写入和读取两方面分析，为什么Kafka速度这么快。
+一、写入数据
+Kafka会把收到的消息都写入到硬盘中，它绝对不会丢失数据。为了优化写入速度Kafka采用了两个技术， 顺序写入和MMFile 。
+1、顺序写入
+磁盘读写的快慢取决于你怎么使用它，也就是顺序读写或者随机读写。在顺序读写的情况下，磁盘的顺序读写速度和内存持平。
+因为硬盘是机械结构，每次读写都会寻址-&amp;gt;写入，其中寻址是一个“机械动作”，它是最耗时的。所以硬盘最讨厌随机I/O，最喜欢顺序I/O。为了提高读写硬盘的速度，Kafka就是使用顺序I/O。
+而且Linux对于磁盘的读写优化也比较多，包括read-ahead和write-behind，磁盘缓存等。如果在内存做这些操作的时候，一个是JAVA对象的内存开销很大，另一个是随着堆内存数据的增多，JAVA的GC时间会变得很长，使用磁盘操作有以下几个好处：
+ 磁盘顺序读写速度超过内存随机读写 JVM的GC效率低，内存占用大。使用磁盘可以避免这一问题 系统冷启动后，磁盘缓存依然可用  下图就示了Kafka是如何写入数据的， 每一个Partition其实都是一个文件 ，收到消息后Kafka会把数据插入到文件末尾（虚框部分）：
+这种方法有一个缺陷——没有办法删除数据 ，所以Kafka是不会删除数据的，它会把所有的数据都保留下来，每个消费者（Consumer）对每个Topic都有一个offset用来表示读取到了第几条数据 。
+两个消费者：
+ Consumer1有两个offset分别对应Partition0、Partition1（假设每一个Topic一个Partition）； Consumer2有一个offset对应Partition2。  这个offset是由客户端SDK负责保存的，Kafka的Broker完全无视这个东西的存在；一般情况下SDK会把它保存到Zookeeper里面，所以需要给Consumer提供zookeeper的地址。
+如果不删除硬盘肯定会被撑满，所以Kakfa提供了两种策略来删除数据：
+ 一是基于时间； 二是基于partition文件大小。  具体配置可以参看它的配置文档。
+2、Memory Mapped Files
+即便是顺序写入硬盘，硬盘的访问速度还是不可能追上内存。所以Kafka的数据并不是实时的写入硬盘 ，它充分利用了现代操作系统分页存储来利用内存提高I/O效率。
+Memory Mapped Files(后面简称mmap)也被翻译成 内存映射文件 ，在64位操作系统中一般可以表示20G的数据文件，它的工作原理是直接利用操作系统的Page来实现文件到物理内存的直接映射。
+完成映射之后你对物理内存的操作会被同步到硬盘上（操作系统在适当的时候）。
+通过mmap，进程像读写硬盘一样读写内存（当然是虚拟机内存），也不必关心内存的大小有虚拟内存为我们兜底。
+使用这种方式可以获取很大的I/O提升，省去了用户空间到内核空间复制的开销（调用文件的read会把数据先放到内核空间的内存中，然后再复制到用户空间的内存中。）
+但也有一个很明显的缺陷——不可靠，写到mmap中的数据并没有被真正的写到硬盘，操作系统会在程序主动调用flush的时候才把数据真正的写到硬盘。
+Kafka提供了一个参数——producer.type来控制是不是主动flush，如果Kafka写入到mmap之后就立即flush然后再返回Producer叫 同步 (sync)；写入mmap之后立即返回Producer不调用flush叫异步 (async)。
+二、读取数据
+Kafka在读取磁盘时做了哪些优化？
+2、基于sendfile实现Zero Copy
+传统模式下，当需要对一个文件进行传输的时候，其具体流程细节如下：
+ 调用read函数，文件数据被copy到内核缓冲区 read函数返回，文件数据从内核缓冲区copy到用户缓冲区 write函数调用，将文件数据从用户缓冲区copy到内核与socket相关的缓冲区。 数据从socket缓冲区copy到相关协议引擎。  以上细节是传统read/write方式进行网络文件传输的方式，我们可以看到，在这个过程当中，文件数据实际上是经过了四次copy操作：
+硬盘—&amp;gt;内核buf—&amp;gt;用户buf—&amp;gt;socket相关缓冲区—&amp;gt;协议引擎
+而sendfile系统调用则提供了一种减少以上多次copy，提升文件传输性能的方法。
+在内核版本2.1中，引入了sendfile系统调用，以简化网络上和两个本地文件之间的数据传输。sendfile的引入不仅减少了数据复制，还减少了上下文切换。
+sendfile(socket, file, len);</description>
+    </item>
+    
+    <item>
+      <title>分页优化</title>
+      <link>/2018/%E5%88%86%E9%A1%B5%E4%BC%98%E5%8C%96/</link>
+      <pubDate>Wed, 14 Mar 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/%E5%88%86%E9%A1%B5%E4%BC%98%E5%8C%96/</guid>
+      <description>使用合理的分页方式以提高分页的效率
+select id,name from product limit 866613, 20
+使用上述SQL语句做分页的时候，可能有人会发现，随着表数据量的增加，直接使用limit分页查询会越来越慢。
+优化的方法如下：可以取前一页的最大行数的id，然后根据这个最大的id来限制下一页的起点。比如此列中，上一页最大的id是866612。SQL可以采用如下的写法：
+select id,name from product where id&amp;gt; 866612 limit 20
+△分段查询 在一些用户选择页面中，可能一些用户选择的时间范围过大，造成查询缓慢。主要的原因是扫描行数过多。这个时候可以通过程序，分段进行查询，循环遍历，将结果合并处理进行展示。
+扫描的行数成百万级以上的时候就可以使用分段查询</description>
+    </item>
+    
+    <item>
+      <title>docker安装</title>
+      <link>/2018/docker%E5%AE%89%E8%A3%85./</link>
+      <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/docker%E5%AE%89%E8%A3%85./</guid>
+      <description>==1安装docker== 安装一些必要的系统工具：
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+添加软件源信息：
+sudo yum-config-manager &amp;ndash;add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+更新 yum 缓存：
+sudo yum makecache fast
+安装 Docker-ce：
+sudo yum -y install docker-ce
+启动 Docker 后台服务
+sudo systemctl start docker
+测试运行 hello-world
+docker run hello-world
+查看安装版本
+docker version
+2删除 Docker CE 执行以下命令来删除 Docker CE：
+$ sudo yum remove docker-ce $ sudo rm -rf /var/lib/docker  ==为了避免每次命令都输入sudo，可以设置用户权限，注意执行后须注销重新登录==
+sudo usermod -a -G docker $USER
+3.Docker启动与停止 安装完成Docker后，默认已经启动了docker服务，如需手动控制docker服务的启停，可执行如下命令</description>
+    </item>
+    
+    <item>
+      <title>docker的卸载</title>
+      <link>/2018/docker%E7%9A%84%E5%8D%B8%E8%BD%BD/</link>
+      <pubDate>Thu, 25 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/docker%E7%9A%84%E5%8D%B8%E8%BD%BD/</guid>
+      <description>卸载
+列出你安装过的包
+[root@ ]# yum list installed | grep docker containerd.io.x86_64 1.2.5-3.1.el7 @docker-ce-stable docker-ce-cli.x86_64 1:18.09.6-3.el7 @docker-ce-stable  删除安装包
+[root@ ]# sudo yum -y remove docker-ce-cli.x86_64  删除镜像/容器
+yum remove docker \ docker-client \ docker-client-latest \ docker-common \ docker-latest \ docker-latest-logrotate \ docker-logrotate \ docker-selinux \ docker-engine-selinux \ docker-engine rm -rf /etc/systemd/system/docker.service.d rm -rf /var/lib/docker rm -rf /var/run/docker  </description>
+    </item>
+    
+    <item>
+      <title>django密码加密</title>
+      <link>/2017/django%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86/</link>
+      <pubDate>Sat, 09 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86/</guid>
+      <description>python的Django框架自带了一套加密方法: make_password( ),具体作用如下:
+&amp;gt;&amp;gt;&amp;gt; from django.contrib.auth.hashers import make_password, check_password &amp;gt;&amp;gt;&amp;gt; make_password(&amp;quot;www.baidu.com&amp;quot;, None, &#39;pbkdf2_sha1&#39;)  参1: 加密的密码,参2: 任意字符串(用于固定生成的字符串,不能为空) 参3: 加密方式
+得到的是一串随机字符串,并且每次生成都不一样
+&amp;gt;&amp;gt;&amp;gt; make_password(&amp;quot;abcdef&amp;quot;, None, &#39;pbkdf2_sha256&#39;) == make_password(&amp;quot;abcdef&amp;quot;, None,&#39;pbkdf2_sha256&#39;) False  这时候如果需要验证密码比较是否正确就需要用check_password( ),具体如下:
+&amp;gt;&amp;gt;&amp;gt; text = &amp;quot;www.baidu.com&amp;quot; &amp;gt;&amp;gt;&amp;gt; passwd = make_password(text, None, &#39;pbkdf2_sha1&#39;) &amp;gt;&amp;gt;&amp;gt; print passwd pbkdf2_sha112000xzMLhCNvQbb8$i1XDnJIpb/cRRGRX2x7Ym74RNfPRCUp5pbU6Sn+V3J0= &amp;gt;&amp;gt;&amp;gt; ret = check_password(text, passwd) &amp;gt;&amp;gt;&amp;gt; print(ret) True  如果你不想每次都生成不同的密文，可以把make_password的第二个函数给一个固定的字符串,如下:
+&amp;gt;&amp;gt;&amp;gt; make_password(text,&amp;quot;a&amp;quot;,&#39;pbkdf2_sha1&#39;) u&#39;pbkdf2_sha112000a5HkIPczRZGSTKUBa5uzZmRuAWdp2Qe6Oemhdasvzv4Q=&#39; &amp;gt;&amp;gt;&amp;gt; make_password(text,&amp;quot;a&amp;quot;,&#39;pbkdf2_sha1&#39;) u′pbkdf2_sha112000a5HkIPczRZGSTKUBa5uzZmRuAWdp2Qe6Oemhdasvzv4Q=&#39;  </description>
+    </item>
+    
+    <item>
+      <title>docker操作</title>
+      <link>/2017/%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/</link>
+      <pubDate>Wed, 06 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/</guid>
+      <description>重新启动storage容器
+[root@localhost ~]# docker stop storage [root@localhost ~]# docker start storage
+查看tracker容器和storage容器的关联
+[root@localhost ~]# docker exec -it storage bash root@localhost:/# cd fdfs_conf root@localhost:/fdfs_conf# fdfs_monitor storage.conf
+查看docker运行的盒子
+docker container ls
+dicker images
+重启nginx,开始
+systemctl status nginx.service
+systemctl status nginx.service</description>
+    </item>
+    
+    <item>
+      <title>Django增删改查（CUSD）</title>
+      <link>/2017/djangomysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A5%E5%BF%97/</link>
+      <pubDate>Fri, 17 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/djangomysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A5%E5%BF%97/</guid>
+      <description>查看mysql数据库日志可以查看对数据库的操作记录。 mysql日志文件默认没有产生，需要做如下配置：
+sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf  把68，69行前面的#去除，然后保存并使用如下命令重启mysql服务。
+sudo service mysql restart  使用如下命令打开mysql日志文件。
+tail -f /var/log/mysql/mysql.log # 可以实时查看数据库的日志内容 # 如提示需要sudo权限，执行 # sudo tail -f /var/log/mysql/mysql.log  </description>
+    </item>
+    
+    <item>
+      <title>Django的定义模型类</title>
+      <link>/2017/django%E7%9A%84%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E7%B1%BB/</link>
+      <pubDate>Thu, 09 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%9A%84%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E7%B1%BB/</guid>
+      <description>模型类被定义在&amp;rdquo;应用/models.py&amp;rdquo;文件中。 模型类必须继承自Model类，位于包django.db.models中。  接下来首先以&amp;rdquo;图书-人物&amp;rdquo;管理为例进行演示。
+1 定义 在models.py 文件中定义模型类。
+from django.db import models # Create your models here. # 准备书籍列表信息的模型类 class BookInfo(models.Model): # 创建字段，字段类型... name = models.CharField(max_length=20, verbose_name=&#39;名称&#39;) pub_date = models.DateField(verbose_name=&#39;发布日期&#39;,null=True) readcount = models.IntegerField(default=0, verbose_name=&#39;阅读量&#39;) commentcount = models.IntegerField(default=0, verbose_name=&#39;评论量&#39;) is_delete = models.BooleanField(default=False, verbose_name=&#39;逻辑删除&#39;) class Meta: db_table = &#39;bookinfo&#39; # 指明数据库表名 verbose_name = &#39;图书&#39; # 在admin站点中显示的名称 def __str__(self): &amp;quot;&amp;quot;&amp;quot;定义每个数据对象的显示信息&amp;quot;&amp;quot;&amp;quot; return self.name # 准备人物列表信息的模型类 class PeopleInfo(models.Model): GENDER_CHOICES = ( (0, &#39;male&#39;), (1, &#39;female&#39;) ) name = models.</description>
+    </item>
+    
+    <item>
+      <title>Django项目是如何开始的</title>
+      <link>/2017/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B/</link>
+      <pubDate>Sun, 29 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B/</guid>
+      <description>1.创建项目
+ django-admin startproject bookmanager   2.创建应用  python manager.py startapp book  3.更换python解释器：按需选择
+  # 进入指定虚拟环境 which python # python2 /home/python/.virtualenvs/py_django/bin/python # python3 /home/python/.virtualenvs/py3_django/bin/python   4.安装应用  INSTALLED_APPS = [ &#39;django.contrib.admin&#39;, &#39;django.contrib.auth&#39;, &#39;django.contrib.contenttypes&#39;, &#39;django.contrib.sessions&#39;, &#39;django.contrib.messages&#39;, &#39;django.contrib.staticfiles&#39;, #添加子应用 &#39;book.apps.BookConfig&#39; ]   5.本地化  #设置中文 LANGUAGE_CODE = &#39;zh-Hans&#39; #亚洲上海时区 TIME_ZONE = &#39;Asia/Shanghai&#39;   6.模板路径
+ 在应用同级目录下,创建templates模板文件夹  TEMPLATES = [ { &#39;BACKEND&#39;: &#39;django.template.backends.django.DjangoTemplates&#39;, &#39;DIRS&#39;: [os.path.join(BASE_DIR,&#39;templates&#39;)], &#39;APP_DIRS&#39;: True, &#39;OPTIONS&#39;: { &#39;context_processors&#39;: [ &#39;django.</description>
+    </item>
+    
+    <item>
+      <title>DjangoApp应用配置</title>
+      <link>/2017/djangoapp%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Sat, 21 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/djangoapp%E5%BA%94%E7%94%A8/</guid>
+      <description>在每个应用目录中都包含了apps.py文件，用于保存该应用的相关信息。
+在创建应用时，Django会向apps.py文件中写入一个该应用的配置类，如
+from django.apps import AppConfig class BookConfig(AppConfig): name = &#39;book&#39;  我们将此类添加到工程settings.py中的INSTALLED_APPS列表中，表明注册安装具备此配置属性的应用。
+ AppConfig.name属性表示这个配置类是加载到哪个应用的，每个配置类必须包含此属性，默认自动生成。
+ AppConfig.verbose_name属性用于设置该应用的直观可读的名字，此名字在Django提供的Admin管理站点中会显示，如
+  from django.apps import AppConfig class UsersConfig(AppConfig): name = &#39;book&#39; verbose_name = &#39;图书管理&#39;  </description>
+    </item>
+    
+    <item>
+      <title>Django视图和url</title>
+      <link>/2017/django%E7%9A%84%E8%A7%86%E5%9B%BE%E5%92%8Curl/</link>
+      <pubDate>Fri, 13 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%9A%84%E8%A7%86%E5%9B%BE%E5%92%8Curl/</guid>
+      <description>1. 定义视图  视图就是一个Python函数，被定义在应用的views.py中.
+ 视图的第一个参数是HttpRequest类型的对象reqeust，包含了所有请求信息.
+ 视图必须返回HttpResponse对象，包含返回给请求者的响应信息.
+ 需要导入HttpResponse模块 :from django.http import HttpResponse
+ 定义视图函数 : 响应字符串OK!给客户端
+   思考 : 如何才能让请求找到视图?
+ 2. 配置URLconf  查找视图的过程 :
+ 1.请求者在浏览器地址栏中输入URL, 请求到网站.
+ 2.网站获取URL信息.
+ 3.然后与编写好的URLconf逐条匹配.
+ 4.如果匹配成功则调用对应的视图.
+ 5.如果所有的URLconf都没有匹配成功.则返回404错误.
+   URLconf入口
+   需要两步完成URLconf配置
+ 1.在项目中定义URLconf 2.在应用中定义URLconf  在项目中定义URLconf
+   在应用中定义URLconf
+ 提示：一条URLconf包括URL规则、视图两部分
+ URL规则使用正则表达式定义.
+ 视图就是在views.py中定义的视图函数.
+   url匹配过程
+    3.</description>
+    </item>
+    
+    <item>
+      <title>Django站点管理</title>
+      <link>/2017/django%E7%AB%99%E7%82%B9%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Tue, 26 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%AB%99%E7%82%B9%E7%AE%A1%E7%90%86/</guid>
+      <description>站点: 分为内容发布和公共访问两部分
+ 内容发布的部分由网站的管理员负责查看、添加、修改、删除数据
+ Django能够根据定义的模型类自动地生成管理模块
+ 使用
+  Django  的管理模块, 需要按照如下步骤操作 :
+ 1.管理界面本地化 2.创建管理员 3.注册模型类 4.发布内容到数据库  1.管理界面本地化  本地化是将显示的语言、时间等使用本地的习惯，这里的本地化就是进行中国化.
+ 中国大陆地区使用简体中文, 时区使用亚洲/上海时区, 注意这里不使用北京时区.
+  2.创建管理员  创建管理员的命令 :  python manage.py createsuperuser   按提示输入用户名、邮箱、密码
+ 重置密码
+ python manager.py changepassword 用户名   登陆站点 :http://127.0.0.1:8000/admin
+ 需要服务器是启动状态
+ 登陆站点成功
+ 站点界面中没有书籍和人物管理入口,因为没有注册模型类
+  3.注册模型类  在应用的admin.py文件中注册模型类
+ 需要导入模型模块 :from book.models import BookInfo,PeopleInfo</description>
+    </item>
+    
+    <item>
+      <title>Nginx的一些报错</title>
+      <link>/2017/nginx%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%A5%E9%94%99/</link>
+      <pubDate>Wed, 20 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/nginx%E7%9A%84%E4%B8%80%E4%BA%9B%E6%8A%A5%E9%94%99/</guid>
+      <description>nginx不像apache那样能识别.haccess文件,
+需要配置,加以下语句加到nginx配置下
+if (!-e $request_filename) { rewrite ^(.*)$ /index.php?s=/$1 last; break; }
+查看自：https://blog.csdn.net/resilient/article/details/85318009</description>
+    </item>
+    
+    <item>
+      <title>Django创建项目</title>
+      <link>/2017/django%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/</link>
+      <pubDate>Mon, 18 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/</guid>
+      <description> 创建Django项目 ```python
+ django-admin startproject name
+- **创建子应用** ```python - python manager.py startapp name    </description>
+    </item>
+    
+    <item>
+      <title>Django简介</title>
+      <link>/2017/django%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Sun, 10 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%AE%80%E4%BB%8B/</guid>
+      <description>1. 简介 Django，发音为[`dʒæŋɡəʊ]，是用python语言写的开源web开发框架，并遵循MVC设计。劳伦斯出版集团为了开发以新闻内容为主的网站，而开发出来了这个框架，于2005年7月在BSD许可证下发布。这个名称来源于比利时的爵士音乐家DjangoReinhardt，他是一个吉普赛人，主要以演奏吉它为主，还演奏过小提琴等。由于Django在近年来的迅速发展，应用越来越广泛，被著名IT开发杂志SDTimes评选为2013SDTimes100，位列&amp;rdquo;API、库和框架&amp;rdquo;分类第6位，被认为是该领域的佼佼者。
+Django的主要目的是简便、快速的开发数据库驱动的网站。它强调代码复用，多个组件可以很方便的以&amp;rdquo;插件&amp;rdquo;形式服务于整个框架，Django有许多功能强大的第三方插件，你甚至可以很方便的开发出自己的工具包。这使得Django具有很强的可扩展性。它还强调快速开发和DRY(DoNotRepeatYourself)原则。
+2. 特点 1） 重量级框架 对比Flask框架，Django原生提供了众多的功能组件，让开发更简便快速。
+ 提供项目工程管理的自动化脚本工具 数据库ORM支持（对象关系映射，英语：Object Relational Mapping） 模板 表单 Admin管理站点 文件管理 认证权限 session机制 缓存  2）MVT模式 有一种程序设计模式叫MVC，其核心思想是分工、解耦，让不同的代码块之间降低耦合，增强代码的可扩展性和可移植性，实现向后兼容。
+ MVC的全拼为Model-View-Controller，最早由TrygveReenskaug在1978年提出，是施乐帕罗奥多研究中心(Xerox PARC)在20世纪80年代为程序语言Smalltalk发明的一种软件设计模式，是为了将传统的输入（input）、处理（processing）、输出（output）任务运用到图形化用户交互模型中而设计的。随着标准输入输出设备的出现，开发人员只需要将精力集中在业务逻辑的分析与实现上。后来被推荐为Oracle旗下Sun公司Java EE平台的设计模式，并且受到越来越多的使用ColdFusion和PHP的开发者的欢迎。现在虽然不再使用原来的分工方式，但是这种分工的思想被沿用下来，广泛应用于软件工程中，是一种典型并且应用广泛的软件架构模式。后来，MVC的思想被应用在了Ｗeb开发方面，被称为Ｗeb MVC框架。
+ MVC模式说明  M全拼为Model，主要封装对数据库层的访问，对数据库中的数据进行增、删、改、查操作。 V全拼为View，用于封装结果，生成页面展示的html内容。 C全拼为Controller，用于接收请求，处理业务逻辑，与Model和View交互，返回结果。  Django的MVT  M全拼为Model，与MVC中的M功能相同，负责和数据库交互，进行数据处理。 V全拼为View，与MVC中的C功能相同，接收请求，进行业务处理，返回应答。 T全拼为Template，与MVC中的V功能相同，负责封装构造要返回的html。  注：差异就在于黑线黑箭头标识出来的部分</description>
+    </item>
+    
+    <item>
+      <title>Flask wtform 组件</title>
+      <link>/2017/flask%E7%9A%84wtform%E7%BB%84%E4%BB%B6/</link>
+      <pubDate>Fri, 25 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84wtform%E7%BB%84%E4%BB%B6/</guid>
+      <description>WTForms是一个支持多个web框架的form组件，用于简化form表单的定义和一些操作
+安装
+pip3 install wtforms pip install flask-wtf  字段类型 说　明 StringField 文本字段 TextAreaField 多行文本字段 PasswordField 密码文本字段 HiddenField 隐藏文本字段 DateField 文本字段，值为 datetime.date 格式 DateTimeField 文本字段，值为 datetime.datetime 格式 IntegerField 文本字段，值为整数 DecimalField 文本字段，值为 decimal.Decimal FloatField 文本字段，值为浮点数 BooleanField 复选框，值为 True 和 False RadioField 一组单选框 SelectField 下拉列表 SelectMultipleField 下拉列表，可选择多个值 FileField 文件上传字段 SubmitField 表单提交按钮 FormField 把表单作为字段嵌入另一个表单 FieldList 一组指定类型的字段  验证函数 说　明
+Email 验证电子邮件地址 EqualTo 比较两个字段的值；常用于要求输入两次密码进行确认的情况 IPAddress 验证 IPv4 网络地址 Length 验证输入字符串的长度 NumberRange 验证输入的值在数字范围内 Optional 无输入值时跳过其他验证函数 Required 确保字段中有数据 Regexp 使用正则表达式验证输入值 URL 验证 URL AnyOf 确保输入值在可选值列表中 NoneOf 确保输入值不在可选值列表中  </description>
+    </item>
+    
+    <item>
+      <title>Flask的csrf</title>
+      <link>/2017/flask%E7%9A%84csrf/</link>
+      <pubDate>Mon, 14 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84csrf/</guid>
+      <description>CSRF：从一个网站A中发起一个到网站B的请求，而这个请求是经过了伪装的，伪装操作达到的目的就是让请求看起来像是从网站B中发起的，也就是说，让B网站所在的服务器端误以为该请求是从自己网站发起的，而不是从A网站发起的。当然，请求一般都是恶意的。
+一、什么是CSRF？
+CSRF是Cross Site Request Forgery的缩写，翻译过来就是跨站请求伪造。那么什么是跨站请求伪造呢？让我一个词一个词的解释：
+1、跨站：顾名思义，就是从一个网站到另一个网站。
+2、请求：即HTTP请求。
+3、伪造：在这里可以理解为仿造、伪装。
+综合起来的意思就是：从一个网站A中发起一个到网站B的请求，而这个请求是经过了伪装的，伪装操作达到的目的就是让请求看起来像是从网站B中发起的，也就是说，让B网站所在的服务器端误以为该请求是从自己网站发起的，而不是从A网站发起的。当然，请求一般都是恶意的。
+看到这里，你可能会问：为什么要伪装成从B网站发起的呢？从网站A直接向B网站服务器发起请求不可以吗？
+要回答这个问题，就需要我们对Cookie机制有一定的认识。关于Cookie机制我会单独写一篇文章，这里不做详细介绍。这里你只需要知道：之所以要伪装成从B网站发起的，是因为Cookie是不能跨域发送的。结合上面这个例子来说就是：如果从A网站直接发送请求到B网站服务器的话，是无法将B网站中产生的Cookie一起发给B服务器的。
+可能你还会问，为什么非要发送Cookie呢？这是因为服务器在用户登录后会将用户的一些信息放到Cookie中返回给客户端，然后客户端在请求一些需要认证的资源的时候会把Cookie一起发给服务器，服务器通过读取Cookie中的信息来进行用户认证，认证通过后才会做出正确的响应。
+A网站访问B网站服务器的一些需要认证的资源的时候，如果没有Cookie信息，服务器是拒绝访问的，那么A网站就无法进行恶意操作。而伪造成B网站的请求，就可以将B网站的Cookie一起发到B服务器，这个时候就服务器就认为该请求是合法的，就会给出正确的响应，这个时候，A网站就达到目的了。
+简单一句话就是：攻击者盗用了你的身份，以你的名义发送恶意请求。
+那么，A网站通过CSRF能够做那些操作呢？
+二、CSRF能够做什么呢？
+CSRF能够做的事情包括：以你名义发送邮件，发消息，盗取你的账号，甚至于购买商品，虚拟货币转账……造成的问题包括：个人隐私泄露以及财产安全。等等等等。</description>
+    </item>
+    
+    <item>
+      <title>Flask的闪现</title>
+      <link>/2017/flask%E7%9A%84%E9%97%AA%E7%8E%B0/</link>
+      <pubDate>Wed, 02 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84%E9%97%AA%E7%8E%B0/</guid>
+      <description>Flash中的消息闪现，在官方的解释是用来给用户做出反馈。不过实际上这个功能只是一个记录消息的方法，在某一个请求中记录消息，在下一个请求中获取消息，然后做相应的处理，也就是说flask只存在于两个相邻的请求中“闪现”，第三次请求就不存在这个flash了。
+通常情况下配合模板系统进行调用，可以实现一种伪”ajax”请求的效果
+基于 flash 模块
+from flask import flash
+模板输出flash
+```
+{# 将flash消息闪现和后台联系起来 #}
+​ {# 将消息闪现里面的所有消息遍历，取出需要返回给用户的信息 #}
+​ {% for message in get_flashed_messages() %}
+​ {{ message }}
+​ {% endfor %}</description>
+    </item>
+    
+    <item>
+      <title>Jinja2模板简介与使用</title>
+      <link>/2017/jinja2%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Sat, 15 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/jinja2%E7%AE%80%E4%BB%8B/</guid>
+      <description>Jinja2模板引擎简介(template)
+模板
+视图函数的主要作用是生成请求的响应，这是最简单的请求。实际上，视图函数有两个作用：处理业务逻辑和返回响应内容。在大型应用中，把业务逻辑和表现内容放在一起，会增加代码的复杂度和维护成本。本节学到的模板，它的作用即是承担视图函数的另一个作用，即返回响应内容。
+模板其实是一个包含响应文本的文件，其中用占位符(变量)表示动态部分，告诉模板引擎其具体的值需要从使用的数据中获取
+使用真实值替换变量，再返回最终得到的字符串，这个过程称为“渲染”
+Flask是使用 Jinja2 这个模板引擎来渲染模板
+使用模板的好处：
+视图函数只负责业务逻辑和数据处理(业务逻辑方面)
+而模板则取到视图函数的数据结果进行展示(视图展示方面)
+代码结构清晰，耦合度低
+Jinja2
+两个概念：
+Jinja2：是 Python 下一个被广泛应用的模板引擎，是由Python实现的模板语言，他的设计思想来源于 Django 的模板引擎，并扩展了其语法和一系列强大的功能，其是Flask内置的模板语言。
+模板语言：是一种被设计来自动生成文档的简单文本格式，在模板语言中，一般都会把一些变量传给模板，替换模板的特定位置上预先定义好的占位变量名。
+官方文档
+渲染模版函数
+Flask提供的 render_template 函数封装了该模板引擎
+render_template 函数的第一个参数是模板的文件名，后面的参数都是键值对，表示模板中变量对应的真实值。
+1
+2
+使用
+​ {{}} 来表示变量名，这种 {{}} 语法叫做变量代码块
+{{ post.title }} Jinja2 模版中的变量代码块可以是任意 Python 类型或者对象，只要它能够被 Python 的 str() 方法转换为一个字符串就可以，比如，可以通过下面的方式显示一个字典或者列表中的某个元素:
+{{your_dict[&#39;key&#39;]}} {{your_list[0]}} 用 {%%} 定义的控制代码块，可以实现一些语言层次的功能，比如循环或者if语句 {% if user %} ​ {{ user }} {% else %} ​ hello! &amp;lt;ul&amp;gt; ​ {% for index in indexs %} ​ &amp;lt;li&amp;gt; {{ index }} &amp;lt;/li&amp;gt; ​ {% endfor %} &amp;lt;/ul&amp;gt;  注释</description>
+    </item>
+    
+    <item>
+      <title>Flask的flask_script</title>
+      <link>/2017/flask%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/</link>
+      <pubDate>Fri, 30 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/</guid>
+      <description>flask_script
+1、安装：进入到虚拟环境中，pip install flask_script
+2、flask_script 作用：可以通过命令行的形式来操作Flask，例如通过命令跑一个开发版本的服务器、设置数据库、定时任务等</description>
+    </item>
+    
+    <item>
+      <title>Flask的request</title>
+      <link>/2017/flask%E7%9A%84request/</link>
+      <pubDate>Thu, 22 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84request/</guid>
+      <description>flask的request模块的属性
+1、method：请求的方法（get或者post）
+2、form：返回form的内容
+3、args和values：args返回请求中的参数，values返回请求中的参数和form
+4、cookies：cookies信息
+5、headers：请求headers信息，返回的结果是个list
+6、date、files：date是请求的数据，files随请求上传的文件</description>
+    </item>
+    
+    <item>
+      <title>Flask上下文</title>
+      <link>/2017/flask%E4%B8%8A%E4%B8%8B%E6%96%87/</link>
+      <pubDate>Sat, 10 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E4%B8%8A%E4%B8%8B%E6%96%87/</guid>
+      <description>上下文：相当于一个容器，保存了 Flask 程序运行过程中的一些信息。
+Flask中有两种上下文，请求上下文和应用上下文
+请求上下文(request context)
+在 flask 中，可以直接在视图函数中使用 request 这个对象进行获取相关数据，而 request 就是请求上下文的对象，保存了当前本次请求的相关数据，请求上下文对象有：request、session
+request
+封装了HTTP请求的内容，针对的是http请求。举例：user = request.args.get(&amp;lsquo;user&amp;rsquo;)，获取的是get请求的参数。
+session
+用来记录请求会话中的信息，针对的是用户信息。举例：session[&amp;lsquo;name&amp;rsquo;] = user.id，可以记录用户信息。还可以通过session.get(&amp;lsquo;name&amp;rsquo;)获取用户信息。
+应用上下文(application context)
+它的字面意思是 应用上下文，但它不是一直存在的，它只是request context 中的一个对 app 的代理(人)，所谓local proxy。它的作用主要是帮助 request 获取当前的应用，它是伴 request 而生，随 request 而灭的。
+应用上下文对象有：current_app，g
+current_app
+应用程序上下文,用于存储应用程序中的变量，可以通过current_app.name打印当前app的名称，也可以在current_app中存储一些变量，例如：
+应用的启动脚本是哪个文件，启动时指定了哪些参数
+加载了哪些配置文件，导入了哪些配置
+连了哪个数据库
+有哪些public的工具类、常量
+应用跑再哪个机器上，IP多少，内存多大
+current_app.name
+current_app.test_value=&amp;lsquo;value&amp;rsquo;
+g变量
+g 作为 flask 程序全局的一个临时变量,充当者中间媒介的作用,我们可以通过它传递一些数据，g 保存的是当前请求的全局变量，不同的请求会有不同的全局变量，通过不同的thread id区别
+g.name=&amp;lsquo;abc&amp;rsquo;
+注意：不同的请求，会有不同的全局变量
+两者区别：
+请求上下文：保存了客户端和服务器交互的数据
+应用上下文：flask 应用程序运行过程中，保存的一些配置信息，比如程序名、数据库连接、应用信息等</description>
+    </item>
+    
+    <item>
+      <title>docker下搭建FastDFS</title>
+      <link>/2017/docker%E4%B8%8B%E6%90%AD%E5%BB%BAfastdfs/</link>
+      <pubDate>Mon, 05 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/docker%E4%B8%8B%E6%90%AD%E5%BB%BAfastdfs/</guid>
+      <description>利用Docker来搭建分布式文件系统FastDfs ​ 对于文件存储来说，一般情况下简单的处理就是在Django配置文件中配置存储目录，按照规则对文件进行上传或者下载。
+​ 实际上，当文件较少的时候，Django是可以应付的过来的。但当文件以海量形式出现的时候，Django就并不是那么好用了，于是Fast DFS应运而出。
+​ FastDFS是一个开源的分布式文件系统，它对文件进行管理，功能包括：文件存储、文件同步、文件访问（文件上传、文件下载）等，解决了大容量存储和负载均衡的问题。特别适合以文件为载体的在线服务，如相册网站、视频网站等等。可以说它就是为互联网而生，为大数据而生的。
+​ FastDFS服务端有两个角色：跟踪器（tracker）和存储节点（storage）。跟踪器主要做调度工作，在访问上起负载均衡的作用。 存储节点存储文件，完成文件管理的所有功能：存储、同步和提供存取接口，FastDFS同时对文件的meta data进行管理。跟踪器和存储节点都可以由多台服务器构成。跟踪器和存储节点中的服务器均可以随时增加或下线而不会影响线上服务。其中跟踪器中的所有服务器都是对等的，可以根据服务器的压力情况随时增加或减少。
+​
+​ 说人话，为啥要用FastDfs:
+​ 1 解决海量存储，同时存储容量扩展方便。
+​ 2 解决文件内容重复,如果用户上传的文件重复(文件指纹一样)，那么系统只有存储一份数据，值得一提的是，这项技术目前被广泛应用在网盘中。
+​ 3 结合Nginx提高网站读取图片的效率。
+如果我们从头搭建fastdfs服务器那么就太low了，网上有大把的docker镜像供你选择，所以又到了利用docker优越性的时候了，首先下载fastdfs镜像 1.加载镜像
+docker pull delron/fastdfs  ·# docker load -i 文件路径/fastdfs_docker.tar
+2. 运行tracker
+执行如下命令开启tracker 服务
+docker run -d --network=host --name tracker -v /root:/var/root delron/fastdfs tracker  ·# docker run -dti &amp;ndash;network=host &amp;ndash;name tracker -v /var/fdfs/tracker:/var/fdfs delron/fastdfs tracker
+我们将fastDFS tracker运行目录映射到本机的/var/root目录中。
+执行如下命令查看tracker是否运行起来
+docker container ls
+如果想停止tracker服务，可以执行如下命令
+docker container stop tracker</description>
+    </item>
+    
+    <item>
+      <title>Flask的cookie与session</title>
+      <link>/2017/flask%E7%9A%84cookie%E4%B8%8Esession/</link>
+      <pubDate>Mon, 29 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84cookie%E4%B8%8Esession/</guid>
+      <description>Cookie
+Cookie：指某些网站为了辨别用户身份、进行会话跟踪而储存在用户本地的数据（通常经过加密）。
+复数形式Cookies。
+Cookie最早是网景公司的前雇员Lou Montulli在1993年3月的发明。
+Cookie是由服务器端生成，发送给客户端浏览器，浏览器会将Cookie的key/value保存，下次请求同一网站时就发送该Cookie给服务器（前提是浏览器设置为启用cookie）。
+Cookie的key/value可以由服务器端自己定义。
+应用：
+最典型的应用是判定注册用户是否已经登录网站，用户可能会得到提示，是否在下一次进入此网站时保留用户信息以便简化登录手续，这些都是Cookie的功用。
+网站的广告推送，经常遇到访问某个网站时，会弹出小窗口，展示我们曾经在购物网站上看过的商品信息。
+购物车，用户可能会在一段时间内在同一家网站的不同页面中选择不同的商品，这些信息都会写入Cookie，以便在最后付款时提取信息。
+提示：
+Cookie是存储在浏览器中的一段纯文本信息，建议不要存储敏感信息如密码，因为电脑上的浏览器可能被其它人使用
+Cookie基于域名安全，不同域名的Cookie是不能互相访问的
+如访问itcast.cn时向浏览器中写了Cookie信息，使用同一浏览器访问baidu.com时，无法访问到itcast.cn写的Cookie信息
+浏览器的同源策略
+当浏览器请求某网站时，会将本网站下所有Cookie信息提交给服务器，所以在request中可以读取Cookie信息
+设置cookie
+from flask imoprt Flask,make_response
+@app.route(&amp;lsquo;/cookie&amp;rsquo;)
+def set_cookie():
+​ resp = make_response(&amp;lsquo;this is to set cookie&amp;rsquo;)
+​ resp.set_cookie(&amp;lsquo;username&amp;rsquo;, &amp;lsquo;itcast&amp;rsquo;)
+​ return resp
+设置过期时间
+@app.route(&amp;lsquo;/cookie&amp;rsquo;)
+def set_cookie():
+​ response = make_response(&amp;lsquo;hello world&amp;rsquo;)
+​ response.set_cookie(&amp;lsquo;username&amp;rsquo;, &amp;lsquo;itheima&amp;rsquo;, max_age=3600)
+​ return response
+获取cookie
+from flask import Flask,request
+#获取cookie
+@app.route(&amp;lsquo;/request&amp;rsquo;)
+def resp_cookie():
+​ resp = request.cookies.get(&amp;lsquo;username&amp;rsquo;)
+return resp</description>
+    </item>
+    
+    <item>
+      <title>Flask两大核心</title>
+      <link>/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/</link>
+      <pubDate>Sat, 13 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/</guid>
+      <description>Flask有两大核心：Werkzeug和Jinja2
+- Werkzeug实现路由、调试和Web服务器网关接口
+- Jinja2实现了模板。
+Werkzeug是一个遵循WSGI协议的python函数库
+- 其内部实现了很多Web框架底层的东西，比如request和response对象；
+- 与WSGI规范的兼容；支持Unicode；
+- 支持基本的会话管理和签名Cookie；
+- 集成URL请求路由等。
+Werkzeug库的 routing 模块负责实现 URL 解析。不同的 URL 对应不同的视图函数，routing模块会对请求信息的URL进行解析，匹配到URL对应的视图函数，执行该函数以此生成一个响应信息。
+routing模块内部有：
+Rule类
+用来构造不同的URL模式的对象，路由URL规则
+Map类
+存储所有的URL规则和一些配置参数
+BaseConverter的子类
+负责定义匹配规则
+MapAdapter类
+负责协调Rule做具体的匹配的工作
+简而言之 Werkzeug实现了路由功能 Jinja2实现了模板功能</description>
+    </item>
+    
+    <item>
+      <title>Flask简述与安装</title>
+      <link>/2017/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Tue, 02 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85/</guid>
+      <description>Flask
+Flask诞生于2010年，是Armin ronacher（人名）用 Python 语言基于 Werkzeug 工具箱编写的轻量级Web开发框架。
+Flask 本身相当于一个内核，其他几乎所有的功能都要用到扩展（邮件扩展Flask-Mail，用户认证Flask-Login，数据库Flask-SQLAlchemy），都需要用第三方的扩展来实现。比如可以用 Flask 扩展加入ORM、窗体验证工具，文件上传、身份验证等。Flask 没有默认使用的数据库，你可以选择 MySQL，也可以用 NoSQL。
+其 WSGI 工具箱采用 Werkzeug（路由模块），模板引擎则使用 Jinja2。这两个也是 Flask 框架的核心。
+Flask 是python三大web框架之一，比之其他两大框架django和tornado而言，它更加的轻量化，开发效率更高，是入门web框架的首选。
+同类的python框架还有 bottle web.py 等
+Flask常用扩展包：
+Flask-SQLalchemy：操作数据库；
+Flask-script：插入脚本；
+Flask-migrate：管理迁移数据库；
+Flask-Session：Session存储方式指定；
+Flask-WTF：表单；
+Flask-Mail：邮件；
+Flask-Bable：提供国际化和本地化支持，翻译；
+Flask-Login：认证用户状态；
+Flask-OpenID：认证；
+Flask-RESTful：开发REST API的工具；
+Flask-Bootstrap：集成前端Twitter Bootstrap框架；
+Flask-Moment：本地化日期和时间；
+Flask-Admin：简单而可扩展的管理接口的框架
+安装flask
+pip install Flask
+列出pip已经安装好的模块
+pip freeze
+三种导入配置文件的方式：
+配置对象，里面定义需要给 APP 添加的一系列配置 class Config(object):
+DEBUG = True
+从配置对象中加载配置 app.config.from_object(Config)
+从配置文件中加载配置 app.config.from_pyfile(&amp;lsquo;config.ini&amp;rsquo;)
+#由环境变量里面来加载配置
+app.config.from_envvar(&amp;lsquo;app_config&amp;rsquo;)
+路由配置，指定methods方法，返回json数据
+@app.route(&amp;lsquo;/demo4&amp;rsquo;,methods=[&amp;lsquo;GET&amp;rsquo;, &amp;lsquo;POST&amp;rsquo;])
+def demo4():</description>
+    </item>
+    
+    <item>
+      <title>redis</title>
+      <link>/2017/redis/</link>
+      <pubDate>Sun, 26 Feb 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/redis/</guid>
+      <description> Redis持久化是如何工作的？ 简单来说就是将数据放到断电后数据不会丢失的设备中，也就是我们通常理解的硬盘。
+首先我们来看一下数据库在进行写操作时到底做了哪些事，主要有下面五个过程：
+ 客户端向服务端发送写操作（数据在客户端的内存中）。 数据库服务端接收到写请求的数据（数据在服务端的内存中）。 服务端调用write这个系统调用，将数据往磁盘上写（数据在系统内存的缓冲区中）。 操作系统将缓冲区中的数据转移到磁盘控制器上（数据在磁盘缓存中）。 磁盘控制器将数据写到磁盘的物理介质中（数据真正落到磁盘上）。  这个是过程。
+ 当数据库系统故障时，这时候系统内核还是完好的。那么此时只要我们执行完了第3步，那么数据就是安全的，因为后续操作系统会来完成后面几步，保证数据最终会落到磁盘上。 当系统断电时，这时候上面5项中提到的所有缓存都会失效，并且数据库和操作系统都会停止工作。所以只有当数据在完成第5步后，才能保证在断电后数据不丢失。  通过上面5步的了解，可能我们会希望搞清下面一些问题：
+ 数据库多长时间调用一次write，将数据写到内核缓冲区？ 内核多长时间会将系统缓冲区中的数据写到磁盘控制器？ 磁盘控制器又在什么时候把缓存中的数据写到物理介质上？  对于第一个问题，通常数据库层面会进行全面控制。而对第二个问题，操作系统有其默认的策略，但是我们也可以通过POSIX API提供的fsync系列命令强制操作系统将数据从内核区写到磁盘控制器上。对于第三个问题，好像数据库已经无法触及，但实际上，大多数情况下磁盘缓存是被设置关闭的，或者是只开启为读缓存，也就是说写操作不会进行缓存，直接写到磁盘。建议的做法是仅仅当你的磁盘设备有备用电池时才开启写缓存。
+数据损坏 所谓数据损坏，就是数据无法恢复，上面我们讲的都是如何保证数据是确实写到磁盘上去，但是写到磁盘上可能并不意味着数据不会损坏。比如我们可能一次写请求会进行两次不同的写操作，当意外发生时，可能会导致一次写操作安全完成，但是另一次还没有进行。如果数据库的数据文件结构组织不合理，可能就会导致数据完全不能恢复的状况出现。
+这里通常也有三种策略来组织数据，以防止数据文件损坏到无法恢复的情况：
+ 第一种是最粗糙的处理，就是不通过数据的组织形式保证数据的可恢复性。而是通过配置数据同步备份的方式，在数据文件损坏后通过数据备份来进行恢复。实际上MongoDB在不开启操作日志，通过配置Replica Sets时就是这种情况。 另一种是在上面基础上添加一个操作日志，每次操作时记一下操作的行为，这样我们可以通过操作日志来进行数据恢复。因为操作日志是顺序追加的方式写的，所以不会出现操作日志也无法恢复的情况。这也类似于MongoDB开启了操作日志的情况。 更保险的做法是数据库不进行旧数据的修改，只是以追加方式去完成写操作，这样数据本身就是一份日志，这样就永远不会出现数据无法恢复的情况了。实际上CouchDB就是此做法的优秀范例。  </description>
+    </item>
+    
+    <item>
+      <title>Docker特点</title>
+      <link>/2016/docker%E7%89%B9%E7%82%B9/</link>
+      <pubDate>Sun, 11 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/docker%E7%89%B9%E7%82%B9/</guid>
+      <description> Docker特点 1.上手快
+用户只需要几分钟，就可以把自己的程序“Docker 化”。Docker 依赖于“写时复制” (copy-on-write)模型，使修改应用程序也非常迅速，可以说达到“随心所致，代码即改” 的境界。
+随后，就可以创建容器来运行应用程序了。大多数 Docker 容器只需要不到 1 秒中即可 启动。由于去除了管理程序的开销，Docker 容器拥有很高的性能，同时同一台宿主机中也 可以运行更多的容器，使用户尽可能的充分利用系统资源。
+2.职责的逻辑分类
+使用 Docker，开发人员只需要关心容器中运行的应用程序，而运维人员只需要关心如 何管理容器。Docker 设计的目的就是要加强开发人员写代码的开发环境与应用程序要部署 的生产环境一致性。从而降低那种“开发时一切正常，肯定是运维的问题(测试环境都是正 常的，上线后出了问题就归结为肯定是运维的问题)”
+3.快速高效的开发生命周期
+Docker 的目标之一就是缩短代码从开发、测试到部署、上线运行的周期，让你的应用 程序具备可移植性，易于构建，并易于协作。(通俗一点说，Docker 就像一个盒子，里面 可以装很多物件，如果需要这些物件的可以直接将该大盒子拿走，而不需要从该盒子中一件 件的取。)
+4.鼓励使用面向服务的架构
+Docker 还鼓励面向服务的体系结构和微服务架构。Docker 推荐单个容器只运行一个应 用程序或进程，这样就形成了一个分布式的应用程序模型，在这种模型下，应用程序或者服 务都可以表示为一系列内部互联的容器，从而使分布式部署应用程序，扩展或调试应用程序 都变得非常简单，同时也提高了程序的内省性。(当然，可以在一个容器中运行多个应用程 序)
+使用Docker做什么 容器提供了隔离性，容器可以为各种测试提供很好的沙盒环境。并且，容器本
+身就具有“标准性”的特征，非常适合为服务创建构建块。Docker 的一些应用场景如下:
+ 加速本地开发和构建流程，使其更加高效、更加轻量化。本地开发人员可以构建、 运行并分享 Docker 容器。容器可以在开发环境中构建，然后轻松的提交到测试环境中，并 最终进入生产环境。 能够让独立的服务或应用程序在不同的环境中，得到相同的运行结果。这一点在 面向服务的架构和重度依赖微型服务的部署由其实用。 用 Docker 创建隔离的环境来进行测试。例如，用 Jenkins CI 这样的持续集成工具 启动一个用于测试的容器。 Docker 可以让开发者先在本机上构建一个复杂的程序或架构来进行测试，而不是 一开始就在生产环境部署、测试。  </description>
+    </item>
+    
+    <item>
+      <title>挂起我的服务器screen</title>
+      <link>/2016/%E6%8C%82%E8%B5%B7%E6%88%91%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8screen/</link>
+      <pubDate>Fri, 21 Oct 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/%E6%8C%82%E8%B5%B7%E6%88%91%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8screen/</guid>
+      <description>你是不是经常需要 SSH 或者 telent 远程登录到 Linux 服务器？你是不是经常为一些长时间运行的任务而头疼，比如系统备份、ftp 传输等等。通常情况下我们都是为每一个这样的任务开一个远程终端窗口，因为他们执行的时间太长了。必须等待它执行完毕，在此期间可不能关掉窗口或者断开连接，否则这个任务就会被杀掉，一切半途而废了。那么究竟是什么到导致的呢？
+==元凶：SIGHUP 信号== 让我们来看看为什么关掉窗口/断开连接会使得正在运行的程序死掉。
+在Linux/Unix中，有这样几个概念：
+ 进程组（process group）：一个或多个进程的集合，每一个进程组有唯一一个进程组ID，即进程组长进程的ID。 会话期（session）：一个或多个进程组的集合，有唯一一个会话期首进程（session leader）。会话期ID为首进程的ID。 会话期可以有一个单独的控制终端（controlling terminal）。与控制终端连接的会话期首进程叫做控制进程（controlling process）。当前与终端交互的进程称为前台进程组。其余进程组称为后台进程组。  根据POSIX.1定义：
+ 挂断信号（SIGHUP）默认的动作是终止程序。 当终端接口检测到网络连接断开，将挂断信号发送给控制进程（会话期首进程）。 如果会话期首进程终止，则该信号发送到该会话期前台进程组。 一个进程退出导致一个孤儿进程组中产生时，如果任意一个孤儿进程组进程处于STOP状态，发送SIGHUP和SIGCONT信号到该进程组中所有进程。  因此当网络断开或终端窗口关闭后，控制进程收到SIGHUP信号退出，会导致该会话期内其他进程退出。
+我们来看一个例子。打开两个SSH终端窗口，在其中一个运行top命令。
+`[root@tivf09 root]# top`  在另一个终端窗口，找到top的进程ID为5180，其父进程ID为5128，即登录shell。
+`[root@tivf09 root]# ps -ef|grep top``root 5180 5128 0 01:03 pts/0 00:00:02 top``root 5857 3672 0 01:12 pts/2 00:00:00 grep top`  使用pstree命令可以更清楚地看到这个关系：
+`[root@tivf09 root]# pstree -H 5180|grep top``|-sshd-+-sshd---bash---top`  使用ps-xj命令可以看到，登录shell（PID 5128）和top在同一个会话期，shell为会话期首进程，所在进程组PGID为5128，top所在进程组PGID为5180，为前台进程组。
+`[root@tivf09 root]# ps -xj|grep 5128`` ``5126 5128 5128 5128 pts/0 5180 S 0 0:00 -bash`` ``5128 5180 5180 5128 pts/0 5180 S 0 0:50 top`` ``3672 18095 18094 3672 pts/2 18094 S 0 0:00 grep 5128`  关闭第一个SSH窗口，在另一个窗口中可以看到top也被杀掉了。</description>
+    </item>
+    
+    <item>
+      <title>排序算法</title>
+      <link>/2016/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</link>
+      <pubDate>Thu, 20 Oct 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/</guid>
+      <description>  Python中排序分为：  插入排序： 直接插入排序 希尔排序 选择排序： 简单选择排序 堆排序 交换排序： 快速排序 冒泡排序 归并排序 基数排序 </description>
+    </item>
+    
+    <item>
+      <title>mysql</title>
+      <link>/2016/mysql/</link>
+      <pubDate>Tue, 18 Oct 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/mysql/</guid>
+      <description>数据库的使用，是开发人员的基本功，对它掌握越清晰越深入，你能做的事情就越多。
+ 做业务，要懂基本的SQL语句； 做性能优化，要懂索引，懂引擎； 做分库分表，要懂主从，懂读写分离&amp;hellip;
+ 今天我们用10分钟，重点梳理一遍以下几方面：
+ 数据库知识点汇总； 数据库事务特性和隔离级别； 详解关系型数据库、索引与锁机制； 数据库调优与最佳实践； 面试考察点及加分项。  知识点汇总
+一、数据库的不同类型
+1.常用的关系型数据库
+ Oracle：功能强大，主要缺点就是贵 MySQL：互联网行业中最流行的数据库，这不仅仅是因为MySQL的免费。可以说关系数据库场景中你需要的功能，MySQL都能很好的满足，后面详解部分会详细介绍MySQL的一些知识点 MariaDB：是MySQL的分支，由开源社区维护，MariaDB虽然被看作MySQL的替代品，但它在扩展功能、存储引擎上都有非常好的改进 PostgreSQL：也叫PGSQL，PGSQL类似于Oracle的多进程框架，可以支持高并发的应用场景，PG几乎支持所有的SQL标准，支持类型相当丰富。PG更加适合严格的企业应用场景，而MySQL更适合业务逻辑相对简单、数据可靠性要求较低的互联网场景。  2.NoSQL数据库（非关系型数据库）
+ Redis：提供了持久化能力，支持多种数据类型。Redis适用于数据变化快且数据大小可预测的场景。 MongoDB：一个基于分布式文件存储的数据库，将数据存储为一个文档，数据结构由键值对组成。MongoDB比较适合表结构不明确，且数据结构可能不断变化的场景，不适合有事务和复杂查询的场景。 HBase：建立在HDFS，也就是Hadoop文件系统之上的分布式面向列的数据库。类似于谷歌的大表设计，HBase可以提供快速随机访问海量结构化数据。在表中它由行排序，一个表有多个列族以及每一个列族可以有任意数量的列。 HBase依赖HDFS可以实现海量数据的可靠存储，适用于数据量大，写多读少，不需要复杂查询的场景。 Cassandra：一个高可靠的大规模分布式存储系统。支持分布式的结构化Key-value存储，以高可用性为主要目标。适合写多的场景，适合做一些简单查询，不适合用来做数据分析统计。 Pika：一个可持久化的大容量类Redis存储服务， 兼容五种主要数据结构的大部分命令。Pika使用磁盘存储，主要解决Redis大容量存储的成本问题。  3.NewSQL数据库（新一代关系型数据库）
+ TiDB：开源的分布式关系数据库，几乎完全兼容MySQL，能够支持水平弹性扩展、ACID事务、标准SQL、MySQL语法和MySQL协议，具有数据强一致的高可用特性。既适合在线事务处理，也适合在线分析处理。 OceanBase：OceanBase是蚂蚁金服的数据库，OB是可以满足金融级的可靠性和数据一致性要求的数据库系统。当你需要使用事务，并且数据量比较大，就比较适合使用OB。不过目前OB已经商业化，不再开源。  二、事物特性及事物类型
+后面的详解知识点会展开介绍
+三、数据库的范式
+前关系数据库有六种范式：第一范式、第二范式、第三范式、巴斯-科德范式（BCNF）、第四范式和第五范式。范式级别越高对数据表的要求越严格。
+ 第一范式要求最低，只要求表中字段不可用在拆分。 第二范式在第一范式的基础上要求每条记录由主键唯一区分，记录中所有属性都依赖于主键。 第三范式在第二范式的基础上，要求所有属性必须直接依赖主键，不允许间接依赖。 一般说来，数据库只需满足第三范式就可以了。  详解知识点一：数据库事务
+知识点
+▌1.数据库事务特性
+数据库的特性是面试时考察频率非常高的题目，共4个特性：
+ 原子性：是指事务由原子的操作序列组成，所有操作要么全部成功，要么全部失败回滚。 一致性：是指事务的执行不能破坏数据库数据的完整性和一致性，一个事务在执行之前和执行之后，数据库都必须处以一致性状态。比如在做多表操作时，多个表要么都是事务后新的值，要么都是事务前的旧值。 隔离性：是指多个用户并发访问数据库时，数据库为每个用户执行的事务，不能被其他事务的操作所干扰，多个并发事务之间要相互隔离。事务的隔离级别我们稍后介绍。 持久性：是指一个事务一旦提交并执行成功，那么对数据库中数据的改变就是永久性的，即便是在数据库系统遇到故障的情况下也不会丢失提交事务的操作。  ▌2.事物并发问题与隔离级别
+a.事务并发问题
+ 脏读：脏读是指在一个事务处理过程里读取了另一个未提交的事务中的数据，例如，账户A转帐给B500元，B余额增加后但事务还没有提交完成，此时如果另外的请求中获取的是B增加后的余额，这就发生了脏读，因为事务如果失败回滚时，B的余额就不应该增加。 不可重复读：不可重复读是指对于数据库中某个数据，一个事务范围内多次查询返回了不同的数据值，这是由于在多次查询之间，有其他事务修改了数据并进行了提交。 幻读：是指一个事务中执行两次完全相同的查询时，第二次查询所返回的结果集跟第一个查询不相同。与不可重复读的区别在于，不可重复读是对同一条记录，两次读取的值不同。而幻读是记录的增加或删除，导致两次相同条件获取的结果记录数不同。  b：事务的四种隔离级别
+可以用于解决这几种并发问题。如图右面，由上到下的4种隔离级别由低到高。
+ 级别1读未提交：也就是可以读取到其他事务未提交的内容，这是最低的隔离级别，这个隔离级别下，前面提到的三种并发问题都有可能发生。 级别2读已提交：就是只能读取到其他事务已经提交的数据。这个隔离级别可以解决脏读问题。 级别三可重复读：可以保证整个事务过程中，对同数据的多次读取结果是相同的。这个级别可以解决脏读和不可重复读的问题。MySQL默认的隔离级别就是可重复读。 级别四串行化：这是最高的隔离级别，所有事务操作都依次顺序执行。这个级别会导致并发度下降，性能最差。不过这个级别可以解决前面提到的所有并发问题。  ▌3.</description>
+    </item>
+    
+    <item>
+      <title>脏读</title>
+      <link>/2016/%E8%84%8F%E8%AF%BB/</link>
+      <pubDate>Thu, 22 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/%E8%84%8F%E8%AF%BB/</guid>
+      <description>脏读 ​ 脏读又称无效数据的读出，是指在数据库访问中，事务T1将某一值修改，然后事务T2读取该值，此后T1因为某种原因撤销对该值的修改，这就导致了T2所读取到的数据是无效的。
+剪短点讲：脏读就是指当一个事务正在访问数据，并且对数据进行了修改，而这种修改还没有提交到数据库中，这时，另外一个事务也访问这个数据，然后使用了这个数据。因为这个数据是还没有提交的数据，那么另外一个事务读到的这个数据是脏数据，依据脏数据所做的操作可能是不正确的。</description>
+    </item>
+    
+    <item>
+      <title>pywin32控制你的打印机</title>
+      <link>/1/pywin32%E6%8E%A7%E5%88%B6%E4%BD%A0%E7%9A%84%E6%89%93%E5%8D%B0%E6%9C%BA/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/1/pywin32%E6%8E%A7%E5%88%B6%E4%BD%A0%E7%9A%84%E6%89%93%E5%8D%B0%E6%9C%BA/</guid>
+      <description>pywin32控制你的打印机
+` def printer(name,phone,place): import win32ui import win32gui import win32print import win32con print_name =win32print.GetDefaultPrinter() # test 获取默认打印机 pHandle = win32print.OpenPrinter(win32print.GetDefaultPrinter()) printinfo = win32print.GetPrinter(pHandle,2) pDevModeObj = printinfo[&amp;quot;pDevMode&amp;quot;] pDevModeObj.Scale=10 # pDevModeObj.Orientation=win32con.DMORIENT_LANDSCAPE # 文本横向 print(pDevModeObj.Scale) DC=win32gui.CreateDC(&#39;WINSPOOL&#39;,print_name,pDevModeObj) hDC=win32ui.CreateDCFromHandle(DC) hDC.StartDoc(&amp;quot;Test doc&amp;quot;) hDC.StartPage() # hDC.SetMapMode(win32con.MM_TWIPS*50) hDC.TextOut(20,10,&amp;quot;我是要打印的内容&amp;quot;) #draws text within a box (assume about 1400 dots per inch for typical HP printer) ulc_x = 100 # give a left margin ulc_y = -100 # give a top margin lrc_x = 160 # width of text area-margin, close to right edge of page lrc_y = -110 # height of text area-margin, close to bottom of the page hDC.</description>
+    </item>
+    
+  </channel>
+</rss>

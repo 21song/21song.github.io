@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2018/%E7%AE%80%E5%8D%95%E8%AE%A4%E8%AF%86%E4%B8%8Bkafka/" />
+  <link rel="next" href="/2018/%E6%AD%A3%E5%90%91%E8%B7%AF%E7%94%B1%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B7%AF%E7%94%B1/" />
+  <link rel="canonical" href="/2018/redis%E5%92%8Cmemeuche/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           redis和memeuche | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="redis和memeuche | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "redis和memeuche",
+    "headline" : "redis和memeuche",
+    "description" : "redis是什么？ Redis 是完全开源免费的，遵守BSD协议，是一个高性能的key-value数据库。\n是当前最热门的的的NoSql数据库之一，也被人们称为数据结构服务器。\n为什么要用redis? 原因很简单：快、性能好、支持并发\n这个问题在大并发，高负载的网站中必须考虑.redis数据库中的所有数据都存储在内存中。由于内存的读写速度远快于硬盘，因此Redis的的的在性能上对比其他基于硬盘存储的数据库有非常明显的优势。\n性能 我们在碰到需要执行耗时特别久，且结果不频繁变动的SQL，就特别适合将运行结果放入缓存，这样，后面的请求就去缓存中读取，请求使得能够迅速响应。\n并发 在大并发的情况下，所有的请求直接访问数据库，数据库会出现连接异常。这个时候，就需要使用的的Redis的做一个缓冲操作，让请求先访问到的Redis的的，而不是直接访问数据库。\nredis的优点： 1，运行在内存，速度快官方号称支持并发11万特读操作，并发8万特写操作。\n2，数据虽在内存，但是提供了持久化的支持，即可以将内存中的数据异步写入到硬盘中，同时不影响继续提供服务。\n3，支持数据结构丰富（string（字符串），list（链表），set（集合），zset（sorted set - 有序集合））和Hash（哈希类型，md5加密出来的那个串）\n——————————————————————————————————————\nMemcached介绍 Memcached 是一个高性能的分布式内存对象缓存系统，用于动态Web应用以减轻数据库负载。它通过在内存中缓存数据和对象来减少读取数据库的次数，从而提供动态、数据库驱动网站的速度，现在已被LiveJournal、hatena、Facebook、Vox、LiveJournal等公司所使用。\nMemcached工作方式分析 许多Web应用都将数据保存到 RDBMS中，应用服务器从中读取数据并在浏览器中显示。 但随着数据量的增大、访问的集中，就会出现RDBMS的负担加重、数据库响应恶化、 网站显示延迟等重大影响。Memcached是高性能的分布式内存缓存服务器,通过缓存数据库查询结果，减少数据库访问次数，以提高动态Web等应用的速度、 提高可扩展性。下图展示了memcache与数据库端协同工作情况： 其中的过程是这样的： 1.检查用户请求的数据是缓存中是否有存在，如果有存在的话，只需要直接把请求的数据返回，无需查询数据库。 2.如果请求的数据在缓存中找不到，这时候再去查询数据库。返回请求数据的同时，把数据存储到缓存中一份。 3.保持缓存的“新鲜性”，每当数据发生变化的时候（比如，数据有被修改，或被删除的情况下），要同步的更新缓存信息，确保用户不会在缓存取到旧的数据。\nMemcached作为高速运行的分布式缓存服务器，具有以下的特点： 1.协议简单 2.基于libevent的事件处理 3.内置内存存储方式 4.memcached不互相通信的分布式\n如何实现分布式可拓展性？ Memcached的分布式不是在服务器端实现的，而是在客户端应用中实现的，即通过内置算法制定目标数据的节点，如下图所示： ——————————————————————————————————————\nRedis 介绍 Redis是一个key-value存储系统。和Memcached类似，它支持存储的value类型相对更多，包括string(字符串)、 list(链表)、set(集合)和zset(有序集合)。这些数据类型都支持push\/pop、add\/remove及取交集并集和差集及更丰富的操作，而且这些操作都是原子性的。在此基础上，redis支持各种不同方式的排序。与memcached一样，为了保证效率，数据都是缓存在内存中。区别的是redis会周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录文件，并且在此基础上实现了master-slave(主从)同步,当前 Redis的应用已经非常广泛，国内像新浪、淘宝，国外像 Flickr、Github等均在使用Redis的缓存服务。\nRedis 工作方式分析 Redis作为一个高性能的key-value数据库具有以下特征： 1.多样的数据模型 2.持久化 3.主从同步 Redis支持丰富的数据类型，最为常用的数据类型主要由五种：String、Hash、List、Set和Sorted Set。Redis通常将数据存储于内存中，或被配置为使用虚拟内存。Redis有一个很重要的特点就是它可以实现持久化数据，通过两种方式可以实现数据持久化：使用RDB快照的方式，将内存中的数据不断写入磁盘；或使用类似MySQL的AOF日志方式，记录每次更新的日志。前者性能较高，但是可能会引起一定程度的数据丢失；后者相反。 Redis支持将数据同步到多台从数据库上，这种特性对提高读取性能非常有益。\nRedis如何实现分布式可拓展性？ 2.8以前的版本：与Memcached一致，可以在客户端实现，也可以使用代理，twitter已开发出用于Redis和Memcached的代理Twemproxy 。 3.0 以后的版本：相较于Memcached只能采用客户端实现分布式存储，Redis则在服务器端构建分布式存储。Redis Cluster是一个实现了分布式且允许单点故障的Redis高级版本，它没有中心节点，各个节点地位一致，具有线性可伸缩的功能。如图给出Redis Cluster的分布式存储架构，其中节点与节点之间通过二进制协议进行通信，节点与客户端之间通过ascii协议进行通信。在数据的放置策略上，Redis Cluster将整个 key的数值域分成16384个哈希槽，每个节点上可以存储一个或多个哈希槽，也就是说当前Redis Cluster支持的最大节点数就是16384。 ——————————————————————————————————————\n1、 Redis和Memcache都是将数据存放在内存中，都是内存数据库。不过memcache还可用于缓存其他东西，例如图片、视频等等。 2、Redis不仅仅支持简单的k\/v类型的数据，同时还提供list，set，hash等数据结构的存储。 3、虚拟内存–Redis当物理内存用完时，可以将一些很久没用到的value 交换到磁盘 4、过期策略–memcache在set时就指定，例如set key1 0 0 8,即永不过期。Redis可以通过例如expire 设定，例如expire name 10 5、分布式–设定memcache集群，利用magent做一主多从;redis可以做一主多从。都可以一主一从 6、存储数据安全–memcache挂掉后，数据没了；redis可以定期保存到磁盘（持久化） 7、灾难恢复–memcache挂掉后，数据不可恢复; redis数据丢失后可以通过aof恢复 8、Redis支持数据的备份，即master-slave模式的数据备份。",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2018",
+    "datePublished": "2018-05-25 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2018-05-25 00:00:00 \x2b0000 UTC",
+    "url" : "\/2018\/redis%E5%92%8Cmemeuche\/",
+    "wordCount" : "122",
+    "keywords" : [ "Python", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">redis和memeuche</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2018-05-25 itemprop="datePublished">May 25, 2018</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/redis/"> Redis </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h3 id="redis是什么">redis是什么？</h3>
+
+<p>Redis 是完全开源免费的，遵守BSD协议，是一个高性能的key-value数据库。</p>
+
+<p>是当前最热门的的的NoSql数据库之一，也被人们称为数据结构服务器。</p>
+
+<h3 id="为什么要用redis">为什么要用redis?</h3>
+
+<p>原因很简单：快、性能好、支持并发</p>
+
+<p>这个问题在大并发，高负载的网站中必须考虑.redis数据库中的所有数据都存储在内存中。由于内存的读写速度远快于硬盘，因此Redis的的的在性能上对比其他基于硬盘存储的数据库有非常明显的优势。</p>
+
+<h4 id="性能">性能</h4>
+
+<p>我们在碰到需要执行耗时特别久，且结果不频繁变动的SQL，就特别适合将运行结果放入缓存，这样，后面的请求就去缓存中读取，请求使得能够<strong>迅速响应</strong>。</p>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/07.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<h4 id="并发">并发</h4>
+
+<p>在大并发的情况下，所有的请求直接访问数据库，数据库会出现连接异常。这个时候，就需要使用的的Redis的做一个缓冲操作，让请求先访问到的Redis的的，而不是直接访问数据库。</p>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/08.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<h4 id="redis的优点">redis的优点：</h4>
+
+<p>1，运行在内存，速度快官方号称支持并发11万特读操作，并发8万特写操作。</p>
+
+<p>2，数据虽在内存，但是提供了持久化的支持，即可以将内存中的数据异步写入到硬盘中，同时不影响继续提供服务。</p>
+
+<p>3，支持数据结构丰富（string（字符串），list（链表），set（集合），zset（sorted set - 有序集合））和Hash（哈希类型，md5加密出来的那个串）</p>
+
+<p>——————————————————————————————————————</p>
+
+<h4 id="memcached介绍">Memcached介绍</h4>
+
+<p>Memcached 是一个高性能的分布式内存对象缓存系统，用于动态Web应用以减轻数据库负载。它通过在内存中缓存数据和对象来减少读取数据库的次数，从而提供动态、数据库驱动网站的速度，现在已被LiveJournal、hatena、Facebook、Vox、LiveJournal等公司所使用。</p>
+
+<p>Memcached工作方式分析
+许多Web应用都将数据保存到 RDBMS中，应用服务器从中读取数据并在浏览器中显示。 但随着数据量的增大、访问的集中，就会出现RDBMS的负担加重、数据库响应恶化、 网站显示延迟等重大影响。Memcached是高性能的分布式内存缓存服务器,通过缓存数据库查询结果，减少数据库访问次数，以提高动态Web等应用的速度、 提高可扩展性。下图展示了memcache与数据库端协同工作情况：
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/09.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure>
+其中的过程是这样的：
+1.检查用户请求的数据是缓存中是否有存在，如果有存在的话，只需要直接把请求的数据返回，无需查询数据库。
+2.如果请求的数据在缓存中找不到，这时候再去查询数据库。返回请求数据的同时，把数据存储到缓存中一份。
+3.保持缓存的“新鲜性”，每当数据发生变化的时候（比如，数据有被修改，或被删除的情况下），要同步的更新缓存信息，确保用户不会在缓存取到旧的数据。</p>
+
+<p>Memcached作为高速运行的分布式缓存服务器，具有以下的特点：
+1.协议简单
+2.基于libevent的事件处理
+3.内置内存存储方式
+4.memcached不互相通信的分布式</p>
+
+<p>如何实现分布式可拓展性？
+Memcached的分布式不是在服务器端实现的，而是在客户端应用中实现的，即通过内置算法制定目标数据的节点，如下图所示：
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/10.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<p>——————————————————————————————————————</p>
+
+<h4 id="redis-介绍">Redis 介绍</h4>
+
+<p>Redis是一个key-value存储系统。和Memcached类似，它支持存储的value类型相对更多，包括string(字符串)、 list(链表)、set(集合)和zset(有序集合)。这些数据类型都支持push/pop、add/remove及取交集并集和差集及更丰富的操作，而且这些操作都是原子性的。在此基础上，redis支持各种不同方式的排序。与memcached一样，为了保证效率，数据都是缓存在内存中。区别的是redis会周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录文件，并且在此基础上实现了master-slave(主从)同步,当前 Redis的应用已经非常广泛，国内像新浪、淘宝，国外像 Flickr、Github等均在使用Redis的缓存服务。</p>
+
+<p>Redis 工作方式分析
+Redis作为一个高性能的key-value数据库具有以下特征：
+1.多样的数据模型
+2.持久化
+3.主从同步
+Redis支持丰富的数据类型，最为常用的数据类型主要由五种：String、Hash、List、Set和Sorted Set。Redis通常将数据存储于内存中，或被配置为使用虚拟内存。Redis有一个很重要的特点就是它可以实现持久化数据，通过两种方式可以实现数据持久化：使用RDB快照的方式，将内存中的数据不断写入磁盘；或使用类似MySQL的AOF日志方式，记录每次更新的日志。前者性能较高，但是可能会引起一定程度的数据丢失；后者相反。 Redis支持将数据同步到多台从数据库上，这种特性对提高读取性能非常有益。</p>
+
+<p>Redis如何实现分布式可拓展性？
+2.8以前的版本：与Memcached一致，可以在客户端实现，也可以使用代理，twitter已开发出用于Redis和Memcached的代理Twemproxy 。
+3.0 以后的版本：相较于Memcached只能采用客户端实现分布式存储，Redis则在服务器端构建分布式存储。Redis Cluster是一个实现了分布式且允许单点故障的Redis高级版本，它没有中心节点，各个节点地位一致，具有线性可伸缩的功能。如图给出Redis Cluster的分布式存储架构，其中节点与节点之间通过二进制协议进行通信，节点与客户端之间通过ascii协议进行通信。在数据的放置策略上，Redis Cluster将整个 key的数值域分成16384个哈希槽，每个节点上可以存储一个或多个哈希槽，也就是说当前Redis Cluster支持的最大节点数就是16384。
+<figure><img src="/images/ring.svg" data-sizes="auto" data-src="http://static.open-open.com/lib/uploadImg/20140902/20140902153248_678.jpg" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<p>——————————————————————————————————————</p>
+
+<p>1、 Redis和Memcache都是将数据存放在内存中，都是内存数据库。不过memcache还可用于缓存其他东西，例如图片、视频等等。
+2、Redis不仅仅支持简单的k/v类型的数据，同时还提供list，set，hash等数据结构的存储。
+3、虚拟内存–Redis当物理内存用完时，可以将一些很久没用到的value 交换到磁盘
+4、过期策略–memcache在set时就指定，例如set key1 0 0 8,即永不过期。Redis可以通过例如expire 设定，例如expire name 10
+5、分布式–设定memcache集群，利用magent做一主多从;redis可以做一主多从。都可以一主一从
+6、存储数据安全–memcache挂掉后，数据没了；redis可以定期保存到磁盘（持久化）
+7、灾难恢复–memcache挂掉后，数据不可恢复; redis数据丢失后可以通过aof恢复
+8、Redis支持数据的备份，即master-slave模式的数据备份。</p>
+
+<p>关于redis和memcache的不同，下面罗列了一些相关说法，供记录：</p>
+
+<p>redis和memecache的不同在于[2]：
+1、存储方式：
+memecache 把数据全部存在内存之中，断电后会挂掉，数据不能超过内存大小
+redis有部份存在硬盘上，这样能保证数据的持久性，支持数据的持久化（笔者注：有快照和AOF日志两种持久化方式，在实际应用的时候，要特别注意配置文件快照参数，要不就很有可能服务器频繁满载做dump）。
+2、数据支持类型：
+redis在数据支持上要比memecache多的多。
+3、使用底层模型不同：
+新版本的redis直接自己构建了VM 机制 ，因为一般的系统调用系统函数的话，会浪费一定的时间去移动和请求。
+4、运行环境不同：
+redis目前官方只支持LINUX 上去行，从而省去了对于其它系统的支持，这样的话可以更好的把精力用于本系统 环境上的优化，虽然后来微软有一个小组为其写了补丁。但是没有放到主干上</p>
+
+<p>个人总结一下，有持久化需求或者对数据结构和处理有高级要求的应用，选择redis，其他简单的key/value存储，选择memcache。</p>
+
+<p>——————————————————————————————————————</p>
+
+<h4 id="综合来讲">综合来讲：</h4>
+
+<p>应该说Memcached和Redis都能很好的满足解决我们的问题，它们性能都很高，总的来说，可以把Redis理解为是对Memcached的拓展，是更加重量级的实现，提供了更多更强大的功能。具体来说：</p>
+
+<p>1.性能上：
+性能上都很出色，具体到细节，由于Redis只使用单核，而Memcached可以使用多核，所以平均每一个核上Redis在存储小数据时比
+Memcached性能更高。而在100k以上的数据中，Memcached性能要高于Redis，虽然Redis最近也在存储大数据的性能上进行优化，但是比起 Memcached，还是稍有逊色。</p>
+
+<p>2.内存空间和数据量大小：
+MemCached可以修改最大内存，采用LRU算法。Redis增加了VM的特性，突破了物理内存的限制。</p>
+
+<p>3.操作便利上：
+MemCached数据结构单一，仅用来缓存数据，而Redis支持更加丰富的数据类型，也可以在服务器端直接对数据进行丰富的操作,这样可以减少网络IO次数和数据体积。</p>
+
+<p>4.可靠性上：
+MemCached不支持数据持久化，断电或重启后数据消失，但其稳定性是有保证的。Redis支持数据持久化和数据恢复，允许单点故障，但是同时也会付出性能的代价。</p>
+
+<p>5.应用场景：
+Memcached：动态系统中减轻数据库负载，提升性能；做缓存，适合多读少写，大数据量的情况（如人人网大量查询用户信息、好友信息、文章信息等）。
+Redis：适用于对读写效率要求都很高，数据处理业务复杂和对安全性要求较高的系统（如新浪微博的计数和微博发布部分系统，对数据安全性、读写要求都很高）。</p>
+
+<h4 id="需要慎重考虑的部分"><strong>需要慎重考虑的部分</strong></h4>
+
+<p>1.Memcached单个key-value大小有限，一个value最大只支持1MB，而Redis最大支持512MB
+2.Memcached只是个内存缓存，对可靠性无要求；而Redis更倾向于内存数据库，因此对对可靠性方面要求比较高
+3.从本质上讲，Memcached只是一个单一key-value内存Cache；而Redis则是一个数据结构内存数据库，支持五种数据类型，因此Redis除单纯缓存作用外，还可以处理一些简单的逻辑运算，Redis不仅可以缓存，而且还可以作为数据库用
+4.新版本（3.0）的Redis是指集群分布式，也就是说集群本身均衡客户端请求，各个节点可以交流，可拓展行、可维护性更强大。</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2018/redis%E5%92%8Cmemeuche/>/2018/redis%E5%92%8Cmemeuche/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2018/%E7%AE%80%E5%8D%95%E8%AE%A4%E8%AF%86%E4%B8%8Bkafka/" class="prev" rel="prev" title="简单认识下Kafka"><i class="iconfont icon-left"></i>&nbsp;简单认识下Kafka</a>
+         
+        
+        <a href="/2018/%E6%AD%A3%E5%90%91%E8%B7%AF%E7%94%B1%E4%B8%8E%E6%99%AE%E9%80%9A%E8%B7%AF%E7%94%B1/" class="next" rel="next" title="正向路由与普通路由">正向路由与普通路由&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+     <link href="//lib.baomitu.com/lightgallery/1.6.11/css/lightgallery.min.css" rel="stylesheet">  
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

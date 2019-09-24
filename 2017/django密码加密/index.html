@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/" />
+  <link rel="next" href="/2018/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" />
+  <link rel="canonical" href="/2017/django%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           django密码加密 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="django密码加密 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "django密码加密",
+    "headline" : "django密码加密",
+    "description" : "python的Django框架自带了一套加密方法: make_password( ),具体作用如下:\n\x26gt;\x26gt;\x26gt; from django.contrib.auth.hashers import make_password, check_password \x26gt;\x26gt;\x26gt; make_password(\x26quot;www.baidu.com\x26quot;, None, \x27pbkdf2_sha1\x27)  参1: 加密的密码,参2: 任意字符串(用于固定生成的字符串,不能为空) 参3: 加密方式\n得到的是一串随机字符串,并且每次生成都不一样\n\x26gt;\x26gt;\x26gt; make_password(\x26quot;abcdef\x26quot;, None, \x27pbkdf2_sha256\x27) == make_password(\x26quot;abcdef\x26quot;, None,\x27pbkdf2_sha256\x27) False  这时候如果需要验证密码比较是否正确就需要用check_password( ),具体如下:\n\x26gt;\x26gt;\x26gt; text = \x26quot;www.baidu.com\x26quot; \x26gt;\x26gt;\x26gt; passwd = make_password(text, None, \x27pbkdf2_sha1\x27) \x26gt;\x26gt;\x26gt; print passwd pbkdf2_sha112000xzMLhCNvQbb8$i1XDnJIpb\/cRRGRX2x7Ym74RNfPRCUp5pbU6Sn\x2bV3J0= \x26gt;\x26gt;\x26gt; ret = check_password(text, passwd) \x26gt;\x26gt;\x26gt; print(ret) True  如果你不想每次都生成不同的密文，可以把make_password的第二个函数给一个固定的字符串,如下:\n\x26gt;\x26gt;\x26gt; make_password(text,\x26quot;a\x26quot;,\x27pbkdf2_sha1\x27) u\x27pbkdf2_sha112000a5HkIPczRZGSTKUBa5uzZmRuAWdp2Qe6Oemhdasvzv4Q=\x27 \x26gt;\x26gt;\x26gt; make_password(text,\x26quot;a\x26quot;,\x27pbkdf2_sha1\x27) u′pbkdf2_sha112000a5HkIPczRZGSTKUBa5uzZmRuAWdp2Qe6Oemhdasvzv4Q=\x27  ",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-12-09 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-12-09 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/django%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86\/",
+    "wordCount" : "58",
+    "keywords" : [ "Python", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">django密码加密</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-12-09 itemprop="datePublished">December 9, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/django/"> Django </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p>python的Django框架自带了一套加密方法: make_password( ),具体作用如下:</p>
+
+<pre><code class="language-python">&gt;&gt;&gt; from django.contrib.auth.hashers import make_password, check_password
+&gt;&gt;&gt; make_password(&quot;www.baidu.com&quot;, None, 'pbkdf2_sha1')
+</code></pre>
+
+<p>参1: 加密的密码,参2: 任意字符串(用于固定生成的字符串,不能为空)   参3: 加密方式</p>
+
+<p>得到的是一串随机字符串,并且每次生成都不一样</p>
+
+<pre><code class="language-python">&gt;&gt;&gt; make_password(&quot;abcdef&quot;, None, 'pbkdf2_sha256') == make_password(&quot;abcdef&quot;, None,'pbkdf2_sha256')
+
+False
+</code></pre>
+
+<p>这时候如果需要验证密码比较是否正确就需要用check_password( ),具体如下:</p>
+
+<pre><code class="language-python">&gt;&gt;&gt; text = &quot;www.baidu.com&quot;
+
+&gt;&gt;&gt; passwd = make_password(text, None, 'pbkdf2_sha1')
+
+&gt;&gt;&gt; print passwd 
+
+pbkdf2_sha112000xzMLhCNvQbb8$i1XDnJIpb/cRRGRX2x7Ym74RNfPRCUp5pbU6Sn+V3J0=
+
+&gt;&gt;&gt; ret = check_password(text, passwd)
+
+&gt;&gt;&gt; print(ret)
+
+True
+</code></pre>
+
+<p>如果你不想每次都生成不同的密文，可以把make_password的第二个函数给一个固定的字符串,如下:</p>
+
+<pre><code class="language-python">&gt;&gt;&gt; make_password(text,&quot;a&quot;,'pbkdf2_sha1')
+
+u'pbkdf2_sha112000a5HkIPczRZGSTKUBa5uzZmRuAWdp2Qe6Oemhdasvzv4Q='
+
+&gt;&gt;&gt; make_password(text,&quot;a&quot;,'pbkdf2_sha1')
+
+u′pbkdf2_sha112000a5HkIPczRZGSTKUBa5uzZmRuAWdp2Qe6Oemhdasvzv4Q='
+</code></pre>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/django%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86/>/2017/django%E5%AF%86%E7%A0%81%E5%8A%A0%E5%AF%86/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/" class="prev" rel="prev" title="docker操作"><i class="iconfont icon-left"></i>&nbsp;docker操作</a>
+         
+        
+        <a href="/2018/vue%E7%94%9F%E5%91%BD%E5%91%A8%E6%9C%9F/" class="next" rel="next" title="Vue 生命周期">Vue 生命周期&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

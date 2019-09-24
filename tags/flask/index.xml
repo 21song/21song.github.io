@@ -1,0 +1,275 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Flask on 宋军亮的技术博客</title>
+    <link>/tags/flask/</link>
+    <description>Recent content in Flask on 宋军亮的技术博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 25 Aug 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/flask/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Flask wtform 组件</title>
+      <link>/2017/flask%E7%9A%84wtform%E7%BB%84%E4%BB%B6/</link>
+      <pubDate>Fri, 25 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84wtform%E7%BB%84%E4%BB%B6/</guid>
+      <description>WTForms是一个支持多个web框架的form组件，用于简化form表单的定义和一些操作
+安装
+pip3 install wtforms pip install flask-wtf  字段类型 说　明 StringField 文本字段 TextAreaField 多行文本字段 PasswordField 密码文本字段 HiddenField 隐藏文本字段 DateField 文本字段，值为 datetime.date 格式 DateTimeField 文本字段，值为 datetime.datetime 格式 IntegerField 文本字段，值为整数 DecimalField 文本字段，值为 decimal.Decimal FloatField 文本字段，值为浮点数 BooleanField 复选框，值为 True 和 False RadioField 一组单选框 SelectField 下拉列表 SelectMultipleField 下拉列表，可选择多个值 FileField 文件上传字段 SubmitField 表单提交按钮 FormField 把表单作为字段嵌入另一个表单 FieldList 一组指定类型的字段  验证函数 说　明
+Email 验证电子邮件地址 EqualTo 比较两个字段的值；常用于要求输入两次密码进行确认的情况 IPAddress 验证 IPv4 网络地址 Length 验证输入字符串的长度 NumberRange 验证输入的值在数字范围内 Optional 无输入值时跳过其他验证函数 Required 确保字段中有数据 Regexp 使用正则表达式验证输入值 URL 验证 URL AnyOf 确保输入值在可选值列表中 NoneOf 确保输入值不在可选值列表中  </description>
+    </item>
+    
+    <item>
+      <title>Flask的csrf</title>
+      <link>/2017/flask%E7%9A%84csrf/</link>
+      <pubDate>Mon, 14 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84csrf/</guid>
+      <description>CSRF：从一个网站A中发起一个到网站B的请求，而这个请求是经过了伪装的，伪装操作达到的目的就是让请求看起来像是从网站B中发起的，也就是说，让B网站所在的服务器端误以为该请求是从自己网站发起的，而不是从A网站发起的。当然，请求一般都是恶意的。
+一、什么是CSRF？
+CSRF是Cross Site Request Forgery的缩写，翻译过来就是跨站请求伪造。那么什么是跨站请求伪造呢？让我一个词一个词的解释：
+1、跨站：顾名思义，就是从一个网站到另一个网站。
+2、请求：即HTTP请求。
+3、伪造：在这里可以理解为仿造、伪装。
+综合起来的意思就是：从一个网站A中发起一个到网站B的请求，而这个请求是经过了伪装的，伪装操作达到的目的就是让请求看起来像是从网站B中发起的，也就是说，让B网站所在的服务器端误以为该请求是从自己网站发起的，而不是从A网站发起的。当然，请求一般都是恶意的。
+看到这里，你可能会问：为什么要伪装成从B网站发起的呢？从网站A直接向B网站服务器发起请求不可以吗？
+要回答这个问题，就需要我们对Cookie机制有一定的认识。关于Cookie机制我会单独写一篇文章，这里不做详细介绍。这里你只需要知道：之所以要伪装成从B网站发起的，是因为Cookie是不能跨域发送的。结合上面这个例子来说就是：如果从A网站直接发送请求到B网站服务器的话，是无法将B网站中产生的Cookie一起发给B服务器的。
+可能你还会问，为什么非要发送Cookie呢？这是因为服务器在用户登录后会将用户的一些信息放到Cookie中返回给客户端，然后客户端在请求一些需要认证的资源的时候会把Cookie一起发给服务器，服务器通过读取Cookie中的信息来进行用户认证，认证通过后才会做出正确的响应。
+A网站访问B网站服务器的一些需要认证的资源的时候，如果没有Cookie信息，服务器是拒绝访问的，那么A网站就无法进行恶意操作。而伪造成B网站的请求，就可以将B网站的Cookie一起发到B服务器，这个时候就服务器就认为该请求是合法的，就会给出正确的响应，这个时候，A网站就达到目的了。
+简单一句话就是：攻击者盗用了你的身份，以你的名义发送恶意请求。
+那么，A网站通过CSRF能够做那些操作呢？
+二、CSRF能够做什么呢？
+CSRF能够做的事情包括：以你名义发送邮件，发消息，盗取你的账号，甚至于购买商品，虚拟货币转账……造成的问题包括：个人隐私泄露以及财产安全。等等等等。</description>
+    </item>
+    
+    <item>
+      <title>Flask的闪现</title>
+      <link>/2017/flask%E7%9A%84%E9%97%AA%E7%8E%B0/</link>
+      <pubDate>Wed, 02 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84%E9%97%AA%E7%8E%B0/</guid>
+      <description>Flash中的消息闪现，在官方的解释是用来给用户做出反馈。不过实际上这个功能只是一个记录消息的方法，在某一个请求中记录消息，在下一个请求中获取消息，然后做相应的处理，也就是说flask只存在于两个相邻的请求中“闪现”，第三次请求就不存在这个flash了。
+通常情况下配合模板系统进行调用，可以实现一种伪”ajax”请求的效果
+基于 flash 模块
+from flask import flash
+模板输出flash
+```
+{# 将flash消息闪现和后台联系起来 #}
+​ {# 将消息闪现里面的所有消息遍历，取出需要返回给用户的信息 #}
+​ {% for message in get_flashed_messages() %}
+​ {{ message }}
+​ {% endfor %}</description>
+    </item>
+    
+    <item>
+      <title>Jinja2模板简介与使用</title>
+      <link>/2017/jinja2%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Sat, 15 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/jinja2%E7%AE%80%E4%BB%8B/</guid>
+      <description>Jinja2模板引擎简介(template)
+模板
+视图函数的主要作用是生成请求的响应，这是最简单的请求。实际上，视图函数有两个作用：处理业务逻辑和返回响应内容。在大型应用中，把业务逻辑和表现内容放在一起，会增加代码的复杂度和维护成本。本节学到的模板，它的作用即是承担视图函数的另一个作用，即返回响应内容。
+模板其实是一个包含响应文本的文件，其中用占位符(变量)表示动态部分，告诉模板引擎其具体的值需要从使用的数据中获取
+使用真实值替换变量，再返回最终得到的字符串，这个过程称为“渲染”
+Flask是使用 Jinja2 这个模板引擎来渲染模板
+使用模板的好处：
+视图函数只负责业务逻辑和数据处理(业务逻辑方面)
+而模板则取到视图函数的数据结果进行展示(视图展示方面)
+代码结构清晰，耦合度低
+Jinja2
+两个概念：
+Jinja2：是 Python 下一个被广泛应用的模板引擎，是由Python实现的模板语言，他的设计思想来源于 Django 的模板引擎，并扩展了其语法和一系列强大的功能，其是Flask内置的模板语言。
+模板语言：是一种被设计来自动生成文档的简单文本格式，在模板语言中，一般都会把一些变量传给模板，替换模板的特定位置上预先定义好的占位变量名。
+官方文档
+渲染模版函数
+Flask提供的 render_template 函数封装了该模板引擎
+render_template 函数的第一个参数是模板的文件名，后面的参数都是键值对，表示模板中变量对应的真实值。
+1
+2
+使用
+​ {{}} 来表示变量名，这种 {{}} 语法叫做变量代码块
+{{ post.title }} Jinja2 模版中的变量代码块可以是任意 Python 类型或者对象，只要它能够被 Python 的 str() 方法转换为一个字符串就可以，比如，可以通过下面的方式显示一个字典或者列表中的某个元素:
+{{your_dict[&#39;key&#39;]}} {{your_list[0]}} 用 {%%} 定义的控制代码块，可以实现一些语言层次的功能，比如循环或者if语句 {% if user %} ​ {{ user }} {% else %} ​ hello! &amp;lt;ul&amp;gt; ​ {% for index in indexs %} ​ &amp;lt;li&amp;gt; {{ index }} &amp;lt;/li&amp;gt; ​ {% endfor %} &amp;lt;/ul&amp;gt;  注释</description>
+    </item>
+    
+    <item>
+      <title>Flask的flask_script</title>
+      <link>/2017/flask%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/</link>
+      <pubDate>Fri, 30 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/</guid>
+      <description>flask_script
+1、安装：进入到虚拟环境中，pip install flask_script
+2、flask_script 作用：可以通过命令行的形式来操作Flask，例如通过命令跑一个开发版本的服务器、设置数据库、定时任务等</description>
+    </item>
+    
+    <item>
+      <title>Flask的request</title>
+      <link>/2017/flask%E7%9A%84request/</link>
+      <pubDate>Thu, 22 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84request/</guid>
+      <description>flask的request模块的属性
+1、method：请求的方法（get或者post）
+2、form：返回form的内容
+3、args和values：args返回请求中的参数，values返回请求中的参数和form
+4、cookies：cookies信息
+5、headers：请求headers信息，返回的结果是个list
+6、date、files：date是请求的数据，files随请求上传的文件</description>
+    </item>
+    
+    <item>
+      <title>Flask上下文</title>
+      <link>/2017/flask%E4%B8%8A%E4%B8%8B%E6%96%87/</link>
+      <pubDate>Sat, 10 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E4%B8%8A%E4%B8%8B%E6%96%87/</guid>
+      <description>上下文：相当于一个容器，保存了 Flask 程序运行过程中的一些信息。
+Flask中有两种上下文，请求上下文和应用上下文
+请求上下文(request context)
+在 flask 中，可以直接在视图函数中使用 request 这个对象进行获取相关数据，而 request 就是请求上下文的对象，保存了当前本次请求的相关数据，请求上下文对象有：request、session
+request
+封装了HTTP请求的内容，针对的是http请求。举例：user = request.args.get(&amp;lsquo;user&amp;rsquo;)，获取的是get请求的参数。
+session
+用来记录请求会话中的信息，针对的是用户信息。举例：session[&amp;lsquo;name&amp;rsquo;] = user.id，可以记录用户信息。还可以通过session.get(&amp;lsquo;name&amp;rsquo;)获取用户信息。
+应用上下文(application context)
+它的字面意思是 应用上下文，但它不是一直存在的，它只是request context 中的一个对 app 的代理(人)，所谓local proxy。它的作用主要是帮助 request 获取当前的应用，它是伴 request 而生，随 request 而灭的。
+应用上下文对象有：current_app，g
+current_app
+应用程序上下文,用于存储应用程序中的变量，可以通过current_app.name打印当前app的名称，也可以在current_app中存储一些变量，例如：
+应用的启动脚本是哪个文件，启动时指定了哪些参数
+加载了哪些配置文件，导入了哪些配置
+连了哪个数据库
+有哪些public的工具类、常量
+应用跑再哪个机器上，IP多少，内存多大
+current_app.name
+current_app.test_value=&amp;lsquo;value&amp;rsquo;
+g变量
+g 作为 flask 程序全局的一个临时变量,充当者中间媒介的作用,我们可以通过它传递一些数据，g 保存的是当前请求的全局变量，不同的请求会有不同的全局变量，通过不同的thread id区别
+g.name=&amp;lsquo;abc&amp;rsquo;
+注意：不同的请求，会有不同的全局变量
+两者区别：
+请求上下文：保存了客户端和服务器交互的数据
+应用上下文：flask 应用程序运行过程中，保存的一些配置信息，比如程序名、数据库连接、应用信息等</description>
+    </item>
+    
+    <item>
+      <title>Flask的cookie与session</title>
+      <link>/2017/flask%E7%9A%84cookie%E4%B8%8Esession/</link>
+      <pubDate>Mon, 29 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84cookie%E4%B8%8Esession/</guid>
+      <description>Cookie
+Cookie：指某些网站为了辨别用户身份、进行会话跟踪而储存在用户本地的数据（通常经过加密）。
+复数形式Cookies。
+Cookie最早是网景公司的前雇员Lou Montulli在1993年3月的发明。
+Cookie是由服务器端生成，发送给客户端浏览器，浏览器会将Cookie的key/value保存，下次请求同一网站时就发送该Cookie给服务器（前提是浏览器设置为启用cookie）。
+Cookie的key/value可以由服务器端自己定义。
+应用：
+最典型的应用是判定注册用户是否已经登录网站，用户可能会得到提示，是否在下一次进入此网站时保留用户信息以便简化登录手续，这些都是Cookie的功用。
+网站的广告推送，经常遇到访问某个网站时，会弹出小窗口，展示我们曾经在购物网站上看过的商品信息。
+购物车，用户可能会在一段时间内在同一家网站的不同页面中选择不同的商品，这些信息都会写入Cookie，以便在最后付款时提取信息。
+提示：
+Cookie是存储在浏览器中的一段纯文本信息，建议不要存储敏感信息如密码，因为电脑上的浏览器可能被其它人使用
+Cookie基于域名安全，不同域名的Cookie是不能互相访问的
+如访问itcast.cn时向浏览器中写了Cookie信息，使用同一浏览器访问baidu.com时，无法访问到itcast.cn写的Cookie信息
+浏览器的同源策略
+当浏览器请求某网站时，会将本网站下所有Cookie信息提交给服务器，所以在request中可以读取Cookie信息
+设置cookie
+from flask imoprt Flask,make_response
+@app.route(&amp;lsquo;/cookie&amp;rsquo;)
+def set_cookie():
+​ resp = make_response(&amp;lsquo;this is to set cookie&amp;rsquo;)
+​ resp.set_cookie(&amp;lsquo;username&amp;rsquo;, &amp;lsquo;itcast&amp;rsquo;)
+​ return resp
+设置过期时间
+@app.route(&amp;lsquo;/cookie&amp;rsquo;)
+def set_cookie():
+​ response = make_response(&amp;lsquo;hello world&amp;rsquo;)
+​ response.set_cookie(&amp;lsquo;username&amp;rsquo;, &amp;lsquo;itheima&amp;rsquo;, max_age=3600)
+​ return response
+获取cookie
+from flask import Flask,request
+#获取cookie
+@app.route(&amp;lsquo;/request&amp;rsquo;)
+def resp_cookie():
+​ resp = request.cookies.get(&amp;lsquo;username&amp;rsquo;)
+return resp</description>
+    </item>
+    
+    <item>
+      <title>Flask两大核心</title>
+      <link>/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/</link>
+      <pubDate>Sat, 13 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/</guid>
+      <description>Flask有两大核心：Werkzeug和Jinja2
+- Werkzeug实现路由、调试和Web服务器网关接口
+- Jinja2实现了模板。
+Werkzeug是一个遵循WSGI协议的python函数库
+- 其内部实现了很多Web框架底层的东西，比如request和response对象；
+- 与WSGI规范的兼容；支持Unicode；
+- 支持基本的会话管理和签名Cookie；
+- 集成URL请求路由等。
+Werkzeug库的 routing 模块负责实现 URL 解析。不同的 URL 对应不同的视图函数，routing模块会对请求信息的URL进行解析，匹配到URL对应的视图函数，执行该函数以此生成一个响应信息。
+routing模块内部有：
+Rule类
+用来构造不同的URL模式的对象，路由URL规则
+Map类
+存储所有的URL规则和一些配置参数
+BaseConverter的子类
+负责定义匹配规则
+MapAdapter类
+负责协调Rule做具体的匹配的工作
+简而言之 Werkzeug实现了路由功能 Jinja2实现了模板功能</description>
+    </item>
+    
+    <item>
+      <title>Flask简述与安装</title>
+      <link>/2017/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Tue, 02 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85/</guid>
+      <description>Flask
+Flask诞生于2010年，是Armin ronacher（人名）用 Python 语言基于 Werkzeug 工具箱编写的轻量级Web开发框架。
+Flask 本身相当于一个内核，其他几乎所有的功能都要用到扩展（邮件扩展Flask-Mail，用户认证Flask-Login，数据库Flask-SQLAlchemy），都需要用第三方的扩展来实现。比如可以用 Flask 扩展加入ORM、窗体验证工具，文件上传、身份验证等。Flask 没有默认使用的数据库，你可以选择 MySQL，也可以用 NoSQL。
+其 WSGI 工具箱采用 Werkzeug（路由模块），模板引擎则使用 Jinja2。这两个也是 Flask 框架的核心。
+Flask 是python三大web框架之一，比之其他两大框架django和tornado而言，它更加的轻量化，开发效率更高，是入门web框架的首选。
+同类的python框架还有 bottle web.py 等
+Flask常用扩展包：
+Flask-SQLalchemy：操作数据库；
+Flask-script：插入脚本；
+Flask-migrate：管理迁移数据库；
+Flask-Session：Session存储方式指定；
+Flask-WTF：表单；
+Flask-Mail：邮件；
+Flask-Bable：提供国际化和本地化支持，翻译；
+Flask-Login：认证用户状态；
+Flask-OpenID：认证；
+Flask-RESTful：开发REST API的工具；
+Flask-Bootstrap：集成前端Twitter Bootstrap框架；
+Flask-Moment：本地化日期和时间；
+Flask-Admin：简单而可扩展的管理接口的框架
+安装flask
+pip install Flask
+列出pip已经安装好的模块
+pip freeze
+三种导入配置文件的方式：
+配置对象，里面定义需要给 APP 添加的一系列配置 class Config(object):
+DEBUG = True
+从配置对象中加载配置 app.config.from_object(Config)
+从配置文件中加载配置 app.config.from_pyfile(&amp;lsquo;config.ini&amp;rsquo;)
+#由环境变量里面来加载配置
+app.config.from_envvar(&amp;lsquo;app_config&amp;rsquo;)
+路由配置，指定methods方法，返回json数据
+@app.route(&amp;lsquo;/demo4&amp;rsquo;,methods=[&amp;lsquo;GET&amp;rsquo;, &amp;lsquo;POST&amp;rsquo;])
+def demo4():</description>
+    </item>
+    
+  </channel>
+</rss>

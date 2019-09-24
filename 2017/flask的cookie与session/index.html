@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/" />
+  <link rel="next" href="/2017/docker%E4%B8%8B%E6%90%AD%E5%BB%BAfastdfs/" />
+  <link rel="canonical" href="/2017/flask%E7%9A%84cookie%E4%B8%8Esession/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Flask的cookie与session | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Flask的cookie与session | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Flask的cookie与session",
+    "headline" : "Flask的cookie与session",
+    "description" : "Cookie\nCookie：指某些网站为了辨别用户身份、进行会话跟踪而储存在用户本地的数据（通常经过加密）。\n复数形式Cookies。\nCookie最早是网景公司的前雇员Lou Montulli在1993年3月的发明。\nCookie是由服务器端生成，发送给客户端浏览器，浏览器会将Cookie的key\/value保存，下次请求同一网站时就发送该Cookie给服务器（前提是浏览器设置为启用cookie）。\nCookie的key\/value可以由服务器端自己定义。\n应用：\n最典型的应用是判定注册用户是否已经登录网站，用户可能会得到提示，是否在下一次进入此网站时保留用户信息以便简化登录手续，这些都是Cookie的功用。\n网站的广告推送，经常遇到访问某个网站时，会弹出小窗口，展示我们曾经在购物网站上看过的商品信息。\n购物车，用户可能会在一段时间内在同一家网站的不同页面中选择不同的商品，这些信息都会写入Cookie，以便在最后付款时提取信息。\n提示：\nCookie是存储在浏览器中的一段纯文本信息，建议不要存储敏感信息如密码，因为电脑上的浏览器可能被其它人使用\nCookie基于域名安全，不同域名的Cookie是不能互相访问的\n如访问itcast.cn时向浏览器中写了Cookie信息，使用同一浏览器访问baidu.com时，无法访问到itcast.cn写的Cookie信息\n浏览器的同源策略\n当浏览器请求某网站时，会将本网站下所有Cookie信息提交给服务器，所以在request中可以读取Cookie信息\n设置cookie\nfrom flask imoprt Flask,make_response\n@app.route(\x26lsquo;\/cookie\x26rsquo;)\ndef set_cookie():\n​ resp = make_response(\x26lsquo;this is to set cookie\x26rsquo;)\n​ resp.set_cookie(\x26lsquo;username\x26rsquo;, \x26lsquo;itcast\x26rsquo;)\n​ return resp\n设置过期时间\n@app.route(\x26lsquo;\/cookie\x26rsquo;)\ndef set_cookie():\n​ response = make_response(\x26lsquo;hello world\x26rsquo;)\n​ response.set_cookie(\x26lsquo;username\x26rsquo;, \x26lsquo;itheima\x26rsquo;, max_age=3600)\n​ return response\n获取cookie\nfrom flask import Flask,request\n#获取cookie\n@app.route(\x26lsquo;\/request\x26rsquo;)\ndef resp_cookie():\n​ resp = request.cookies.get(\x26lsquo;username\x26rsquo;)\nreturn resp",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-05-29 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-05-29 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/flask%E7%9A%84cookie%E4%B8%8Esession\/",
+    "wordCount" : "96",
+    "keywords" : [ "Python","Flask", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Flask的cookie与session</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-05-29 itemprop="datePublished">May 29, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/python/"> Python </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p><strong>Cookie</strong></p>
+
+<p><strong>Cookie：指某些网站为了辨别用户身份、进行会话跟踪而储存在用户本地的数据（通常经过加密）。</strong></p>
+
+<p><strong>复数形式Cookies。</strong></p>
+
+<p><strong>Cookie最早是网景公司的前雇员Lou Montulli在1993年3月的发明。</strong></p>
+
+<p><strong>Cookie是由服务器端生成，发送给客户端浏览器，浏览器会将Cookie的key/value保存，下次请求同一网站时就发送该Cookie给服务器（前提是浏览器设置为启用cookie）。</strong></p>
+
+<p><strong>Cookie的key/value可以由服务器端自己定义。</strong></p>
+
+<p><strong>应用：</strong></p>
+
+<p><strong>最典型的应用是判定注册用户是否已经登录网站，用户可能会得到提示，是否在下一次进入此网站时保留用户信息以便简化登录手续，这些都是Cookie的功用。</strong></p>
+
+<p><strong>网站的广告推送，经常遇到访问某个网站时，会弹出小窗口，展示我们曾经在购物网站上看过的商品信息。</strong></p>
+
+<p><strong>购物车，用户可能会在一段时间内在同一家网站的不同页面中选择不同的商品，这些信息都会写入Cookie，以便在最后付款时提取信息。</strong></p>
+
+<p><strong>提示：</strong></p>
+
+<p><strong>Cookie是存储在浏览器中的一段纯文本信息，建议不要存储敏感信息如密码，因为电脑上的浏览器可能被其它人使用</strong></p>
+
+<p><strong>Cookie基于域名安全，不同域名的Cookie是不能互相访问的</strong></p>
+
+<p><strong>如访问itcast.cn时向浏览器中写了Cookie信息，使用同一浏览器访问baidu.com时，无法访问到itcast.cn写的Cookie信息</strong></p>
+
+<p><strong>浏览器的同源策略</strong></p>
+
+<p><strong>当浏览器请求某网站时，会将本网站下所有Cookie信息提交给服务器，所以在request中可以读取Cookie信息</strong></p>
+
+<p><strong>设置cookie</strong></p>
+
+<p><strong>from flask imoprt Flask,make_response</strong></p>
+
+<p><strong>@app.route(&lsquo;/cookie&rsquo;)</strong></p>
+
+<p><strong>def set_cookie():</strong></p>
+
+<p>​    <strong>resp = make_response(&lsquo;this is to set cookie&rsquo;)</strong></p>
+
+<p>​    <strong>resp.set_cookie(&lsquo;username&rsquo;, &lsquo;itcast&rsquo;)</strong></p>
+
+<p>​    <strong>return resp</strong></p>
+
+<p><strong>设置过期时间</strong></p>
+
+<p><strong>@app.route(&lsquo;/cookie&rsquo;)</strong></p>
+
+<p><strong>def set_cookie():</strong></p>
+
+<p>​    <strong>response = make_response(&lsquo;hello world&rsquo;)</strong></p>
+
+<p>​    <strong>response.set_cookie(&lsquo;username&rsquo;, &lsquo;itheima&rsquo;, max_age=3600)</strong></p>
+
+<p>​    <strong>return response</strong></p>
+
+<p><strong>获取cookie</strong></p>
+
+<p><strong>from flask import Flask,request</strong></p>
+
+<p><strong>#获取cookie</strong></p>
+
+<p><strong>@app.route(&lsquo;/request&rsquo;)</strong></p>
+
+<p><strong>def resp_cookie():</strong></p>
+
+<p>​    <strong>resp = request.cookies.get(&lsquo;username&rsquo;)</strong></p>
+
+<p><strong>return resp</strong></p>
+
+<p><strong>Session</strong></p>
+
+<p><strong>对于敏感、重要的信息，建议要存储在服务器端，不能存储在浏览器中，如用户名、余额、等级、验证码等信息</strong></p>
+
+<p><strong>在服务器端进行状态保持的方案就是Session</strong></p>
+
+<p><strong>Session依赖于Cookie</strong></p>
+
+<p><strong>session数据的获取</strong></p>
+
+<p><strong>session:请求上下文对象，用于处理http请求中的一些数据内容</strong></p>
+
+<p><strong>@app.route(&lsquo;/index1&rsquo;)</strong></p>
+
+<p><strong>def index1():</strong></p>
+
+<p>​    <strong>session[&lsquo;username&rsquo;] = &lsquo;itcast&rsquo;</strong></p>
+
+<p>​    <strong>return redirect(url_for(&lsquo;index&rsquo;))</strong></p>
+
+<p><strong>@app.route(&lsquo;/&rsquo;)</strong></p>
+
+<p><strong>def index():</strong></p>
+
+<p>​    <strong>return session.get(&lsquo;username&rsquo;)</strong></p>
+
+<p><strong>记得设置secret_key: app.secret_key = &lsquo;itheima&rsquo;</strong></p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/flask%E7%9A%84cookie%E4%B8%8Esession/>/2017/flask%E7%9A%84cookie%E4%B8%8Esession/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            <span class="tag"><a href="/tags/flask/">
+                    #Flask</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/" class="prev" rel="prev" title="Flask两大核心"><i class="iconfont icon-left"></i>&nbsp;Flask两大核心</a>
+         
+        
+        <a href="/2017/docker%E4%B8%8B%E6%90%AD%E5%BB%BAfastdfs/" class="next" rel="next" title="docker下搭建FastDFS">docker下搭建FastDFS&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

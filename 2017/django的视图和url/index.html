@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/mysql%E5%AE%89%E8%A3%85%E5%BB%BA%E8%A1%A8%E5%BB%BA%E5%BA%93/" />
+  <link rel="next" href="/2017/mysql%E8%87%AA%E5%85%B3%E8%81%94/" />
+  <link rel="canonical" href="/2017/django%E7%9A%84%E8%A7%86%E5%9B%BE%E5%92%8Curl/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Django视图和url | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Django视图和url | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Django视图和url",
+    "headline" : "Django视图和url",
+    "description" : "1. 定义视图  视图就是一个Python函数，被定义在应用的views.py中.\n 视图的第一个参数是HttpRequest类型的对象reqeust，包含了所有请求信息.\n 视图必须返回HttpResponse对象，包含返回给请求者的响应信息.\n 需要导入HttpResponse模块 :from django.http import HttpResponse\n 定义视图函数 : 响应字符串OK!给客户端\n   思考 : 如何才能让请求找到视图?\n 2. 配置URLconf  查找视图的过程 :\n 1.请求者在浏览器地址栏中输入URL, 请求到网站.\n 2.网站获取URL信息.\n 3.然后与编写好的URLconf逐条匹配.\n 4.如果匹配成功则调用对应的视图.\n 5.如果所有的URLconf都没有匹配成功.则返回404错误.\n   URLconf入口\n   需要两步完成URLconf配置\n 1.在项目中定义URLconf 2.在应用中定义URLconf  在项目中定义URLconf\n   在应用中定义URLconf\n 提示：一条URLconf包括URL规则、视图两部分\n URL规则使用正则表达式定义.\n 视图就是在views.py中定义的视图函数.\n   url匹配过程\n    3.",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-10-13 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-10-13 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/django%E7%9A%84%E8%A7%86%E5%9B%BE%E5%92%8Curl\/",
+    "wordCount" : "45",
+    "keywords" : [ "Python","Django", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Django视图和url</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-10-13 itemprop="datePublished">October 13, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/python/"> Python </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+            
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<h4 id="1-定义视图">1. 定义视图</h4>
+
+<ul>
+<li><p>视图就是一个<code>Python</code>函数，被定义在<code>应用</code>的<code>views.py</code>中.</p></li>
+
+<li><p>视图的第一个参数是<code>HttpRequest</code>类型的对象<code>reqeust</code>，包含了所有<code>请求信息</code>.</p></li>
+
+<li><p>视图必须返回<code>HttpResponse对象</code>，包含返回给请求者的<code>响应信息</code>.</p></li>
+
+<li><p>需要导入<code>HttpResponse</code>模块 :<code>from django.http import HttpResponse</code></p></li>
+
+<li><p>定义视图函数 : 响应字符串<code>OK!</code>给客户端</p></li>
+</ul>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/view_index.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<blockquote>
+<p><strong>思考 : 如何才能让请求找到视图?</strong></p>
+</blockquote>
+
+<h4 id="2-配置urlconf">2. 配置URLconf</h4>
+
+<ul>
+<li><p>查找视图的过程 :</p>
+
+<ul>
+<li><p>1.请求者在浏览器地址栏中输入URL, 请求到网站.</p></li>
+
+<li><p>2.网站获取URL信息.</p></li>
+
+<li><p>3.然后与编写好的URLconf逐条匹配.</p></li>
+
+<li><p>4.如果匹配成功则调用对应的视图.</p></li>
+
+<li><p>5.如果所有的URLconf都没有匹配成功.则返回404错误.</p></li>
+</ul>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/001.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p></li>
+
+<li><p><code>URLconf</code>入口</p></li>
+</ul>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/root_urlconf.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<ul>
+<li><p>需要两步完成<code>URLconf</code>配置</p>
+
+<ul>
+<li>1.在<code>项目</code>中定义<code>URLconf</code></li>
+<li>2.在<code>应用</code>中定义<code>URLconf</code></li>
+</ul></li>
+
+<li><p><strong>在</strong><code>项目</code><strong>中定义</strong><code>URLconf</code></p></li>
+</ul>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/urls.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<ul>
+<li><p><strong>在</strong><code>应用</code><strong>中定义</strong><code>URLconf</code></p>
+
+<ul>
+<li><p>提示：一条<code>URLconf</code>包括URL规则、视图两部分</p></li>
+
+<li><p>URL规则使用正则表达式定义.</p></li>
+
+<li><p>视图就是在<code>views.py</code>中定义的视图函数.</p></li>
+</ul>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/url_view.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<ul>
+<li><p>url匹配过程</p></li>
+
+<li><p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/url_xmind.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p></li>
+</ul></li>
+</ul>
+
+<h4 id="3-测试-请求访问">3. 测试：请求访问</h4>
+
+<ul>
+<li><code>http://127.0.0.1:8000/</code></li>
+</ul>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/ok.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<h4 id="4-总结">4. 总结</h4>
+
+<p>视图处理过程如下图：</p>
+
+<p><figure><img src="/images/ring.svg" data-sizes="auto" data-src="/images/xm/url.png" alt="" class="lazyload"><figcaption class="image-caption"></figcaption></figure></p>
+
+<blockquote>
+<p>使用视图时需要进行两步操作，两步操作不分先后</p>
+
+<ol>
+<li>配置<code>URLconf</code></li>
+<li>在<code>应用/views.py</code>中定义视图</li>
+</ol>
+</blockquote>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/django%E7%9A%84%E8%A7%86%E5%9B%BE%E5%92%8Curl/>/2017/django%E7%9A%84%E8%A7%86%E5%9B%BE%E5%92%8Curl/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            <span class="tag"><a href="/tags/django/">
+                    #Django</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/mysql%E5%AE%89%E8%A3%85%E5%BB%BA%E8%A1%A8%E5%BB%BA%E5%BA%93/" class="prev" rel="prev" title="Mysql建表建库"><i class="iconfont icon-left"></i>&nbsp;Mysql建表建库</a>
+         
+        
+        <a href="/2017/mysql%E8%87%AA%E5%85%B3%E8%81%94/" class="next" rel="next" title="Mysql 自关联">Mysql 自关联&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+     <link href="//lib.baomitu.com/lightgallery/1.6.11/css/lightgallery.min.css" rel="stylesheet">  
+      
+     <script src="/js/vendor_gallery.min.js" async="" ></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

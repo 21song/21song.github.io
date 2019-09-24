@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2016/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" />
+  <link rel="next" href="/2016/docker%E7%89%B9%E7%82%B9/" />
+  <link rel="canonical" href="/2016/%E6%8C%82%E8%B5%B7%E6%88%91%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8screen/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           挂起我的服务器screen | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="挂起我的服务器screen | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "挂起我的服务器screen",
+    "headline" : "挂起我的服务器screen",
+    "description" : "你是不是经常需要 SSH 或者 telent 远程登录到 Linux 服务器？你是不是经常为一些长时间运行的任务而头疼，比如系统备份、ftp 传输等等。通常情况下我们都是为每一个这样的任务开一个远程终端窗口，因为他们执行的时间太长了。必须等待它执行完毕，在此期间可不能关掉窗口或者断开连接，否则这个任务就会被杀掉，一切半途而废了。那么究竟是什么到导致的呢？\n==元凶：SIGHUP 信号== 让我们来看看为什么关掉窗口\/断开连接会使得正在运行的程序死掉。\n在Linux\/Unix中，有这样几个概念：\n 进程组（process group）：一个或多个进程的集合，每一个进程组有唯一一个进程组ID，即进程组长进程的ID。 会话期（session）：一个或多个进程组的集合，有唯一一个会话期首进程（session leader）。会话期ID为首进程的ID。 会话期可以有一个单独的控制终端（controlling terminal）。与控制终端连接的会话期首进程叫做控制进程（controlling process）。当前与终端交互的进程称为前台进程组。其余进程组称为后台进程组。  根据POSIX.1定义：\n 挂断信号（SIGHUP）默认的动作是终止程序。 当终端接口检测到网络连接断开，将挂断信号发送给控制进程（会话期首进程）。 如果会话期首进程终止，则该信号发送到该会话期前台进程组。 一个进程退出导致一个孤儿进程组中产生时，如果任意一个孤儿进程组进程处于STOP状态，发送SIGHUP和SIGCONT信号到该进程组中所有进程。  因此当网络断开或终端窗口关闭后，控制进程收到SIGHUP信号退出，会导致该会话期内其他进程退出。\n我们来看一个例子。打开两个SSH终端窗口，在其中一个运行top命令。\n`[root@tivf09 root]# top`  在另一个终端窗口，找到top的进程ID为5180，其父进程ID为5128，即登录shell。\n`[root@tivf09 root]# ps -ef|grep top``root 5180 5128 0 01:03 pts\/0 00:00:02 top``root 5857 3672 0 01:12 pts\/2 00:00:00 grep top`  使用pstree命令可以更清楚地看到这个关系：\n`[root@tivf09 root]# pstree -H 5180|grep top``|-sshd-\x2b-sshd---bash---top`  使用ps-xj命令可以看到，登录shell（PID 5128）和top在同一个会话期，shell为会话期首进程，所在进程组PGID为5128，top所在进程组PGID为5180，为前台进程组。\n`[root@tivf09 root]# ps -xj|grep 5128`` ``5126 5128 5128 5128 pts\/0 5180 S 0 0:00 -bash`` ``5128 5180 5180 5128 pts\/0 5180 S 0 0:50 top`` ``3672 18095 18094 3672 pts\/2 18094 S 0 0:00 grep 5128`  关闭第一个SSH窗口，在另一个窗口中可以看到top也被杀掉了。",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2016",
+    "datePublished": "2016-10-21 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2016-10-21 00:00:00 \x2b0000 UTC",
+    "url" : "\/2016\/%E6%8C%82%E8%B5%B7%E6%88%91%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8screen\/",
+    "wordCount" : "133",
+    "keywords" : [ "Python", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">挂起我的服务器screen</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2016-10-21 itemprop="datePublished">October 21, 2016</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/django/"> Django </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<p>你是不是经常需要 SSH 或者 telent 远程登录到 Linux 服务器？你是不是经常为一些长时间运行的任务而头疼，比如系统备份、ftp 传输等等。通常情况下我们都是为每一个这样的任务开一个远程终端窗口，因为他们执行的时间太长了。必须等待它执行完毕，在此期间可不能关掉窗口或者断开连接，否则这个任务就会被杀掉，一切半途而废了。那么究竟是什么到导致的呢？</p>
+
+<h2 id="元凶-sighup-信号">==元凶：SIGHUP 信号==</h2>
+
+<p>让我们来看看为什么关掉窗口/断开连接会使得正在运行的程序死掉。</p>
+
+<p>在Linux/Unix中，有这样几个概念：</p>
+
+<ul>
+<li>进程组（process group）：一个或多个进程的集合，每一个进程组有唯一一个进程组ID，即进程组长进程的ID。</li>
+<li>会话期（session）：一个或多个进程组的集合，有唯一一个会话期首进程（session leader）。会话期ID为首进程的ID。</li>
+<li>会话期可以有一个单独的控制终端（controlling terminal）。与控制终端连接的会话期首进程叫做控制进程（controlling process）。当前与终端交互的进程称为前台进程组。其余进程组称为后台进程组。</li>
+</ul>
+
+<p>根据POSIX.1定义：</p>
+
+<ul>
+<li>挂断信号（SIGHUP）默认的动作是终止程序。</li>
+<li>当终端接口检测到网络连接断开，将挂断信号发送给控制进程（会话期首进程）。</li>
+<li>如果会话期首进程终止，则该信号发送到该会话期前台进程组。</li>
+<li>一个进程退出导致一个孤儿进程组中产生时，如果任意一个孤儿进程组进程处于STOP状态，发送SIGHUP和SIGCONT信号到该进程组中所有进程。</li>
+</ul>
+
+<p>因此当网络断开或终端窗口关闭后，控制进程收到SIGHUP信号退出，会导致该会话期内其他进程退出。</p>
+
+<p>我们来看一个例子。打开两个SSH终端窗口，在其中一个运行top命令。</p>
+
+<pre><code>`[root@tivf09 root]# top`
+</code></pre>
+
+<p>在另一个终端窗口，找到top的进程ID为5180，其父进程ID为5128，即登录shell。</p>
+
+<pre><code>`[root@tivf09 root]# ps -ef|grep top``root      5180  5128  0 01:03 pts/0    00:00:02 top``root      5857  3672  0 01:12 pts/2    00:00:00 grep top`
+</code></pre>
+
+<p>使用pstree命令可以更清楚地看到这个关系：</p>
+
+<pre><code>`[root@tivf09 root]# pstree -H 5180|grep top``|-sshd-+-sshd---bash---top`
+</code></pre>
+
+<p>使用ps-xj命令可以看到，登录shell（PID 5128）和top在同一个会话期，shell为会话期首进程，所在进程组PGID为5128，top所在进程组PGID为5180，为前台进程组。</p>
+
+<pre><code>`[root@tivf09 root]# ps -xj|grep 5128`` ``5126  5128  5128  5128 pts/0     5180 S        0   0:00 -bash`` ``5128  5180  5180  5128 pts/0     5180 S        0   0:50 top`` ``3672 18095 18094  3672 pts/2    18094 S        0   0:00 grep 5128`
+</code></pre>
+
+<p>关闭第一个SSH窗口，在另一个窗口中可以看到top也被杀掉了。</p>
+
+<pre><code>`[root@tivf09 root]# ps -ef|grep 5128``root     18699  3672  0 04:35 pts/2    00:00:00 grep 5128`
+</code></pre>
+
+<p>如果我们可以忽略SIGHUP信号，关掉窗口应该就不会影响程序的运行了。nohup命令可以达到这个目的，如果程序的标准输出/标准错误是终端，nohup默认将其重定向到nohup.out文件。值得注意的是nohup命令只是使得程序忽略SIGHUP信号，还需要使用标记<strong>&amp;</strong>把它放在后台运行。</p>
+
+<pre><code>`nohup &lt;``command``&gt; [argument…] &amp;`
+</code></pre>
+
+<p>虽然nohup很容易使用，但还是比较“简陋”的，对于简单的命令能够应付过来，对于复杂的需要人机交互的任务就麻烦了。</p>
+
+<p>其实我们可以使用一个更为强大的实用程序screen。流行的Linux发行版（例如Red Hat Enterprise Linux 4）通常会自带screen实用程序，如果没有的话，可以从GNU screen的官方网站下载。</p>
+
+<pre><code>`[root@tivf06 ~]# rpm -qa|grep screen``xscreensaver-4.18-5.rhel4.11``screen-4.0.2-5`
+</code></pre>
+
+<p>==screen是什么？==</p>
+
+<p>​   screen是linux下的一种多重视窗管理程序。在使用telnet或SSH远程登录linux时，如果连接非正常中断，重新连接时，系统将开一个新的session，无法恢复原来的session.screen命令可以解决这个问题。</p>
+
+<p>作用：</p>
+
+<p>​   使用telnet或SSH远程登录linux时，如果连接非正常中断，重新连接时，系统将开一个新的session，无法恢复原来的session.screen命令可以解决这个问题。Screen工具是一个终端多路转接器，在本质上，这意味着你能够使用一个单一的终端窗口运行多终端的应用。</p>
+
+<p>来自：<a href="https://www.ibm.com/developerworks/cn/linux/l-cn-screen/" rel="nofollow noreferrer" target="_blank">https://www.ibm.com/developerworks/cn/linux/l-cn-screen/</a></p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2016/%E6%8C%82%E8%B5%B7%E6%88%91%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8screen/>/2016/%E6%8C%82%E8%B5%B7%E6%88%91%E7%9A%84%E6%9C%8D%E5%8A%A1%E5%99%A8screen/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2016/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" class="prev" rel="prev" title="排序算法"><i class="iconfont icon-left"></i>&nbsp;排序算法</a>
+         
+        
+        <a href="/2016/docker%E7%89%B9%E7%82%B9/" class="next" rel="next" title="Docker特点">Docker特点&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

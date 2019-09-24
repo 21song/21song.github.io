@@ -1,0 +1,461 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Python on 宋军亮的技术博客</title>
+    <link>/categories/python/</link>
+    <description>Recent content in Python on 宋军亮的技术博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 23 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/python/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>pywin32控制你的打印机</title>
+      <link>/2019/%E9%87%87%E7%94%A8pywin32%E6%8E%A7%E5%88%B6%E4%BD%A0%E7%9A%84%E6%89%93%E5%8D%B0%E6%9C%BA/</link>
+      <pubDate>Mon, 23 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/%E9%87%87%E7%94%A8pywin32%E6%8E%A7%E5%88%B6%E4%BD%A0%E7%9A%84%E6%89%93%E5%8D%B0%E6%9C%BA/</guid>
+      <description>pywin23控制打印机</description>
+    </item>
+    
+    <item>
+      <title>多线程cpu/gil</title>
+      <link>/2019/%E5%A4%9A%E7%BA%BF%E7%A8%8Bcpu%E4%B8%8Egil/</link>
+      <pubDate>Fri, 02 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/%E5%A4%9A%E7%BA%BF%E7%A8%8Bcpu%E4%B8%8Egil/</guid>
+      <description>多线程与CPU： 1.单核CPU CPU密集型的程序（做计算操作的程序） 单线程即可（ 此时的任务已经把CPU资源100%消耗了，就没必要也不可能使用多线程来提高计算效率） 2.单核CPU IO密集型的程序（做IO操作的程序 ） 多线程&amp;gt;单线程（多线程可以阻塞，但并不是并行，是“伪并行”，实际上还是一个CPU在执行一切事物，只是切换的太快，没法察觉） 3.多核CPU 做计算操作的程序 多线程&amp;gt;&amp;gt;单线程 （每个核心执行一个线程，每个核心的线程并发执行计算，以提高任务执行效率，例如加密解密，数据压缩解压缩（视频、音频、普通数据），否则只能使一个核心满载，而其他核心闲置。）
+4.多核CPU IO密集型任务 多线程&amp;gt;单线程
+但是在PYTHON里：
+由于GIL的机制就变得不完全一样了：单核CPU CPU密集型程序 单线程耗时&amp;lt;多线程。多核CPU CPU密集型程序 单线程耗时&amp;lt;多线程，也就是说只要是CPU密集型程序 不要只单独的使用多线程。
+一、先说为什么会有GIL ，GIL是干什么的：
+多线程之间数据完整性和状态同步的最简单方法自然就是加锁，于是python解释器有了GIL这把超级大锁，就默认python内部对象是thread-safe的，无需在实现时考虑额外的内存锁和同步操作。
+也就是说 如果不释放这把锁，线程都是串行的。
+但PYTHON的多线程并不是一无是处
+二、GIL锁的释放机制：
+先解释什么是IO密集型和计算密集型：
+计算密集型任务的特点是要进行大量的计算，消耗CPU资源，比如计算圆周率、对视频进行高清解码等等，全靠CPU的运算能力。这种计算密集型任务虽然也可以用多任务完成，但是任务越多，花在任务切换的时间就越多，CPU执行任务的效率就越低，所以，要最高效地利用CPU，计算密集型任务同时进行的数量应当等于CPU的核心数。
+计算密集型任务由于主要消耗CPU资源，因此，代码运行效率至关重要。Python这样的脚本语言运行效率很低，完全不适合计算密集型任务。对于计算密集型任务，最好用C语言编写。
+第二种任务的类型是IO密集型，涉及到网络、磁盘IO的任务都是IO密集型任务，这类任务的特点是CPU消耗很少，任务的大部分时间都在等待IO操作完成（因为IO的速度远远低于CPU和内存的速度）。对于IO密集型任务，任务越多，CPU效率越高，但也有一个限度。常见的大部分任务都是IO密集型任务，比如Web应用。
+IO密集型任务执行期间，99%的时间都花在IO上，花在CPU上的时间很少，因此，用运行速度极快的C语言替换用Python这样运行速度极低的脚本语言，完全无法提升运行效率。对于IO密集型任务，最合适的语言就是开发效率最高（代码量最少）的语言，脚本语言是首选，C语言最差。
+GIL对于IO密集型和计算密集型：
+IO密集型（网络传输、磁盘读写等）： 线程遇到I/O阻塞时，会自动释放GIL。（阻塞等待时，就释放GIL，给另一个线程执行的机会）
+cpu密集型（编解码，解压缩等）： 解释器会周期性的让线程释放锁
+由上面可知，至少有两种情况python会做线程切换，一是一但有IO操作时，会有线程切换，二是当一个线程连续执行了一定数量的指令时，会出现线程切换。
+再加上每次操作系统执行线程的调度都需要消耗时间，这样，就可以理解为什么在多核+cpu密集型程序时不要单独的使用多线程，会比单线程更耗时。
+即使是多核CPU，如果没有GIL 不同核的CPU执行不同的线程，但是有了GIL这把锁，某个核心上的CPU即使被唤醒也没有获得GIL锁，无法执行。
+在不使用别的库的情况下，python多线程最好只用于IO密集型的操作.</description>
+    </item>
+    
+    <item>
+      <title>python面试题收藏</title>
+      <link>/2019/python%E9%9D%A2%E8%AF%95%E9%A2%98/</link>
+      <pubDate>Fri, 28 Jun 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/python%E9%9D%A2%E8%AF%95%E9%A2%98/</guid>
+      <description>git上的面试题 https://github.com/kenwoodjw/python_interview_question https://github.com/taizilongxu/interview_python
+一些简单的Python测试题 http://www.wklken.me/posts/2015/08/26/python-some-test-questions.html https://baijiahao.baidu.com/s?id=1607651363840614527&amp;amp;wfr=spider&amp;amp;for=pc
+面试Python后端的技巧 https://blog.csdn.net/yueguanghaidao/article/details/49638261
+一个python面试经历 https://mp.weixin.qq.com/s?__biz=MzU0ODczMTEwOQ==&amp;amp;mid=2247486666&amp;amp;idx=1&amp;amp;sn=709653e9cb60ca65ea6636bf7cdd8381&amp;amp;source=41#wechat_redirect</description>
+    </item>
+    
+    <item>
+      <title>Django增删改查（CUSD）</title>
+      <link>/2017/djangomysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A5%E5%BF%97/</link>
+      <pubDate>Fri, 17 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/djangomysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A5%E5%BF%97/</guid>
+      <description>查看mysql数据库日志可以查看对数据库的操作记录。 mysql日志文件默认没有产生，需要做如下配置：
+sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf  把68，69行前面的#去除，然后保存并使用如下命令重启mysql服务。
+sudo service mysql restart  使用如下命令打开mysql日志文件。
+tail -f /var/log/mysql/mysql.log # 可以实时查看数据库的日志内容 # 如提示需要sudo权限，执行 # sudo tail -f /var/log/mysql/mysql.log  </description>
+    </item>
+    
+    <item>
+      <title>Django的定义模型类</title>
+      <link>/2017/django%E7%9A%84%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E7%B1%BB/</link>
+      <pubDate>Thu, 09 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%9A%84%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E7%B1%BB/</guid>
+      <description>模型类被定义在&amp;rdquo;应用/models.py&amp;rdquo;文件中。 模型类必须继承自Model类，位于包django.db.models中。  接下来首先以&amp;rdquo;图书-人物&amp;rdquo;管理为例进行演示。
+1 定义 在models.py 文件中定义模型类。
+from django.db import models # Create your models here. # 准备书籍列表信息的模型类 class BookInfo(models.Model): # 创建字段，字段类型... name = models.CharField(max_length=20, verbose_name=&#39;名称&#39;) pub_date = models.DateField(verbose_name=&#39;发布日期&#39;,null=True) readcount = models.IntegerField(default=0, verbose_name=&#39;阅读量&#39;) commentcount = models.IntegerField(default=0, verbose_name=&#39;评论量&#39;) is_delete = models.BooleanField(default=False, verbose_name=&#39;逻辑删除&#39;) class Meta: db_table = &#39;bookinfo&#39; # 指明数据库表名 verbose_name = &#39;图书&#39; # 在admin站点中显示的名称 def __str__(self): &amp;quot;&amp;quot;&amp;quot;定义每个数据对象的显示信息&amp;quot;&amp;quot;&amp;quot; return self.name # 准备人物列表信息的模型类 class PeopleInfo(models.Model): GENDER_CHOICES = ( (0, &#39;male&#39;), (1, &#39;female&#39;) ) name = models.</description>
+    </item>
+    
+    <item>
+      <title>Django项目是如何开始的</title>
+      <link>/2017/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B/</link>
+      <pubDate>Sun, 29 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B/</guid>
+      <description>1.创建项目
+ django-admin startproject bookmanager   2.创建应用  python manager.py startapp book  3.更换python解释器：按需选择
+  # 进入指定虚拟环境 which python # python2 /home/python/.virtualenvs/py_django/bin/python # python3 /home/python/.virtualenvs/py3_django/bin/python   4.安装应用  INSTALLED_APPS = [ &#39;django.contrib.admin&#39;, &#39;django.contrib.auth&#39;, &#39;django.contrib.contenttypes&#39;, &#39;django.contrib.sessions&#39;, &#39;django.contrib.messages&#39;, &#39;django.contrib.staticfiles&#39;, #添加子应用 &#39;book.apps.BookConfig&#39; ]   5.本地化  #设置中文 LANGUAGE_CODE = &#39;zh-Hans&#39; #亚洲上海时区 TIME_ZONE = &#39;Asia/Shanghai&#39;   6.模板路径
+ 在应用同级目录下,创建templates模板文件夹  TEMPLATES = [ { &#39;BACKEND&#39;: &#39;django.template.backends.django.DjangoTemplates&#39;, &#39;DIRS&#39;: [os.path.join(BASE_DIR,&#39;templates&#39;)], &#39;APP_DIRS&#39;: True, &#39;OPTIONS&#39;: { &#39;context_processors&#39;: [ &#39;django.</description>
+    </item>
+    
+    <item>
+      <title>DjangoApp应用配置</title>
+      <link>/2017/djangoapp%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Sat, 21 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/djangoapp%E5%BA%94%E7%94%A8/</guid>
+      <description>在每个应用目录中都包含了apps.py文件，用于保存该应用的相关信息。
+在创建应用时，Django会向apps.py文件中写入一个该应用的配置类，如
+from django.apps import AppConfig class BookConfig(AppConfig): name = &#39;book&#39;  我们将此类添加到工程settings.py中的INSTALLED_APPS列表中，表明注册安装具备此配置属性的应用。
+ AppConfig.name属性表示这个配置类是加载到哪个应用的，每个配置类必须包含此属性，默认自动生成。
+ AppConfig.verbose_name属性用于设置该应用的直观可读的名字，此名字在Django提供的Admin管理站点中会显示，如
+  from django.apps import AppConfig class UsersConfig(AppConfig): name = &#39;book&#39; verbose_name = &#39;图书管理&#39;  </description>
+    </item>
+    
+    <item>
+      <title>Django视图和url</title>
+      <link>/2017/django%E7%9A%84%E8%A7%86%E5%9B%BE%E5%92%8Curl/</link>
+      <pubDate>Fri, 13 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%9A%84%E8%A7%86%E5%9B%BE%E5%92%8Curl/</guid>
+      <description>1. 定义视图  视图就是一个Python函数，被定义在应用的views.py中.
+ 视图的第一个参数是HttpRequest类型的对象reqeust，包含了所有请求信息.
+ 视图必须返回HttpResponse对象，包含返回给请求者的响应信息.
+ 需要导入HttpResponse模块 :from django.http import HttpResponse
+ 定义视图函数 : 响应字符串OK!给客户端
+   思考 : 如何才能让请求找到视图?
+ 2. 配置URLconf  查找视图的过程 :
+ 1.请求者在浏览器地址栏中输入URL, 请求到网站.
+ 2.网站获取URL信息.
+ 3.然后与编写好的URLconf逐条匹配.
+ 4.如果匹配成功则调用对应的视图.
+ 5.如果所有的URLconf都没有匹配成功.则返回404错误.
+   URLconf入口
+   需要两步完成URLconf配置
+ 1.在项目中定义URLconf 2.在应用中定义URLconf  在项目中定义URLconf
+   在应用中定义URLconf
+ 提示：一条URLconf包括URL规则、视图两部分
+ URL规则使用正则表达式定义.
+ 视图就是在views.py中定义的视图函数.
+   url匹配过程
+    3.</description>
+    </item>
+    
+    <item>
+      <title>Django站点管理</title>
+      <link>/2017/django%E7%AB%99%E7%82%B9%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Tue, 26 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%AB%99%E7%82%B9%E7%AE%A1%E7%90%86/</guid>
+      <description>站点: 分为内容发布和公共访问两部分
+ 内容发布的部分由网站的管理员负责查看、添加、修改、删除数据
+ Django能够根据定义的模型类自动地生成管理模块
+ 使用
+  Django  的管理模块, 需要按照如下步骤操作 :
+ 1.管理界面本地化 2.创建管理员 3.注册模型类 4.发布内容到数据库  1.管理界面本地化  本地化是将显示的语言、时间等使用本地的习惯，这里的本地化就是进行中国化.
+ 中国大陆地区使用简体中文, 时区使用亚洲/上海时区, 注意这里不使用北京时区.
+  2.创建管理员  创建管理员的命令 :  python manage.py createsuperuser   按提示输入用户名、邮箱、密码
+ 重置密码
+ python manager.py changepassword 用户名   登陆站点 :http://127.0.0.1:8000/admin
+ 需要服务器是启动状态
+ 登陆站点成功
+ 站点界面中没有书籍和人物管理入口,因为没有注册模型类
+  3.注册模型类  在应用的admin.py文件中注册模型类
+ 需要导入模型模块 :from book.models import BookInfo,PeopleInfo</description>
+    </item>
+    
+    <item>
+      <title>Django创建项目</title>
+      <link>/2017/django%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/</link>
+      <pubDate>Mon, 18 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/</guid>
+      <description> 创建Django项目 ```python
+ django-admin startproject name
+- **创建子应用** ```python - python manager.py startapp name    </description>
+    </item>
+    
+    <item>
+      <title>Django简介</title>
+      <link>/2017/django%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Sun, 10 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%AE%80%E4%BB%8B/</guid>
+      <description>1. 简介 Django，发音为[`dʒæŋɡəʊ]，是用python语言写的开源web开发框架，并遵循MVC设计。劳伦斯出版集团为了开发以新闻内容为主的网站，而开发出来了这个框架，于2005年7月在BSD许可证下发布。这个名称来源于比利时的爵士音乐家DjangoReinhardt，他是一个吉普赛人，主要以演奏吉它为主，还演奏过小提琴等。由于Django在近年来的迅速发展，应用越来越广泛，被著名IT开发杂志SDTimes评选为2013SDTimes100，位列&amp;rdquo;API、库和框架&amp;rdquo;分类第6位，被认为是该领域的佼佼者。
+Django的主要目的是简便、快速的开发数据库驱动的网站。它强调代码复用，多个组件可以很方便的以&amp;rdquo;插件&amp;rdquo;形式服务于整个框架，Django有许多功能强大的第三方插件，你甚至可以很方便的开发出自己的工具包。这使得Django具有很强的可扩展性。它还强调快速开发和DRY(DoNotRepeatYourself)原则。
+2. 特点 1） 重量级框架 对比Flask框架，Django原生提供了众多的功能组件，让开发更简便快速。
+ 提供项目工程管理的自动化脚本工具 数据库ORM支持（对象关系映射，英语：Object Relational Mapping） 模板 表单 Admin管理站点 文件管理 认证权限 session机制 缓存  2）MVT模式 有一种程序设计模式叫MVC，其核心思想是分工、解耦，让不同的代码块之间降低耦合，增强代码的可扩展性和可移植性，实现向后兼容。
+ MVC的全拼为Model-View-Controller，最早由TrygveReenskaug在1978年提出，是施乐帕罗奥多研究中心(Xerox PARC)在20世纪80年代为程序语言Smalltalk发明的一种软件设计模式，是为了将传统的输入（input）、处理（processing）、输出（output）任务运用到图形化用户交互模型中而设计的。随着标准输入输出设备的出现，开发人员只需要将精力集中在业务逻辑的分析与实现上。后来被推荐为Oracle旗下Sun公司Java EE平台的设计模式，并且受到越来越多的使用ColdFusion和PHP的开发者的欢迎。现在虽然不再使用原来的分工方式，但是这种分工的思想被沿用下来，广泛应用于软件工程中，是一种典型并且应用广泛的软件架构模式。后来，MVC的思想被应用在了Ｗeb开发方面，被称为Ｗeb MVC框架。
+ MVC模式说明  M全拼为Model，主要封装对数据库层的访问，对数据库中的数据进行增、删、改、查操作。 V全拼为View，用于封装结果，生成页面展示的html内容。 C全拼为Controller，用于接收请求，处理业务逻辑，与Model和View交互，返回结果。  Django的MVT  M全拼为Model，与MVC中的M功能相同，负责和数据库交互，进行数据处理。 V全拼为View，与MVC中的C功能相同，接收请求，进行业务处理，返回应答。 T全拼为Template，与MVC中的V功能相同，负责封装构造要返回的html。  注：差异就在于黑线黑箭头标识出来的部分</description>
+    </item>
+    
+    <item>
+      <title>Flask wtform 组件</title>
+      <link>/2017/flask%E7%9A%84wtform%E7%BB%84%E4%BB%B6/</link>
+      <pubDate>Fri, 25 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84wtform%E7%BB%84%E4%BB%B6/</guid>
+      <description>WTForms是一个支持多个web框架的form组件，用于简化form表单的定义和一些操作
+安装
+pip3 install wtforms pip install flask-wtf  字段类型 说　明 StringField 文本字段 TextAreaField 多行文本字段 PasswordField 密码文本字段 HiddenField 隐藏文本字段 DateField 文本字段，值为 datetime.date 格式 DateTimeField 文本字段，值为 datetime.datetime 格式 IntegerField 文本字段，值为整数 DecimalField 文本字段，值为 decimal.Decimal FloatField 文本字段，值为浮点数 BooleanField 复选框，值为 True 和 False RadioField 一组单选框 SelectField 下拉列表 SelectMultipleField 下拉列表，可选择多个值 FileField 文件上传字段 SubmitField 表单提交按钮 FormField 把表单作为字段嵌入另一个表单 FieldList 一组指定类型的字段  验证函数 说　明
+Email 验证电子邮件地址 EqualTo 比较两个字段的值；常用于要求输入两次密码进行确认的情况 IPAddress 验证 IPv4 网络地址 Length 验证输入字符串的长度 NumberRange 验证输入的值在数字范围内 Optional 无输入值时跳过其他验证函数 Required 确保字段中有数据 Regexp 使用正则表达式验证输入值 URL 验证 URL AnyOf 确保输入值在可选值列表中 NoneOf 确保输入值不在可选值列表中  </description>
+    </item>
+    
+    <item>
+      <title>Flask的csrf</title>
+      <link>/2017/flask%E7%9A%84csrf/</link>
+      <pubDate>Mon, 14 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84csrf/</guid>
+      <description>CSRF：从一个网站A中发起一个到网站B的请求，而这个请求是经过了伪装的，伪装操作达到的目的就是让请求看起来像是从网站B中发起的，也就是说，让B网站所在的服务器端误以为该请求是从自己网站发起的，而不是从A网站发起的。当然，请求一般都是恶意的。
+一、什么是CSRF？
+CSRF是Cross Site Request Forgery的缩写，翻译过来就是跨站请求伪造。那么什么是跨站请求伪造呢？让我一个词一个词的解释：
+1、跨站：顾名思义，就是从一个网站到另一个网站。
+2、请求：即HTTP请求。
+3、伪造：在这里可以理解为仿造、伪装。
+综合起来的意思就是：从一个网站A中发起一个到网站B的请求，而这个请求是经过了伪装的，伪装操作达到的目的就是让请求看起来像是从网站B中发起的，也就是说，让B网站所在的服务器端误以为该请求是从自己网站发起的，而不是从A网站发起的。当然，请求一般都是恶意的。
+看到这里，你可能会问：为什么要伪装成从B网站发起的呢？从网站A直接向B网站服务器发起请求不可以吗？
+要回答这个问题，就需要我们对Cookie机制有一定的认识。关于Cookie机制我会单独写一篇文章，这里不做详细介绍。这里你只需要知道：之所以要伪装成从B网站发起的，是因为Cookie是不能跨域发送的。结合上面这个例子来说就是：如果从A网站直接发送请求到B网站服务器的话，是无法将B网站中产生的Cookie一起发给B服务器的。
+可能你还会问，为什么非要发送Cookie呢？这是因为服务器在用户登录后会将用户的一些信息放到Cookie中返回给客户端，然后客户端在请求一些需要认证的资源的时候会把Cookie一起发给服务器，服务器通过读取Cookie中的信息来进行用户认证，认证通过后才会做出正确的响应。
+A网站访问B网站服务器的一些需要认证的资源的时候，如果没有Cookie信息，服务器是拒绝访问的，那么A网站就无法进行恶意操作。而伪造成B网站的请求，就可以将B网站的Cookie一起发到B服务器，这个时候就服务器就认为该请求是合法的，就会给出正确的响应，这个时候，A网站就达到目的了。
+简单一句话就是：攻击者盗用了你的身份，以你的名义发送恶意请求。
+那么，A网站通过CSRF能够做那些操作呢？
+二、CSRF能够做什么呢？
+CSRF能够做的事情包括：以你名义发送邮件，发消息，盗取你的账号，甚至于购买商品，虚拟货币转账……造成的问题包括：个人隐私泄露以及财产安全。等等等等。</description>
+    </item>
+    
+    <item>
+      <title>Flask的闪现</title>
+      <link>/2017/flask%E7%9A%84%E9%97%AA%E7%8E%B0/</link>
+      <pubDate>Wed, 02 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84%E9%97%AA%E7%8E%B0/</guid>
+      <description>Flash中的消息闪现，在官方的解释是用来给用户做出反馈。不过实际上这个功能只是一个记录消息的方法，在某一个请求中记录消息，在下一个请求中获取消息，然后做相应的处理，也就是说flask只存在于两个相邻的请求中“闪现”，第三次请求就不存在这个flash了。
+通常情况下配合模板系统进行调用，可以实现一种伪”ajax”请求的效果
+基于 flash 模块
+from flask import flash
+模板输出flash
+```
+{# 将flash消息闪现和后台联系起来 #}
+​ {# 将消息闪现里面的所有消息遍历，取出需要返回给用户的信息 #}
+​ {% for message in get_flashed_messages() %}
+​ {{ message }}
+​ {% endfor %}</description>
+    </item>
+    
+    <item>
+      <title>Jinja2模板简介与使用</title>
+      <link>/2017/jinja2%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Sat, 15 Jul 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/jinja2%E7%AE%80%E4%BB%8B/</guid>
+      <description>Jinja2模板引擎简介(template)
+模板
+视图函数的主要作用是生成请求的响应，这是最简单的请求。实际上，视图函数有两个作用：处理业务逻辑和返回响应内容。在大型应用中，把业务逻辑和表现内容放在一起，会增加代码的复杂度和维护成本。本节学到的模板，它的作用即是承担视图函数的另一个作用，即返回响应内容。
+模板其实是一个包含响应文本的文件，其中用占位符(变量)表示动态部分，告诉模板引擎其具体的值需要从使用的数据中获取
+使用真实值替换变量，再返回最终得到的字符串，这个过程称为“渲染”
+Flask是使用 Jinja2 这个模板引擎来渲染模板
+使用模板的好处：
+视图函数只负责业务逻辑和数据处理(业务逻辑方面)
+而模板则取到视图函数的数据结果进行展示(视图展示方面)
+代码结构清晰，耦合度低
+Jinja2
+两个概念：
+Jinja2：是 Python 下一个被广泛应用的模板引擎，是由Python实现的模板语言，他的设计思想来源于 Django 的模板引擎，并扩展了其语法和一系列强大的功能，其是Flask内置的模板语言。
+模板语言：是一种被设计来自动生成文档的简单文本格式，在模板语言中，一般都会把一些变量传给模板，替换模板的特定位置上预先定义好的占位变量名。
+官方文档
+渲染模版函数
+Flask提供的 render_template 函数封装了该模板引擎
+render_template 函数的第一个参数是模板的文件名，后面的参数都是键值对，表示模板中变量对应的真实值。
+1
+2
+使用
+​ {{}} 来表示变量名，这种 {{}} 语法叫做变量代码块
+{{ post.title }} Jinja2 模版中的变量代码块可以是任意 Python 类型或者对象，只要它能够被 Python 的 str() 方法转换为一个字符串就可以，比如，可以通过下面的方式显示一个字典或者列表中的某个元素:
+{{your_dict[&#39;key&#39;]}} {{your_list[0]}} 用 {%%} 定义的控制代码块，可以实现一些语言层次的功能，比如循环或者if语句 {% if user %} ​ {{ user }} {% else %} ​ hello! &amp;lt;ul&amp;gt; ​ {% for index in indexs %} ​ &amp;lt;li&amp;gt; {{ index }} &amp;lt;/li&amp;gt; ​ {% endfor %} &amp;lt;/ul&amp;gt;  注释</description>
+    </item>
+    
+    <item>
+      <title>Flask的flask_script</title>
+      <link>/2017/flask%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/</link>
+      <pubDate>Fri, 30 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/</guid>
+      <description>flask_script
+1、安装：进入到虚拟环境中，pip install flask_script
+2、flask_script 作用：可以通过命令行的形式来操作Flask，例如通过命令跑一个开发版本的服务器、设置数据库、定时任务等</description>
+    </item>
+    
+    <item>
+      <title>Flask的request</title>
+      <link>/2017/flask%E7%9A%84request/</link>
+      <pubDate>Thu, 22 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84request/</guid>
+      <description>flask的request模块的属性
+1、method：请求的方法（get或者post）
+2、form：返回form的内容
+3、args和values：args返回请求中的参数，values返回请求中的参数和form
+4、cookies：cookies信息
+5、headers：请求headers信息，返回的结果是个list
+6、date、files：date是请求的数据，files随请求上传的文件</description>
+    </item>
+    
+    <item>
+      <title>Flask上下文</title>
+      <link>/2017/flask%E4%B8%8A%E4%B8%8B%E6%96%87/</link>
+      <pubDate>Sat, 10 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E4%B8%8A%E4%B8%8B%E6%96%87/</guid>
+      <description>上下文：相当于一个容器，保存了 Flask 程序运行过程中的一些信息。
+Flask中有两种上下文，请求上下文和应用上下文
+请求上下文(request context)
+在 flask 中，可以直接在视图函数中使用 request 这个对象进行获取相关数据，而 request 就是请求上下文的对象，保存了当前本次请求的相关数据，请求上下文对象有：request、session
+request
+封装了HTTP请求的内容，针对的是http请求。举例：user = request.args.get(&amp;lsquo;user&amp;rsquo;)，获取的是get请求的参数。
+session
+用来记录请求会话中的信息，针对的是用户信息。举例：session[&amp;lsquo;name&amp;rsquo;] = user.id，可以记录用户信息。还可以通过session.get(&amp;lsquo;name&amp;rsquo;)获取用户信息。
+应用上下文(application context)
+它的字面意思是 应用上下文，但它不是一直存在的，它只是request context 中的一个对 app 的代理(人)，所谓local proxy。它的作用主要是帮助 request 获取当前的应用，它是伴 request 而生，随 request 而灭的。
+应用上下文对象有：current_app，g
+current_app
+应用程序上下文,用于存储应用程序中的变量，可以通过current_app.name打印当前app的名称，也可以在current_app中存储一些变量，例如：
+应用的启动脚本是哪个文件，启动时指定了哪些参数
+加载了哪些配置文件，导入了哪些配置
+连了哪个数据库
+有哪些public的工具类、常量
+应用跑再哪个机器上，IP多少，内存多大
+current_app.name
+current_app.test_value=&amp;lsquo;value&amp;rsquo;
+g变量
+g 作为 flask 程序全局的一个临时变量,充当者中间媒介的作用,我们可以通过它传递一些数据，g 保存的是当前请求的全局变量，不同的请求会有不同的全局变量，通过不同的thread id区别
+g.name=&amp;lsquo;abc&amp;rsquo;
+注意：不同的请求，会有不同的全局变量
+两者区别：
+请求上下文：保存了客户端和服务器交互的数据
+应用上下文：flask 应用程序运行过程中，保存的一些配置信息，比如程序名、数据库连接、应用信息等</description>
+    </item>
+    
+    <item>
+      <title>Flask的cookie与session</title>
+      <link>/2017/flask%E7%9A%84cookie%E4%B8%8Esession/</link>
+      <pubDate>Mon, 29 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%9A%84cookie%E4%B8%8Esession/</guid>
+      <description>Cookie
+Cookie：指某些网站为了辨别用户身份、进行会话跟踪而储存在用户本地的数据（通常经过加密）。
+复数形式Cookies。
+Cookie最早是网景公司的前雇员Lou Montulli在1993年3月的发明。
+Cookie是由服务器端生成，发送给客户端浏览器，浏览器会将Cookie的key/value保存，下次请求同一网站时就发送该Cookie给服务器（前提是浏览器设置为启用cookie）。
+Cookie的key/value可以由服务器端自己定义。
+应用：
+最典型的应用是判定注册用户是否已经登录网站，用户可能会得到提示，是否在下一次进入此网站时保留用户信息以便简化登录手续，这些都是Cookie的功用。
+网站的广告推送，经常遇到访问某个网站时，会弹出小窗口，展示我们曾经在购物网站上看过的商品信息。
+购物车，用户可能会在一段时间内在同一家网站的不同页面中选择不同的商品，这些信息都会写入Cookie，以便在最后付款时提取信息。
+提示：
+Cookie是存储在浏览器中的一段纯文本信息，建议不要存储敏感信息如密码，因为电脑上的浏览器可能被其它人使用
+Cookie基于域名安全，不同域名的Cookie是不能互相访问的
+如访问itcast.cn时向浏览器中写了Cookie信息，使用同一浏览器访问baidu.com时，无法访问到itcast.cn写的Cookie信息
+浏览器的同源策略
+当浏览器请求某网站时，会将本网站下所有Cookie信息提交给服务器，所以在request中可以读取Cookie信息
+设置cookie
+from flask imoprt Flask,make_response
+@app.route(&amp;lsquo;/cookie&amp;rsquo;)
+def set_cookie():
+​ resp = make_response(&amp;lsquo;this is to set cookie&amp;rsquo;)
+​ resp.set_cookie(&amp;lsquo;username&amp;rsquo;, &amp;lsquo;itcast&amp;rsquo;)
+​ return resp
+设置过期时间
+@app.route(&amp;lsquo;/cookie&amp;rsquo;)
+def set_cookie():
+​ response = make_response(&amp;lsquo;hello world&amp;rsquo;)
+​ response.set_cookie(&amp;lsquo;username&amp;rsquo;, &amp;lsquo;itheima&amp;rsquo;, max_age=3600)
+​ return response
+获取cookie
+from flask import Flask,request
+#获取cookie
+@app.route(&amp;lsquo;/request&amp;rsquo;)
+def resp_cookie():
+​ resp = request.cookies.get(&amp;lsquo;username&amp;rsquo;)
+return resp</description>
+    </item>
+    
+    <item>
+      <title>Flask两大核心</title>
+      <link>/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/</link>
+      <pubDate>Sat, 13 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/</guid>
+      <description>Flask有两大核心：Werkzeug和Jinja2
+- Werkzeug实现路由、调试和Web服务器网关接口
+- Jinja2实现了模板。
+Werkzeug是一个遵循WSGI协议的python函数库
+- 其内部实现了很多Web框架底层的东西，比如request和response对象；
+- 与WSGI规范的兼容；支持Unicode；
+- 支持基本的会话管理和签名Cookie；
+- 集成URL请求路由等。
+Werkzeug库的 routing 模块负责实现 URL 解析。不同的 URL 对应不同的视图函数，routing模块会对请求信息的URL进行解析，匹配到URL对应的视图函数，执行该函数以此生成一个响应信息。
+routing模块内部有：
+Rule类
+用来构造不同的URL模式的对象，路由URL规则
+Map类
+存储所有的URL规则和一些配置参数
+BaseConverter的子类
+负责定义匹配规则
+MapAdapter类
+负责协调Rule做具体的匹配的工作
+简而言之 Werkzeug实现了路由功能 Jinja2实现了模板功能</description>
+    </item>
+    
+    <item>
+      <title>Flask简述与安装</title>
+      <link>/2017/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85/</link>
+      <pubDate>Tue, 02 May 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85/</guid>
+      <description>Flask
+Flask诞生于2010年，是Armin ronacher（人名）用 Python 语言基于 Werkzeug 工具箱编写的轻量级Web开发框架。
+Flask 本身相当于一个内核，其他几乎所有的功能都要用到扩展（邮件扩展Flask-Mail，用户认证Flask-Login，数据库Flask-SQLAlchemy），都需要用第三方的扩展来实现。比如可以用 Flask 扩展加入ORM、窗体验证工具，文件上传、身份验证等。Flask 没有默认使用的数据库，你可以选择 MySQL，也可以用 NoSQL。
+其 WSGI 工具箱采用 Werkzeug（路由模块），模板引擎则使用 Jinja2。这两个也是 Flask 框架的核心。
+Flask 是python三大web框架之一，比之其他两大框架django和tornado而言，它更加的轻量化，开发效率更高，是入门web框架的首选。
+同类的python框架还有 bottle web.py 等
+Flask常用扩展包：
+Flask-SQLalchemy：操作数据库；
+Flask-script：插入脚本；
+Flask-migrate：管理迁移数据库；
+Flask-Session：Session存储方式指定；
+Flask-WTF：表单；
+Flask-Mail：邮件；
+Flask-Bable：提供国际化和本地化支持，翻译；
+Flask-Login：认证用户状态；
+Flask-OpenID：认证；
+Flask-RESTful：开发REST API的工具；
+Flask-Bootstrap：集成前端Twitter Bootstrap框架；
+Flask-Moment：本地化日期和时间；
+Flask-Admin：简单而可扩展的管理接口的框架
+安装flask
+pip install Flask
+列出pip已经安装好的模块
+pip freeze
+三种导入配置文件的方式：
+配置对象，里面定义需要给 APP 添加的一系列配置 class Config(object):
+DEBUG = True
+从配置对象中加载配置 app.config.from_object(Config)
+从配置文件中加载配置 app.config.from_pyfile(&amp;lsquo;config.ini&amp;rsquo;)
+#由环境变量里面来加载配置
+app.config.from_envvar(&amp;lsquo;app_config&amp;rsquo;)
+路由配置，指定methods方法，返回json数据
+@app.route(&amp;lsquo;/demo4&amp;rsquo;,methods=[&amp;lsquo;GET&amp;rsquo;, &amp;lsquo;POST&amp;rsquo;])
+def demo4():</description>
+    </item>
+    
+    <item>
+      <title>pywin32控制你的打印机</title>
+      <link>/1/pywin32%E6%8E%A7%E5%88%B6%E4%BD%A0%E7%9A%84%E6%89%93%E5%8D%B0%E6%9C%BA/</link>
+      <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
+      
+      <guid>/1/pywin32%E6%8E%A7%E5%88%B6%E4%BD%A0%E7%9A%84%E6%89%93%E5%8D%B0%E6%9C%BA/</guid>
+      <description>pywin32控制你的打印机
+` def printer(name,phone,place): import win32ui import win32gui import win32print import win32con print_name =win32print.GetDefaultPrinter() # test 获取默认打印机 pHandle = win32print.OpenPrinter(win32print.GetDefaultPrinter()) printinfo = win32print.GetPrinter(pHandle,2) pDevModeObj = printinfo[&amp;quot;pDevMode&amp;quot;] pDevModeObj.Scale=10 # pDevModeObj.Orientation=win32con.DMORIENT_LANDSCAPE # 文本横向 print(pDevModeObj.Scale) DC=win32gui.CreateDC(&#39;WINSPOOL&#39;,print_name,pDevModeObj) hDC=win32ui.CreateDCFromHandle(DC) hDC.StartDoc(&amp;quot;Test doc&amp;quot;) hDC.StartPage() # hDC.SetMapMode(win32con.MM_TWIPS*50) hDC.TextOut(20,10,&amp;quot;我是要打印的内容&amp;quot;) #draws text within a box (assume about 1400 dots per inch for typical HP printer) ulc_x = 100 # give a left margin ulc_y = -100 # give a top margin lrc_x = 160 # width of text area-margin, close to right edge of page lrc_y = -110 # height of text area-margin, close to bottom of the page hDC.</description>
+    </item>
+    
+  </channel>
+</rss>

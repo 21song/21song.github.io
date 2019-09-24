@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/flask%E7%9A%84csrf/" />
+  <link rel="next" href="/2017/flask%E7%9A%84wtform%E7%BB%84%E4%BB%B6/" />
+  <link rel="canonical" href="/2017/mysql%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Mysql 外键约束 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Mysql 外键约束 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Mysql 外键约束",
+    "headline" : "Mysql 外键约束",
+    "description" : "建表时生成外键\nFOREIGN KEY (sid) REFERENCES student (id);\n建表后添加外键\nALTER TABLE course_student ADD FOREIGN KEY (sid) REFERENCES student (id);\n删除外键\nALTER TABLE course_student DROP FOREIGN KEY course_student_ibfk_1;\n外键用于与另一张表的关联。是能确定另一张表记录的字段，用于保持数据的一致性。比如，A表中的一个字段，是B表的主键，那他就可以是A表的外键。\n主键、外键和索引的区别\n主键 外键 索引\n定义 唯一标识一条记录，不能有重复的，不允许为NULL 表的外键是另一表的主键, 外键可以有重复的, 可以是NULL 没有重复值，可以为NULL(会使索引无效)\n作用 用来保证数据完整性 用来和其他表建立联系用的 提高查询排序的速度\n个数 主键只能有一个 一个表可以有多个外键 一个表可以有多个惟一索引\n错误的设计方式—[1215] Cannot add foreign key constraint\n出现这种问题的原因一般有两个：\n 两张表里要设主键和外键的字段的数据类型或者数据长度不一样。 2.某个表里已经有记录了。  ",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-08-24 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-08-24 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/mysql%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F\/",
+    "wordCount" : "54",
+    "keywords" : [ "Mysql", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Mysql 外键约束</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-08-24 itemprop="datePublished">August 24, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/database/"> Database </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p>建表时生成外键</p>
+
+<p>FOREIGN KEY (<code>sid</code>) REFERENCES <code>student</code> (<code>id</code>);</p>
+
+<p>建表后添加外键</p>
+
+<p>ALTER TABLE <code>course_student</code> ADD FOREIGN KEY (<code>sid</code>) REFERENCES <code>student</code> (<code>id</code>);</p>
+
+<p>删除外键</p>
+
+<p>ALTER TABLE <code>course_student</code> DROP FOREIGN KEY <code>course_student_ibfk_1</code>;</p>
+
+<p>外键用于与另一张表的关联。是能确定另一张表记录的字段，用于保持数据的一致性。比如，A表中的一个字段，是B表的主键，那他就可以是A表的外键。</p>
+
+<p>主键、外键和索引的区别</p>
+
+<p>主键  外键  索引</p>
+
+<p>定义  唯一标识一条记录，不能有重复的，不允许为NULL    表的外键是另一表的主键, 外键可以有重复的, 可以是NULL  没有重复值，可以为NULL(会使索引无效)</p>
+
+<p>作用  用来保证数据完整性   用来和其他表建立联系用的    提高查询排序的速度</p>
+
+<p>个数  主键只能有一个 一个表可以有多个外键  一个表可以有多个惟一索引</p>
+
+<p><strong>错误的设计方式—[1215] Cannot add foreign key constraint</strong></p>
+
+<p>出现这种问题的原因一般有两个：</p>
+
+<ol>
+<li>两张表里要设主键和外键的字段的数据类型或者数据长度不一样。
+2.某个表里已经有记录了。</li>
+</ol>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/mysql%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F/>/2017/mysql%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/mysql/">
+                    #Mysql</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/flask%E7%9A%84csrf/" class="prev" rel="prev" title="Flask的csrf"><i class="iconfont icon-left"></i>&nbsp;Flask的csrf</a>
+         
+        
+        <a href="/2017/flask%E7%9A%84wtform%E7%BB%84%E4%BB%B6/" class="next" rel="next" title="Flask wtform 组件">Flask wtform 组件&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

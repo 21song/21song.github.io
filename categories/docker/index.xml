@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Docker on 宋军亮的技术博客</title>
+    <link>/categories/docker/</link>
+    <description>Recent content in Docker on 宋军亮的技术博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 26 Jan 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/docker/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>docker安装</title>
+      <link>/2018/docker%E5%AE%89%E8%A3%85./</link>
+      <pubDate>Fri, 26 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/docker%E5%AE%89%E8%A3%85./</guid>
+      <description>==1安装docker== 安装一些必要的系统工具：
+sudo yum install -y yum-utils device-mapper-persistent-data lvm2
+添加软件源信息：
+sudo yum-config-manager &amp;ndash;add-repo http://mirrors.aliyun.com/docker-ce/linux/centos/docker-ce.repo
+更新 yum 缓存：
+sudo yum makecache fast
+安装 Docker-ce：
+sudo yum -y install docker-ce
+启动 Docker 后台服务
+sudo systemctl start docker
+测试运行 hello-world
+docker run hello-world
+查看安装版本
+docker version
+2删除 Docker CE 执行以下命令来删除 Docker CE：
+$ sudo yum remove docker-ce $ sudo rm -rf /var/lib/docker  ==为了避免每次命令都输入sudo，可以设置用户权限，注意执行后须注销重新登录==
+sudo usermod -a -G docker $USER
+3.Docker启动与停止 安装完成Docker后，默认已经启动了docker服务，如需手动控制docker服务的启停，可执行如下命令</description>
+    </item>
+    
+    <item>
+      <title>docker的卸载</title>
+      <link>/2018/docker%E7%9A%84%E5%8D%B8%E8%BD%BD/</link>
+      <pubDate>Thu, 25 Jan 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/docker%E7%9A%84%E5%8D%B8%E8%BD%BD/</guid>
+      <description>卸载
+列出你安装过的包
+[root@ ]# yum list installed | grep docker containerd.io.x86_64 1.2.5-3.1.el7 @docker-ce-stable docker-ce-cli.x86_64 1:18.09.6-3.el7 @docker-ce-stable  删除安装包
+[root@ ]# sudo yum -y remove docker-ce-cli.x86_64  删除镜像/容器
+yum remove docker \ docker-client \ docker-client-latest \ docker-common \ docker-latest \ docker-latest-logrotate \ docker-logrotate \ docker-selinux \ docker-engine-selinux \ docker-engine rm -rf /etc/systemd/system/docker.service.d rm -rf /var/lib/docker rm -rf /var/run/docker  </description>
+    </item>
+    
+    <item>
+      <title>docker操作</title>
+      <link>/2017/%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/</link>
+      <pubDate>Wed, 06 Dec 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/%E4%B8%80%E4%BA%9B%E6%93%8D%E4%BD%9C/</guid>
+      <description>重新启动storage容器
+[root@localhost ~]# docker stop storage [root@localhost ~]# docker start storage
+查看tracker容器和storage容器的关联
+[root@localhost ~]# docker exec -it storage bash root@localhost:/# cd fdfs_conf root@localhost:/fdfs_conf# fdfs_monitor storage.conf
+查看docker运行的盒子
+docker container ls
+dicker images
+重启nginx,开始
+systemctl status nginx.service
+systemctl status nginx.service</description>
+    </item>
+    
+    <item>
+      <title>docker下搭建FastDFS</title>
+      <link>/2017/docker%E4%B8%8B%E6%90%AD%E5%BB%BAfastdfs/</link>
+      <pubDate>Mon, 05 Jun 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/docker%E4%B8%8B%E6%90%AD%E5%BB%BAfastdfs/</guid>
+      <description>利用Docker来搭建分布式文件系统FastDfs ​ 对于文件存储来说，一般情况下简单的处理就是在Django配置文件中配置存储目录，按照规则对文件进行上传或者下载。
+​ 实际上，当文件较少的时候，Django是可以应付的过来的。但当文件以海量形式出现的时候，Django就并不是那么好用了，于是Fast DFS应运而出。
+​ FastDFS是一个开源的分布式文件系统，它对文件进行管理，功能包括：文件存储、文件同步、文件访问（文件上传、文件下载）等，解决了大容量存储和负载均衡的问题。特别适合以文件为载体的在线服务，如相册网站、视频网站等等。可以说它就是为互联网而生，为大数据而生的。
+​ FastDFS服务端有两个角色：跟踪器（tracker）和存储节点（storage）。跟踪器主要做调度工作，在访问上起负载均衡的作用。 存储节点存储文件，完成文件管理的所有功能：存储、同步和提供存取接口，FastDFS同时对文件的meta data进行管理。跟踪器和存储节点都可以由多台服务器构成。跟踪器和存储节点中的服务器均可以随时增加或下线而不会影响线上服务。其中跟踪器中的所有服务器都是对等的，可以根据服务器的压力情况随时增加或减少。
+​
+​ 说人话，为啥要用FastDfs:
+​ 1 解决海量存储，同时存储容量扩展方便。
+​ 2 解决文件内容重复,如果用户上传的文件重复(文件指纹一样)，那么系统只有存储一份数据，值得一提的是，这项技术目前被广泛应用在网盘中。
+​ 3 结合Nginx提高网站读取图片的效率。
+如果我们从头搭建fastdfs服务器那么就太low了，网上有大把的docker镜像供你选择，所以又到了利用docker优越性的时候了，首先下载fastdfs镜像 1.加载镜像
+docker pull delron/fastdfs  ·# docker load -i 文件路径/fastdfs_docker.tar
+2. 运行tracker
+执行如下命令开启tracker 服务
+docker run -d --network=host --name tracker -v /root:/var/root delron/fastdfs tracker  ·# docker run -dti &amp;ndash;network=host &amp;ndash;name tracker -v /var/fdfs/tracker:/var/fdfs delron/fastdfs tracker
+我们将fastDFS tracker运行目录映射到本机的/var/root目录中。
+执行如下命令查看tracker是否运行起来
+docker container ls
+如果想停止tracker服务，可以执行如下命令
+docker container stop tracker</description>
+    </item>
+    
+    <item>
+      <title>Docker特点</title>
+      <link>/2016/docker%E7%89%B9%E7%82%B9/</link>
+      <pubDate>Sun, 11 Dec 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/docker%E7%89%B9%E7%82%B9/</guid>
+      <description> Docker特点 1.上手快
+用户只需要几分钟，就可以把自己的程序“Docker 化”。Docker 依赖于“写时复制” (copy-on-write)模型，使修改应用程序也非常迅速，可以说达到“随心所致，代码即改” 的境界。
+随后，就可以创建容器来运行应用程序了。大多数 Docker 容器只需要不到 1 秒中即可 启动。由于去除了管理程序的开销，Docker 容器拥有很高的性能，同时同一台宿主机中也 可以运行更多的容器，使用户尽可能的充分利用系统资源。
+2.职责的逻辑分类
+使用 Docker，开发人员只需要关心容器中运行的应用程序，而运维人员只需要关心如 何管理容器。Docker 设计的目的就是要加强开发人员写代码的开发环境与应用程序要部署 的生产环境一致性。从而降低那种“开发时一切正常，肯定是运维的问题(测试环境都是正 常的，上线后出了问题就归结为肯定是运维的问题)”
+3.快速高效的开发生命周期
+Docker 的目标之一就是缩短代码从开发、测试到部署、上线运行的周期，让你的应用 程序具备可移植性，易于构建，并易于协作。(通俗一点说，Docker 就像一个盒子，里面 可以装很多物件，如果需要这些物件的可以直接将该大盒子拿走，而不需要从该盒子中一件 件的取。)
+4.鼓励使用面向服务的架构
+Docker 还鼓励面向服务的体系结构和微服务架构。Docker 推荐单个容器只运行一个应 用程序或进程，这样就形成了一个分布式的应用程序模型，在这种模型下，应用程序或者服 务都可以表示为一系列内部互联的容器，从而使分布式部署应用程序，扩展或调试应用程序 都变得非常简单，同时也提高了程序的内省性。(当然，可以在一个容器中运行多个应用程 序)
+使用Docker做什么 容器提供了隔离性，容器可以为各种测试提供很好的沙盒环境。并且，容器本
+身就具有“标准性”的特征，非常适合为服务创建构建块。Docker 的一些应用场景如下:
+ 加速本地开发和构建流程，使其更加高效、更加轻量化。本地开发人员可以构建、 运行并分享 Docker 容器。容器可以在开发环境中构建，然后轻松的提交到测试环境中，并 最终进入生产环境。 能够让独立的服务或应用程序在不同的环境中，得到相同的运行结果。这一点在 面向服务的架构和重度依赖微型服务的部署由其实用。 用 Docker 创建隔离的环境来进行测试。例如，用 Jenkins CI 这样的持续集成工具 启动一个用于测试的容器。 Docker 可以让开发者先在本机上构建一个复杂的程序或架构来进行测试，而不是 一开始就在生产环境部署、测试。  </description>
+    </item>
+    
+  </channel>
+</rss>

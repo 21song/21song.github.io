@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Mysql on 宋军亮的技术博客</title>
+    <link>/tags/mysql/</link>
+    <description>Recent content in Mysql on 宋军亮的技术博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 17 Nov 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/mysql/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Django增删改查（CUSD）</title>
+      <link>/2017/djangomysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A5%E5%BF%97/</link>
+      <pubDate>Fri, 17 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/djangomysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A5%E5%BF%97/</guid>
+      <description>查看mysql数据库日志可以查看对数据库的操作记录。 mysql日志文件默认没有产生，需要做如下配置：
+sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf  把68，69行前面的#去除，然后保存并使用如下命令重启mysql服务。
+sudo service mysql restart  使用如下命令打开mysql日志文件。
+tail -f /var/log/mysql/mysql.log # 可以实时查看数据库的日志内容 # 如提示需要sudo权限，执行 # sudo tail -f /var/log/mysql/mysql.log  </description>
+    </item>
+    
+    <item>
+      <title>Mysql索引</title>
+      <link>/2017/mysql%E7%B4%A2%E5%BC%95/</link>
+      <pubDate>Thu, 26 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/mysql%E7%B4%A2%E5%BC%95/</guid>
+      <description>索引是什么
+索引是一种特殊的文件(InnoDB数据表上的索引是表空间的一个组成部分)，它们包含着对数据表里所有记录的引用指针。
+更通俗的说，数据库索引好比是一本书前面的目录，能加快数据库的查询速度
+索引目的
+索引的目的在于提高查询效率，可以类比字典，如果要查“mysql”这个单词，我们肯定需要定位到m字母，然后从下往下找到y字母，再找到剩下的sql。如果没有索引，那么你可能需要把所有单词看一遍才能找到你想要的，如果我想找到m开头的单词呢？或者ze开头的单词呢？是不是觉得如果没有索引，这个事情根本无法完成？
+索引原理
+除了词典，生活中随处可见索引的例子，如火车站的车次表、图书的目录等。它们的原理都是一样的，通过不断的缩小想要获得数据的范围来筛选出最终想要的结果，同时把随机的事件变成顺序的事件，也就是我们总是通过同一种查找方式来锁定数据。
+数据库也是一样，但显然要复杂许多，因为不仅面临着等值查询，还有范围查询(&amp;gt;、&amp;lt;、between、in)、模糊查询(like)、并集查询(or)等等。数据库应该选择怎么样的方式来应对所有的问题呢？我们回想字典的例子，能不能把数据分成段，然后分段查询呢？最简单的如果1000条数据，1到100分成第一段，101到200分成第二段，201到300分成第三段……这样查第250条数据，只要找第三段就可以了，一下子去除了90%的无效数据。
+普通索引
+创建索引
+这是最基本的索引，它没有任何限制。它有以下几种创建方式：
+CREATE INDEX indexName ON mytable(username(length));
+如果是CHAR，VARCHAR类型，length可以小于字段实际长度；如果是BLOB和TEXT类型，必须指定 length。
+修改表结构(添加索引)
+ALTER table tableName ADD INDEX indexName(columnName)
+创建表的时候直接指定
+CREATE TABLE mytable( ID INT NOT NULL, username VARCHAR(16) NOT NULL, INDEX indexName );
+删除索引的语法
+DROP INDEX [indexName] ON mytable;
+查看索引
+show index from 表名;
+用来查看某个表都具备哪些索引
+联合索引
+为两个或者两个以上的字段创建普通索引，适用于多个字段联合查询的优化
+创建联合索引
+ALTER TABLE test_index
+ADD INDEX s_index (id, name) ;</description>
+    </item>
+    
+    <item>
+      <title>Mysql事务细说</title>
+      <link>/2017/mysql%E4%BA%8B%E5%8A%A1/</link>
+      <pubDate>Fri, 20 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/mysql%E4%BA%8B%E5%8A%A1/</guid>
+      <description>原子性（atomicity）
+一个事务必须被视为一个不可分割的最小工作单元，整个事务中的所有操作要么全部提交成功，要么全部失败回滚，对于一个事务来说，不可能只执行其中的一部分操作，这就是事务的原子性
+一致性（consistency）
+数据库总是从一个一致性的状态转换到另一个一致性的状态。（在前面的例子中，一致性确保了，即使在执行第三、四条语句之间时系统崩溃，支票账户中也不会损失200美元，因为事务最终没有提交，所以事务中所做的修改也不会保存到数据库中。）
+隔离性（isolation）
+通常来说，一个事务所做的修改在最终提交以前，对其他事务是不可见的。（在前面的例子中，当执行完第三条语句、第四条语句还未开始时，此时有另外的一个账户汇总程序开始运行，则其看到支票帐户的余额并没有被减去200美元。）
+持久性（durability）
+一旦事务提交，则其所做的修改会永久保存到数据库。（此时即使系统崩溃，修改的数据也不会丢失。）
+事务命令
+表的引擎类型必须是innodb类型才可以使用事务，这是mysql表的默认引擎
+查看表的创建语句，可以看到engine=innodb
+&amp;ndash; 选择数据库
+use jing_dong;
+&amp;ndash; 查看goods表
+show create table goods;
+开启事务，命令如下：
+开启事务后执行修改命令，变更会维护到本地缓存中，而不维护到物理表中
+begin;
+或者
+start transaction;
+提交事务，命令如下
+commit;
+将缓存中的数据变更维护到物理表中
+回滚事务，命令如下：
+放弃缓存中变更的数据
+rollback;</description>
+    </item>
+    
+    <item>
+      <title>Mysql 自关联</title>
+      <link>/2017/mysql%E8%87%AA%E5%85%B3%E8%81%94/</link>
+      <pubDate>Wed, 18 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/mysql%E8%87%AA%E5%85%B3%E8%81%94/</guid>
+      <description>自关联的基本含义就是自己join自己，用一张表搞定多张表可以达到的效果
+需要注意的是，当表自关联的时候，需要使用as 起别名，防止关联的时候引发重名的问题。
+自关联
+select
+​ *
+from
+​ areas as p
+inner join areas as c on c.pid=p.aid
+where
+​ p.atitle=&amp;lsquo;河南省&amp;rsquo;;
+查询所有区
+select
+​ *
+from
+​ areas as c
+inner join areas as a on a.pid=c.aid
+where
+​ c.atitle=&amp;lsquo;郑州市&amp;rsquo;;
+三表关联
+select
+​ *
+from
+​ areas as p
+left join areas as c on c.pid=p.aid
+left join areas as a on a.pid=c.aid
+where
+p.atitle=&amp;lsquo;河南省&amp;rsquo;
+子查询的定义
+子查询允许把一个查询嵌套在另一个查询当中。
+ 标量子查询：  　是指子查询返回的是单一值的标量，如一个数字或一个字符串，也是子查询中最简单的返回形式。 可以使用 = &amp;gt; &amp;lt; &amp;gt;= &amp;lt;= &amp;lt;&amp;gt; 这些操作符对子查询的标量结果进行比较，通常子查询的位置在比较式的右侧</description>
+    </item>
+    
+    <item>
+      <title>Mysql建表建库</title>
+      <link>/2017/mysql%E5%AE%89%E8%A3%85%E5%BB%BA%E8%A1%A8%E5%BB%BA%E5%BA%93/</link>
+      <pubDate>Tue, 03 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/mysql%E5%AE%89%E8%A3%85%E5%BB%BA%E8%A1%A8%E5%BB%BA%E5%BA%93/</guid>
+      <description>1 安装navicat 和 xampp ，注意路径不要出现中文，xampp最好安装在根目录
+比如 d:/xampp
+mysql 默认运行在3306端口
+命令查看是否运行：netstat -an|find &amp;ldquo;3306&amp;rdquo; mysql的配置文件是my.ini 可以用来修改mysql的端口，目录，以及相关的配置
+启动mysql 使用start 停止使用 stop
+进入mysql命令行，找到你的xampp目录地址，进入mysql/bin目录打命令
+mysql –uroot –p123456
+修改root的密码
+use mysql;update user set password = password(‘123456’) where user = ‘root’
+退出mysql命令用 quit 或者 exit
+mysql 默认的数据引擎是 innodb
+InnoDB：支持事务处理，支持外键，并发控制。如果需要对事务的完整性要求比较高（比如银行），要求实现并发控制（比如售票），那选择InnoDB有很大的优势。如果需要频繁的更新、删除操作的数据库，也可以选择InnoDB，因为支持事务的提交（commit）和回滚（rollback）。
+MyISAM：插入数据快，空间和内存使用比较低。如果表主要是用于插入新记录和读出记录，那么选择MyISAM能实现处理高效率。如果应用的完整性、并发性要求比较低，也可以使用。
+查看mysql 当前版本： select verison(); 查看当前时间： select now();
+查看逻辑运算：select 1+1;
+列出所有数据库：show databases;
+创建数据库 （一定注意创建数据库要指定编码utf8）
+create database 库名 charset=utf8;
+删除数据库
+drop database 库名;
+选择数据库
+use 库名;
+列出当前数据库中的所有表
+show tables;</description>
+    </item>
+    
+    <item>
+      <title>连接查询(join 语法)</title>
+      <link>/2017/mysql%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2/</link>
+      <pubDate>Sun, 24 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/mysql%E8%BF%9E%E6%8E%A5%E6%9F%A5%E8%AF%A2/</guid>
+      <description>join 用于多表中字段之间的联系，语法如下：
+&amp;hellip; FROM table1 INNER|LEFT|RIGHT JOIN table2 ON conditiona
+table1:左表；table2:右表。
+JOIN 按照功能大致分为如下三类：
+INNER JOIN（内连接,或等值连接）：取得两个表中存在连接匹配关系的记录。
+LEFT JOIN（左连接）：取得左表（table1）完全记录，即是右表（table2）并无对应匹配记录。
+RIGHT JOIN（右连接）：与 LEFT JOIN 相反，取得右表（table2）完全记录，即是左表（table1）并无匹配对应记录。
+注意：mysql不支持Full join,不过可以通过UNION 关键字来合并 LEFT JOIN 与 RIGHT JOIN来模拟FULL join.
+接下来给出一个列子用于解释下面几种分类。如下两个表(A,B)
+ mysql&amp;gt; select A.id,A.name,B.name from A,B where A.id=B.id;
+ +&amp;mdash;-+&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-+
+ | id | name | name |
+ +&amp;mdash;-+&amp;mdash;&amp;mdash;&amp;mdash;&amp;ndash;+&amp;mdash;&amp;mdash;&amp;mdash;&amp;mdash;-+
+ | 1 | Pirate | Rutabaga |
+ | 2 | Monkey | Pirate |
+ | 3 | Ninja | Darth Vader |</description>
+    </item>
+    
+    <item>
+      <title>Mysql 数据类型聚合函数</title>
+      <link>/2017/mysql%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</link>
+      <pubDate>Thu, 14 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/mysql%E6%95%B0%E6%8D%AE%E7%B1%BB%E5%9E%8B/</guid>
+      <description>MySQL支持多种类型，大致可以分为三类：数值、日期/时间和字符串(字符)类型
+一个英文字符等于一个字节，一个中文三个字节
+数据库类型的属性，重点是主键（primary key）和自增长(auto_increment)，理解主键的含义
+表中的每一行都应该具有可以唯一标识自己的一列(或一组列)。而这个承担标识作用的列称为主键。
+如果没有主键，数据的管理将会十分混乱。比如会存在多条一模一样的记录，删除和修改特定行十分困难。
+自增长字段每个表只能有一个
+使用 as 给字段起别名(给长的字段取别名)
+select id as code from student;可以通过 as 给表起别名
+在select后面列前使用distinct可以消除重复的行
+s
+mysql的联合主键：用2个字段(或者多个字段,后面具体都是用2个字段组合)来确定一条记录，说明，这2个字段都不是唯一的，2个字段可以分别重复，这么设置的好处，可以很直观的看到某个重复字段的记录条数。
+筛选条件格式
+select 字段1，字段2 from 表名 where 条件
+比较运算符
+逻辑运算符
+and or not （is 用来判断null）
+例5：查询编号大于3的女同学
+select id,name,gender from student where id&amp;gt;3 and gender=&amp;lsquo;女&amp;rsquo;
+例6：查询编号小于4或没被删除的学生
+select id,name,is_delete from student where id&amp;lt;4 or is_delete=0
+例7：查询年龄不为空的学生
+select id,name,age from student where age is not null
+范围查询
+between &amp;hellip; and (相当于&amp;lt;=和&amp;gt;=)
+查询年龄在20岁到30岁之间的学生
+select name from student where age between 20 and 30</description>
+    </item>
+    
+    <item>
+      <title>Mysql 外键约束</title>
+      <link>/2017/mysql%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F/</link>
+      <pubDate>Thu, 24 Aug 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/mysql%E5%A4%96%E9%94%AE%E7%BA%A6%E6%9D%9F/</guid>
+      <description>建表时生成外键
+FOREIGN KEY (sid) REFERENCES student (id);
+建表后添加外键
+ALTER TABLE course_student ADD FOREIGN KEY (sid) REFERENCES student (id);
+删除外键
+ALTER TABLE course_student DROP FOREIGN KEY course_student_ibfk_1;
+外键用于与另一张表的关联。是能确定另一张表记录的字段，用于保持数据的一致性。比如，A表中的一个字段，是B表的主键，那他就可以是A表的外键。
+主键、外键和索引的区别
+主键 外键 索引
+定义 唯一标识一条记录，不能有重复的，不允许为NULL 表的外键是另一表的主键, 外键可以有重复的, 可以是NULL 没有重复值，可以为NULL(会使索引无效)
+作用 用来保证数据完整性 用来和其他表建立联系用的 提高查询排序的速度
+个数 主键只能有一个 一个表可以有多个外键 一个表可以有多个惟一索引
+错误的设计方式—[1215] Cannot add foreign key constraint
+出现这种问题的原因一般有两个：
+ 两张表里要设主键和外键的字段的数据类型或者数据长度不一样。 2.某个表里已经有记录了。  </description>
+    </item>
+    
+    <item>
+      <title>Mysql 视图（view）</title>
+      <link>/2016/mysql%E8%A7%86%E5%9B%BE/</link>
+      <pubDate>Thu, 13 Oct 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/mysql%E8%A7%86%E5%9B%BE/</guid>
+      <description>什么是视图
+通俗的讲，视图就是一条SELECT语句执行后返回的结果集。所以我们在创建视图的时候，主要的工作就落在创建这条SQL查询语句上。
+视图的特性
+视图是对若干张基本表的引用，一张虚表，查询语句执行的结果，不存储具体的数据（基本表数据发生了改变，视图也会跟着改变）；
+可以跟基本表一样，进行增删改查操作(ps:增删改操作有条件限制)；
+视图的作用
+方便操作，特别是查询操作，减少复杂的SQL语句，增强可读性；
+更加安全，数据库授权命令不能限定到特定行和特定列，但是通过合理创建视图，可以把权限限定到行列级别；
+使用场合
+权限控制的时候，不希望用户访问表中某些含敏感信息的列，比如salary&amp;hellip;
+关键信息来源于多个复杂关联表，可以创建视图提取我们需要的信息，简化操作；
+建立视图
+建议名称以v_开头，用来和普通表区分
+使用show tables 可以显示视图
+create view 视图名称 as select语句;
+使用视图
+select * from 视图名称
+删除视图
+drop view 视图名称
+修改视图
+create or replace view 视图名称 as sql语句</description>
+    </item>
+    
+  </channel>
+</rss>

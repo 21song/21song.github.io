@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2019/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BC%98%E5%8C%96/" />
+  <link rel="next" href="/2019/%E8%81%9A%E7%84%A6%E7%88%AC%E8%99%AB%E5%92%8C%E9%80%9A%E7%94%A8%E7%88%AC%E8%99%AB/" />
+  <link rel="canonical" href="/2019/%E5%A4%9A%E7%BA%BF%E7%A8%8Bcpu%E4%B8%8Egil/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           多线程cpu/gil | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="多线程cpu/gil | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "多线程cpu\/gil",
+    "headline" : "多线程cpu\/gil",
+    "description" : "多线程与CPU： 1.单核CPU CPU密集型的程序（做计算操作的程序） 单线程即可（ 此时的任务已经把CPU资源100%消耗了，就没必要也不可能使用多线程来提高计算效率） 2.单核CPU IO密集型的程序（做IO操作的程序 ） 多线程\x26gt;单线程（多线程可以阻塞，但并不是并行，是“伪并行”，实际上还是一个CPU在执行一切事物，只是切换的太快，没法察觉） 3.多核CPU 做计算操作的程序 多线程\x26gt;\x26gt;单线程 （每个核心执行一个线程，每个核心的线程并发执行计算，以提高任务执行效率，例如加密解密，数据压缩解压缩（视频、音频、普通数据），否则只能使一个核心满载，而其他核心闲置。）\n4.多核CPU IO密集型任务 多线程\x26gt;单线程\n但是在PYTHON里：\n由于GIL的机制就变得不完全一样了：单核CPU CPU密集型程序 单线程耗时\x26lt;多线程。多核CPU CPU密集型程序 单线程耗时\x26lt;多线程，也就是说只要是CPU密集型程序 不要只单独的使用多线程。\n一、先说为什么会有GIL ，GIL是干什么的：\n多线程之间数据完整性和状态同步的最简单方法自然就是加锁，于是python解释器有了GIL这把超级大锁，就默认python内部对象是thread-safe的，无需在实现时考虑额外的内存锁和同步操作。\n也就是说 如果不释放这把锁，线程都是串行的。\n但PYTHON的多线程并不是一无是处\n二、GIL锁的释放机制：\n先解释什么是IO密集型和计算密集型：\n计算密集型任务的特点是要进行大量的计算，消耗CPU资源，比如计算圆周率、对视频进行高清解码等等，全靠CPU的运算能力。这种计算密集型任务虽然也可以用多任务完成，但是任务越多，花在任务切换的时间就越多，CPU执行任务的效率就越低，所以，要最高效地利用CPU，计算密集型任务同时进行的数量应当等于CPU的核心数。\n计算密集型任务由于主要消耗CPU资源，因此，代码运行效率至关重要。Python这样的脚本语言运行效率很低，完全不适合计算密集型任务。对于计算密集型任务，最好用C语言编写。\n第二种任务的类型是IO密集型，涉及到网络、磁盘IO的任务都是IO密集型任务，这类任务的特点是CPU消耗很少，任务的大部分时间都在等待IO操作完成（因为IO的速度远远低于CPU和内存的速度）。对于IO密集型任务，任务越多，CPU效率越高，但也有一个限度。常见的大部分任务都是IO密集型任务，比如Web应用。\nIO密集型任务执行期间，99%的时间都花在IO上，花在CPU上的时间很少，因此，用运行速度极快的C语言替换用Python这样运行速度极低的脚本语言，完全无法提升运行效率。对于IO密集型任务，最合适的语言就是开发效率最高（代码量最少）的语言，脚本语言是首选，C语言最差。\nGIL对于IO密集型和计算密集型：\nIO密集型（网络传输、磁盘读写等）： 线程遇到I\/O阻塞时，会自动释放GIL。（阻塞等待时，就释放GIL，给另一个线程执行的机会）\ncpu密集型（编解码，解压缩等）： 解释器会周期性的让线程释放锁\n由上面可知，至少有两种情况python会做线程切换，一是一但有IO操作时，会有线程切换，二是当一个线程连续执行了一定数量的指令时，会出现线程切换。\n再加上每次操作系统执行线程的调度都需要消耗时间，这样，就可以理解为什么在多核\x2bcpu密集型程序时不要单独的使用多线程，会比单线程更耗时。\n即使是多核CPU，如果没有GIL 不同核的CPU执行不同的线程，但是有了GIL这把锁，某个核心上的CPU即使被唤醒也没有获得GIL锁，无法执行。\n在不使用别的库的情况下，python多线程最好只用于IO密集型的操作.",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2019",
+    "datePublished": "2019-08-02 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2019-08-02 00:00:00 \x2b0000 UTC",
+    "url" : "\/2019\/%E5%A4%9A%E7%BA%BF%E7%A8%8Bcpu%E4%B8%8Egil\/",
+    "wordCount" : "45",
+    "keywords" : [ "python", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">多线程cpu/gil</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2019-08-02 itemprop="datePublished">August 2, 2019</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/python/"> python </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p>多线程与CPU：
+1.单核CPU  CPU密集型的程序（做计算操作的程序）  单线程即可（ 此时的任务已经把CPU资源100%消耗了，就没必要也不可能使用多线程来提高计算效率）
+2.单核CPU  IO密集型的程序（做IO操作的程序 ）        多线程&gt;单线程（多线程可以阻塞，但并不是并行，是“伪并行”，实际上还是一个CPU在执行一切事物，只是切换的太快，没法察觉）
+3.多核CPU 做计算操作的程序 多线程&gt;&gt;单线程 （每个核心执行一个线程，每个核心的线程并发执行计算，以提高任务执行效率，例如加密解密，数据压缩解压缩（视频、音频、普通数据），否则只能使一个核心满载，而其他核心闲置。）</p>
+
+<p>4.多核CPU  IO密集型任务 多线程&gt;单线程</p>
+
+<p>但是在PYTHON里：</p>
+
+<p>由于GIL的机制就变得不完全一样了：单核CPU  CPU密集型程序 单线程耗时&lt;多线程。多核CPU  CPU密集型程序 单线程耗时&lt;多线程，也就是说只要是CPU密集型程序 不要只单独的使用多线程。</p>
+
+<p>一、先说为什么会有GIL ，GIL是干什么的：</p>
+
+<p>多线程之间数据完整性和状态同步的最简单方法自然就是加锁，于是python解释器有了GIL这把超级大锁，就默认python内部对象是thread-safe的，无需在实现时考虑额外的内存锁和同步操作。</p>
+
+<p>也就是说 如果不释放这把锁，线程都是串行的。</p>
+
+<p>但PYTHON的多线程并不是一无是处</p>
+
+<p>二、GIL锁的释放机制：</p>
+
+<p>先解释什么是IO密集型和计算密集型：</p>
+
+<p>计算密集型任务的特点是要进行大量的计算，消耗CPU资源，比如计算圆周率、对视频进行高清解码等等，全靠CPU的运算能力。这种计算密集型任务虽然也可以用多任务完成，但是任务越多，花在任务切换的时间就越多，CPU执行任务的效率就越低，所以，要最高效地利用CPU，计算密集型任务同时进行的数量应当等于CPU的核心数。</p>
+
+<p>计算密集型任务由于主要消耗CPU资源，因此，代码运行效率至关重要。Python这样的脚本语言运行效率很低，完全不适合计算密集型任务。对于计算密集型任务，最好用C语言编写。</p>
+
+<p>第二种任务的类型是IO密集型，涉及到网络、磁盘IO的任务都是IO密集型任务，这类任务的特点是CPU消耗很少，任务的大部分时间都在等待IO操作完成（因为IO的速度远远低于CPU和内存的速度）。对于IO密集型任务，任务越多，CPU效率越高，但也有一个限度。常见的大部分任务都是IO密集型任务，比如Web应用。</p>
+
+<p>IO密集型任务执行期间，99%的时间都花在IO上，花在CPU上的时间很少，因此，用运行速度极快的C语言替换用Python这样运行速度极低的脚本语言，完全无法提升运行效率。对于IO密集型任务，最合适的语言就是开发效率最高（代码量最少）的语言，脚本语言是首选，C语言最差。</p>
+
+<p>GIL对于IO密集型和计算密集型：</p>
+
+<p>IO密集型（网络传输、磁盘读写等）：
+线程遇到I/O阻塞时，会自动释放GIL。（阻塞等待时，就释放GIL，给另一个线程执行的机会）</p>
+
+<p>cpu密集型（编解码，解压缩等）：
+解释器会周期性的让线程释放锁</p>
+
+<p>由上面可知，至少有两种情况python会做线程切换，一是一但有IO操作时，会有线程切换，二是当一个线程连续执行了一定数量的指令时，会出现线程切换。</p>
+
+<p>再加上每次操作系统执行线程的调度都需要消耗时间，这样，就可以理解为什么在多核+cpu密集型程序时不要单独的使用多线程，会比单线程更耗时。</p>
+
+<p>即使是多核CPU，如果没有GIL 不同核的CPU执行不同的线程，但是有了GIL这把锁，某个核心上的CPU即使被唤醒也没有获得GIL锁，无法执行。</p>
+
+<p>在不使用别的库的情况下，python多线程最好只用于IO密集型的操作.</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2019/%E5%A4%9A%E7%BA%BF%E7%A8%8Bcpu%E4%B8%8Egil/>/2019/%E5%A4%9A%E7%BA%BF%E7%A8%8Bcpu%E4%B8%8Egil/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #python</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2019/%E6%95%B0%E6%8D%AE%E5%BA%93%E4%BC%98%E5%8C%96/" class="prev" rel="prev" title="数据库优化"><i class="iconfont icon-left"></i>&nbsp;数据库优化</a>
+         
+        
+        <a href="/2019/%E8%81%9A%E7%84%A6%E7%88%AC%E8%99%AB%E5%92%8C%E9%80%9A%E7%94%A8%E7%88%AC%E8%99%AB/" class="next" rel="next" title="聚焦爬虫和通用爬虫">聚焦爬虫和通用爬虫&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

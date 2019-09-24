@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/flask%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/" />
+  <link rel="next" href="/2017/flask%E7%9A%84%E9%97%AA%E7%8E%B0/" />
+  <link rel="canonical" href="/2017/jinja2%E7%AE%80%E4%BB%8B/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Jinja2模板简介与使用 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Jinja2模板简介与使用 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Jinja2模板简介与使用",
+    "headline" : "Jinja2模板简介与使用",
+    "description" : "Jinja2模板引擎简介(template)\n模板\n视图函数的主要作用是生成请求的响应，这是最简单的请求。实际上，视图函数有两个作用：处理业务逻辑和返回响应内容。在大型应用中，把业务逻辑和表现内容放在一起，会增加代码的复杂度和维护成本。本节学到的模板，它的作用即是承担视图函数的另一个作用，即返回响应内容。\n模板其实是一个包含响应文本的文件，其中用占位符(变量)表示动态部分，告诉模板引擎其具体的值需要从使用的数据中获取\n使用真实值替换变量，再返回最终得到的字符串，这个过程称为“渲染”\nFlask是使用 Jinja2 这个模板引擎来渲染模板\n使用模板的好处：\n视图函数只负责业务逻辑和数据处理(业务逻辑方面)\n而模板则取到视图函数的数据结果进行展示(视图展示方面)\n代码结构清晰，耦合度低\nJinja2\n两个概念：\nJinja2：是 Python 下一个被广泛应用的模板引擎，是由Python实现的模板语言，他的设计思想来源于 Django 的模板引擎，并扩展了其语法和一系列强大的功能，其是Flask内置的模板语言。\n模板语言：是一种被设计来自动生成文档的简单文本格式，在模板语言中，一般都会把一些变量传给模板，替换模板的特定位置上预先定义好的占位变量名。\n官方文档\n渲染模版函数\nFlask提供的 render_template 函数封装了该模板引擎\nrender_template 函数的第一个参数是模板的文件名，后面的参数都是键值对，表示模板中变量对应的真实值。\n1\n2\n使用\n​ {{}} 来表示变量名，这种 {{}} 语法叫做变量代码块\n{{ post.title }} Jinja2 模版中的变量代码块可以是任意 Python 类型或者对象，只要它能够被 Python 的 str() 方法转换为一个字符串就可以，比如，可以通过下面的方式显示一个字典或者列表中的某个元素:\n{{your_dict[\x27key\x27]}} {{your_list[0]}} 用 {%%} 定义的控制代码块，可以实现一些语言层次的功能，比如循环或者if语句 {% if user %} ​ {{ user }} {% else %} ​ hello! \x26lt;ul\x26gt; ​ {% for index in indexs %} ​ \x26lt;li\x26gt; {{ index }} \x26lt;\/li\x26gt; ​ {% endfor %} \x26lt;\/ul\x26gt;  注释",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-07-15 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-07-15 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/jinja2%E7%AE%80%E4%BB%8B\/",
+    "wordCount" : "767",
+    "keywords" : [ "Python","Flask", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Jinja2模板简介与使用</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-07-15 itemprop="datePublished">July 15, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/python/"> Python </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p>Jinja2模板引擎简介(template)</p>
+
+<p>模板</p>
+
+<p>视图函数的主要作用是生成请求的响应，这是最简单的请求。实际上，视图函数有两个作用：处理业务逻辑和返回响应内容。在大型应用中，把业务逻辑和表现内容放在一起，会增加代码的复杂度和维护成本。本节学到的模板，它的作用即是承担视图函数的另一个作用，即返回响应内容。</p>
+
+<p>模板其实是一个包含响应文本的文件，其中用占位符(变量)表示动态部分，告诉模板引擎其具体的值需要从使用的数据中获取</p>
+
+<p>使用真实值替换变量，再返回最终得到的字符串，这个过程称为“渲染”</p>
+
+<p>Flask是使用 Jinja2 这个模板引擎来渲染模板</p>
+
+<p>使用模板的好处：</p>
+
+<p>视图函数只负责业务逻辑和数据处理(业务逻辑方面)</p>
+
+<p>而模板则取到视图函数的数据结果进行展示(视图展示方面)</p>
+
+<p>代码结构清晰，耦合度低</p>
+
+<p>Jinja2</p>
+
+<p>两个概念：</p>
+
+<p>Jinja2：是 Python 下一个被广泛应用的模板引擎，是由Python实现的模板语言，他的设计思想来源于 Django 的模板引擎，并扩展了其语法和一系列强大的功能，其是Flask内置的模板语言。</p>
+
+<p>模板语言：是一种被设计来自动生成文档的简单文本格式，在模板语言中，一般都会把一些变量传给模板，替换模板的特定位置上预先定义好的占位变量名。</p>
+
+<p>官方文档</p>
+
+<p>渲染模版函数</p>
+
+<p>Flask提供的 render_template 函数封装了该模板引擎</p>
+
+<p>render_template 函数的第一个参数是模板的文件名，后面的参数都是键值对，表示模板中变量对应的真实值。</p>
+
+<p>1</p>
+
+<p>2</p>
+
+<p>使用</p>
+
+<p>​    {{}} 来表示变量名，这种 {{}} 语法叫做变量代码块</p>
+
+<h1>{{ post.title }}</h1>
+
+<p>Jinja2 模版中的变量代码块可以是任意 Python 类型或者对象，只要它能够被 Python 的 str() 方法转换为一个字符串就可以，比如，可以通过下面的方式显示一个字典或者列表中的某个元素:</p>
+
+<pre><code>{{your_dict['key']}}
+
+{{your_list[0]}}
+
+ 
+
+用 {%%} 定义的控制代码块，可以实现一些语言层次的功能，比如循环或者if语句
+
+ 
+
+{% if user %}
+
+​    {{ user }}
+
+{% else %}
+
+​    hello!
+
+&lt;ul&gt;
+
+​    {% for index in indexs %}
+
+​    &lt;li&gt; {{ index }} &lt;/li&gt;
+
+​    {% endfor %}
+
+&lt;/ul&gt;
+</code></pre>
+
+<p>注释</p>
+
+<p>使用 {# #} 进行注释，注释的内容不会在html中被渲染出来</p>
+
+<p>{# {{ name }} #}</p>
+
+<p>模板使用</p>
+
+<p>#.html</p>
+
+<pre><code>&lt;!DOCTYPE html&gt;
+
+&lt;html lang=&quot;en&quot;&gt;
+
+&lt;head&gt;
+
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+
+​    &lt;title&gt;Title&lt;/title&gt;
+
+&lt;/head&gt;
+
+&lt;body&gt;
+
+​    &lt;h1&gt;{{title | reverse | upper}}&lt;/h1&gt;
+
+​    &lt;br&gt;
+
+​    {{list2 | listreverse}}
+
+​    &lt;br&gt;
+
+​    &lt;ul&gt;
+
+​        {% for item in my_list %}
+
+​        &lt;li&gt;{{item.id}}----{{item.value}}&lt;/li&gt;
+
+​        {% endfor %}
+
+​    &lt;/ul&gt;
+
+ 
+
+​    {% for item in my_list %}
+
+​        {% if loop.index==1 %}
+
+​            &lt;li style=&quot;background-color: red;&quot;&gt;{{ loop.index }}--{{ item.get('value') }}&lt;/li&gt;
+
+​        {% elif loop.index==2 %}
+
+​            &lt;li style=&quot;background-color: blue;&quot;&gt;{{ loop.index }}--{{ item.get('value') }}&lt;/li&gt;
+
+​        {% elif loop.index==3 %}
+
+​            &lt;li style=&quot;background-color: green;&quot;&gt;{{ loop.index }}--{{ item.get('value') }}&lt;/li&gt;
+
+​        {% else %}
+
+​            &lt;li style=&quot;background-color: yellow;&quot;&gt;{{ loop.index }}--{{ item.get('value') }}&lt;/li&gt;
+
+​        {% endif %}
+
+​    {% endfor %}
+
+&lt;/body&gt;
+
+&lt;/html&gt;
+
+ 
+
+# .py
+
+from flask import Flask
+
+from flask import render_template
+
+ 
+
+app = Flask(__name__)
+
+@app.route('/')
+
+def index():
+
+​    list1 = list(range(10))
+
+​    my_list = [{&quot;id&quot;: 1, &quot;value&quot;: &quot;我爱工作&quot;},
+
+​               {&quot;id&quot;: 2, &quot;value&quot;: &quot;工作使人快乐&quot;},
+
+​               {&quot;id&quot;: 3, &quot;value&quot;: &quot;沉迷于工作无法自拔&quot;},
+
+​               {&quot;id&quot;: 4, &quot;value&quot;: &quot;日渐消瘦&quot;},
+
+​               {&quot;id&quot;: 5, &quot;value&quot;: &quot;以梦为马，越骑越傻&quot;}]
+
+​    return render_template(
+
+​        # 渲染模板语言
+
+​        'index.html',
+
+​        title='hello world',
+
+​        list2=list1,
+
+​        my_list=my_list
+
+​        )
+
+ 
+
+ 
+
+# step1 定义过滤器
+
+def do_listreverse(li):
+
+​    temp_li = list(li)
+
+​    temp_li.reverse()
+
+​    return temp_li
+
+ 
+
+# step2 添加自定义过滤器
+
+app.add_template_filter(do_listreverse, 'listreverse')
+
+ 
+
+ 
+
+ 
+
+if __name__ == '__main__':
+
+app.run(debug=True)
+
+ 
+
+过滤器
+
+过滤器的本质就是函数。有时候我们不仅仅只是需要输出变量的值，我们还需要修改变量的显示，甚至格式化、运算等等，而在模板中是不能直接调用 Python 中的某些方法，那么这就用到了过滤器。
+
+ 
+
+链式调用
+
+{{ &quot;hello world&quot; | reverse | upper }}
+
+1
+
+常见内建过滤器
+
+字符串操作
+
+safe：禁用转义
+
+ 
+
+&lt;p&gt;{{ '&lt;em&gt;hello&lt;/em&gt;' | safe }}&lt;/p&gt;
+
+ 
+
+capitalize：把变量值的首字母转成大写，其余字母转小写
+
+ 
+
+&lt;p&gt;{{ 'hello' | capitalize }}&lt;/p&gt;
+
+ 
+
+lower：把值转成小写
+
+ 
+
+&lt;p&gt;{{ 'HELLO' | lower }}&lt;/p&gt;
+
+ 
+
+upper：把值转成大写
+
+ 
+
+&lt;p&gt;{{ 'hello' | upper }}&lt;/p&gt;
+
+ 
+
+title：把值中的每个单词的首字母都转成大写
+
+ 
+
+&lt;p&gt;{{ 'hello' | title }}&lt;/p&gt;
+
+ 
+
+reverse：字符串反转
+
+ 
+
+&lt;p&gt;{{ 'olleh' | reverse }}&lt;/p&gt;
+
+ 
+
+format：格式化输出
+
+ 
+
+&lt;p&gt;{{ '%s is %d' | format('name',17) }}&lt;/p&gt;
+
+ 
+
+striptags：渲染之前把值中所有的HTML标签都删掉
+
+ 
+
+&lt;p&gt;{{ '&lt;em&gt;hello&lt;/em&gt;' | striptags }}&lt;/p&gt;
+
+ 
+
+truncate: 字符串截断
+
+ 
+
+&lt;p&gt;{{ 'hello every one' | truncate(9)}}&lt;/p&gt;
+
+ 
+
+列表操作
+
+first：取第一个元素
+
+ 
+
+&lt;p&gt;{{ [1,2,3,4,5,6] | first }}&lt;/p&gt;
+
+ 
+
+last：取最后一个元素
+
+ 
+
+&lt;p&gt;{{ [1,2,3,4,5,6] | last }}&lt;/p&gt;
+
+ 
+
+length：获取列表长度
+
+ 
+
+&lt;p&gt;{{ [1,2,3,4,5,6] | length }}&lt;/p&gt;
+
+ 
+
+sum：列表求和
+
+ 
+
+&lt;p&gt;{{ [1,2,3,4,5,6] | sum }}&lt;/p&gt;
+
+ 
+
+sort：列表排序
+
+ 
+
+&lt;p&gt;{{ [6,2,3,1,5,4] | sort }}&lt;/p&gt;
+
+ 
+
+语句块操作
+
+{% filter upper %}
+
+​    #一大堆文字#
+
+{% endfilter %}
+
+ 
+
+自定义过滤器
+
+from flask import Flask
+
+from flask import render_template
+
+ 
+
+app = Flask(__name__)
+
+@app.route('/')
+
+def index():
+
+​    list1 = list(range(10))
+
+​    my_list = [{&quot;id&quot;: 1, &quot;value&quot;: &quot;我爱工作&quot;},
+
+​               {&quot;id&quot;: 2, &quot;value&quot;: &quot;工作使人快乐&quot;},
+
+​               {&quot;id&quot;: 3, &quot;value&quot;: &quot;沉迷于工作无法自拔&quot;},
+
+​               {&quot;id&quot;: 4, &quot;value&quot;: &quot;日渐消瘦&quot;},
+
+​               {&quot;id&quot;: 5, &quot;value&quot;: &quot;以梦为马，越骑越傻&quot;}]
+
+​    return render_template(
+
+​        # 渲染模板语言
+
+​        'index.html',
+
+​        title='hello world',
+
+​        list2=list1,
+
+​        my_list=my_list
+
+​        )
+
+ 
+
+ 
+
+# step1 定义过滤器
+
+def do_listreverse(li):
+
+​    temp_li = list(li)
+
+​    temp_li.reverse()
+
+​    return temp_li
+
+ 
+
+# step2 添加自定义过滤器
+
+app.add_template_filter(do_listreverse, 'listreverse')
+
+ 
+
+ 
+
+ 
+
+if __name__ == '__main__':
+
+app.run(debug=True)
+
+ 
+
+控制代码块
+
+控制代码块主要包含两个：
+
+ 
+
+- if/else if /else / endif
+
+- for / endfor
+
+ 
+
+条件语句
+
+{% if comments | length &gt; 0 %}
+
+​    There are {{ comments | length }} comments
+
+{% else %}
+
+​    There are no comments
+
+{% endif %}
+
+ 
+
+循环语句
+
+{% for post in posts %}
+
+    &lt;div&gt;
+
+​        &lt;h1&gt;{{ post.title }}&lt;/h1&gt;
+
+        &lt;p&gt;{{ post.text | safe }}&lt;/p&gt;
+
+​    &lt;/div&gt;
+
+{% endfor %}
+
+ 
+
+结合使用
+
+模拟continue功能
+
+ 
+
+{% for post in posts if post.text %}
+
+    &lt;div&gt;
+
+​        &lt;h1&gt;{{ post.title }}&lt;/h1&gt;
+
+        &lt;p&gt;{{ post.text | safe }}&lt;/p&gt;
+
+​    &lt;/div&gt;
+
+{% endfor %}
+
+ 
+
+代码复用
+
+宏 —- 类似python中的函数
+
+创建:
+
+​        {% macro 标签名(key=value)%} {% end macro %}
+
+ 
+
+# d8_macro1.html
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html lang=&quot;en&quot;&gt;
+
+&lt;head&gt;
+
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+
+​    &lt;title&gt;Title&lt;/title&gt;
+
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;!-- step1 宏导入 import filename as xx--&gt;
+
+{% import 'd8_macro2.html' as fun %}
+
+&lt;!-- step2 宏调用 类似于python函数调用 --&gt;
+
+{{ fun.input('button','zhuce') }}
+
+&lt;/body&gt;
+
+&lt;/html&gt;
+
+# d8_macro2.html
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html lang=&quot;en&quot;&gt;
+
+&lt;head&gt;
+
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+
+​    &lt;title&gt;Title&lt;/title&gt;
+
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;!-- step1 宏导入 import filename as xx--&gt;
+
+{% import 'd8_macro2.html' as fun %}
+
+&lt;!-- step2 宏调用 类似于python函数调用 --&gt;
+
+{{ fun.input('button','zhuce') }}
+
+&lt;/body&gt;
+
+&lt;/html&gt;
+
+继承
+
+关键字: block extends
+
+ 
+
+&lt;!DOCTYPE html&gt;
+
+&lt;html lang=&quot;en&quot;&gt;
+
+&lt;head&gt;
+
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+
+​    &lt;title&gt;Title&lt;/title&gt;
+
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;h1&gt;top123 {{ title }}&lt;/h1&gt;&lt;br&gt;
+
+ 
+
+&lt;!-- 预留空间 给继承的html --&gt;
+
+{% block body %}{% endblock %}
+
+ 
+
+&lt;br&gt;&lt;h1&gt;bottom&lt;/h1&gt;
+
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
+
+<p>{% extends &lsquo;d1_base.html&rsquo; %}</p>
+
+<pre><code>{% block body %}
+
+&lt;h2&gt;detail&lt;/h2&gt;
+
+{% endblock %}
+</code></pre>
+
+<p>继承:常常用于上下部分不做修改的网址</p>
+
+<p>包含</p>
+
+<p>包含: 将一个模板加载到另一个模板里面种</p>
+
+<pre><code>&lt;h1&gt;这是一个多页面共同的内容&lt;/h1&gt;
+&lt;!DOCTYPE html&gt;
+
+&lt;html lang=&quot;en&quot;&gt;
+
+&lt;head&gt;
+
+    &lt;meta charset=&quot;UTF-8&quot;&gt;
+
+​    &lt;title&gt;Title&lt;/title&gt;
+
+&lt;/head&gt;
+
+&lt;body&gt;
+
+&lt;!-- 特殊的自定义 函数 --&gt;
+
+&lt;h1&gt;{{ request.url }}&lt;/h1&gt;
+
+&lt;h2&gt;{{ g.title }}&lt;/h2&gt;
+
+index
+
+&lt;br&gt;
+
+&lt;!-- include 调用html文件 --&gt;
+
+{% include 'd2_include.html' %}
+
+&lt;hr&gt;
+
+&lt;!-- 已经内置的特殊变量 --&gt;
+
+{{ url_for('detail') }}&lt;br&gt;
+
+&lt;a href=&quot;{{ url_for('detail') }}&quot; &gt;详细页面&lt;/a&gt;
+
+&lt;/body&gt;
+
+&lt;/html&gt;
+</code></pre>
+
+<p>总结:</p>
+
+<p>宏(Macro)、继承(Block)、包含(include)均能实现代码的复用。</p>
+
+<p>继承(Block)的本质是代码替换，一般用来实现多个页面中重复不变的区域。</p>
+
+<p>宏(Macro)的功能类似函数，可以传入参数，需要定义、调用。</p>
+
+<p>包含(include)是直接将目标模板文件整个渲染出来。</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/jinja2%E7%AE%80%E4%BB%8B/>/2017/jinja2%E7%AE%80%E4%BB%8B/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            <span class="tag"><a href="/tags/flask/">
+                    #Flask</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/flask%E5%91%BD%E4%BB%A4%E6%93%8D%E4%BD%9C/" class="prev" rel="prev" title="Flask的flask_script"><i class="iconfont icon-left"></i>&nbsp;Flask的flask_script</a>
+         
+        
+        <a href="/2017/flask%E7%9A%84%E9%97%AA%E7%8E%B0/" class="next" rel="next" title="Flask的闪现">Flask的闪现&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

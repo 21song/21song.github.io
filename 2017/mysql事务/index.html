@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/mysql%E8%87%AA%E5%85%B3%E8%81%94/" />
+  <link rel="next" href="/2017/djangoapp%E5%BA%94%E7%94%A8/" />
+  <link rel="canonical" href="/2017/mysql%E4%BA%8B%E5%8A%A1/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Mysql事务细说 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Mysql事务细说 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Mysql事务细说",
+    "headline" : "Mysql事务细说",
+    "description" : "原子性（atomicity）\n一个事务必须被视为一个不可分割的最小工作单元，整个事务中的所有操作要么全部提交成功，要么全部失败回滚，对于一个事务来说，不可能只执行其中的一部分操作，这就是事务的原子性\n一致性（consistency）\n数据库总是从一个一致性的状态转换到另一个一致性的状态。（在前面的例子中，一致性确保了，即使在执行第三、四条语句之间时系统崩溃，支票账户中也不会损失200美元，因为事务最终没有提交，所以事务中所做的修改也不会保存到数据库中。）\n隔离性（isolation）\n通常来说，一个事务所做的修改在最终提交以前，对其他事务是不可见的。（在前面的例子中，当执行完第三条语句、第四条语句还未开始时，此时有另外的一个账户汇总程序开始运行，则其看到支票帐户的余额并没有被减去200美元。）\n持久性（durability）\n一旦事务提交，则其所做的修改会永久保存到数据库。（此时即使系统崩溃，修改的数据也不会丢失。）\n事务命令\n表的引擎类型必须是innodb类型才可以使用事务，这是mysql表的默认引擎\n查看表的创建语句，可以看到engine=innodb\n\x26ndash; 选择数据库\nuse jing_dong;\n\x26ndash; 查看goods表\nshow create table goods;\n开启事务，命令如下：\n开启事务后执行修改命令，变更会维护到本地缓存中，而不维护到物理表中\nbegin;\n或者\nstart transaction;\n提交事务，命令如下\ncommit;\n将缓存中的数据变更维护到物理表中\n回滚事务，命令如下：\n放弃缓存中变更的数据\nrollback;",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-10-20 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-10-20 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/mysql%E4%BA%8B%E5%8A%A1\/",
+    "wordCount" : "33",
+    "keywords" : [ "Mysql","ACID", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Mysql事务细说</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-10-20 itemprop="datePublished">October 20, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/database/"> Database </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p><strong>原子性（atomicity）</strong></p>
+
+<p><strong>一个事务必须被视为一个不可分割的最小工作单元，整个事务中的所有操作要么全部提交成功，要么全部失败回滚，对于一个事务来说，不可能只执行其中的一部分操作，这就是事务的原子性</strong></p>
+
+<p><strong>一致性（consistency）</strong></p>
+
+<p><strong>数据库总是从一个一致性的状态转换到另一个一致性的状态。（在前面的例子中，一致性确保了，即使在执行第三、四条语句之间时系统崩溃，支票账户中也不会损失200美元，因为事务最终没有提交，所以事务中所做的修改也不会保存到数据库中。）</strong></p>
+
+<p><strong>隔离性（isolation）</strong></p>
+
+<p><strong>通常来说，一个事务所做的修改在最终提交以前，对其他事务是不可见的。（在前面的例子中，当执行完第三条语句、第四条语句还未开始时，此时有另外的一个账户汇总程序开始运行，则其看到支票帐户的余额并没有被减去200美元。）</strong></p>
+
+<p><strong>持久性（durability）</strong></p>
+
+<p><strong>一旦事务提交，则其所做的修改会永久保存到数据库。（此时即使系统崩溃，修改的数据也不会丢失。）</strong></p>
+
+<p><strong>事务命令</strong></p>
+
+<p><strong>表的引擎类型必须是innodb类型才可以使用事务，这是mysql表的默认引擎</strong></p>
+
+<p><strong>查看表的创建语句，可以看到engine=innodb</strong></p>
+
+<p><strong>&ndash; 选择数据库</strong></p>
+
+<p><strong>use jing_dong;</strong></p>
+
+<p><strong>&ndash; 查看goods表</strong></p>
+
+<p><strong>show create table goods;</strong></p>
+
+<p><strong>开启事务，命令如下：</strong></p>
+
+<p><strong>开启事务后执行修改命令，变更会维护到本地缓存中，而不维护到物理表中</strong></p>
+
+<p><strong>begin;</strong></p>
+
+<p><strong>或者</strong></p>
+
+<p><strong>start transaction;</strong></p>
+
+<p><strong>提交事务，命令如下</strong></p>
+
+<p><strong>commit;</strong></p>
+
+<p><strong>将缓存中的数据变更维护到物理表中</strong></p>
+
+<p><strong>回滚事务，命令如下：</strong></p>
+
+<p><strong>放弃缓存中变更的数据</strong></p>
+
+<p><strong>rollback;</strong></p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/mysql%E4%BA%8B%E5%8A%A1/>/2017/mysql%E4%BA%8B%E5%8A%A1/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/mysql/">
+                    #Mysql</a></span>
+            
+            <span class="tag"><a href="/tags/acid/">
+                    #ACID</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/mysql%E8%87%AA%E5%85%B3%E8%81%94/" class="prev" rel="prev" title="Mysql 自关联"><i class="iconfont icon-left"></i>&nbsp;Mysql 自关联</a>
+         
+        
+        <a href="/2017/djangoapp%E5%BA%94%E7%94%A8/" class="next" rel="next" title="DjangoApp应用配置">DjangoApp应用配置&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

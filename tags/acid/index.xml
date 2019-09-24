@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>ACID on 宋军亮的技术博客</title>
+    <link>/tags/acid/</link>
+    <description>Recent content in ACID on 宋军亮的技术博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 20 Oct 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/acid/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Mysql事务细说</title>
+      <link>/2017/mysql%E4%BA%8B%E5%8A%A1/</link>
+      <pubDate>Fri, 20 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/mysql%E4%BA%8B%E5%8A%A1/</guid>
+      <description>原子性（atomicity）
+一个事务必须被视为一个不可分割的最小工作单元，整个事务中的所有操作要么全部提交成功，要么全部失败回滚，对于一个事务来说，不可能只执行其中的一部分操作，这就是事务的原子性
+一致性（consistency）
+数据库总是从一个一致性的状态转换到另一个一致性的状态。（在前面的例子中，一致性确保了，即使在执行第三、四条语句之间时系统崩溃，支票账户中也不会损失200美元，因为事务最终没有提交，所以事务中所做的修改也不会保存到数据库中。）
+隔离性（isolation）
+通常来说，一个事务所做的修改在最终提交以前，对其他事务是不可见的。（在前面的例子中，当执行完第三条语句、第四条语句还未开始时，此时有另外的一个账户汇总程序开始运行，则其看到支票帐户的余额并没有被减去200美元。）
+持久性（durability）
+一旦事务提交，则其所做的修改会永久保存到数据库。（此时即使系统崩溃，修改的数据也不会丢失。）
+事务命令
+表的引擎类型必须是innodb类型才可以使用事务，这是mysql表的默认引擎
+查看表的创建语句，可以看到engine=innodb
+&amp;ndash; 选择数据库
+use jing_dong;
+&amp;ndash; 查看goods表
+show create table goods;
+开启事务，命令如下：
+开启事务后执行修改命令，变更会维护到本地缓存中，而不维护到物理表中
+begin;
+或者
+start transaction;
+提交事务，命令如下
+commit;
+将缓存中的数据变更维护到物理表中
+回滚事务，命令如下：
+放弃缓存中变更的数据
+rollback;</description>
+    </item>
+    
+    <item>
+      <title>脏读</title>
+      <link>/2016/%E8%84%8F%E8%AF%BB/</link>
+      <pubDate>Thu, 22 Sep 2016 00:00:00 +0000</pubDate>
+      
+      <guid>/2016/%E8%84%8F%E8%AF%BB/</guid>
+      <description>脏读 ​ 脏读又称无效数据的读出，是指在数据库访问中，事务T1将某一值修改，然后事务T2读取该值，此后T1因为某种原因撤销对该值的修改，这就导致了T2所读取到的数据是无效的。
+剪短点讲：脏读就是指当一个事务正在访问数据，并且对数据进行了修改，而这种修改还没有提交到数据库中，这时，另外一个事务也访问这个数据，然后使用了这个数据。因为这个数据是还没有提交的数据，那么另外一个事务读到的这个数据是脏数据，依据脏数据所做的操作可能是不正确的。</description>
+    </item>
+    
+  </channel>
+</rss>

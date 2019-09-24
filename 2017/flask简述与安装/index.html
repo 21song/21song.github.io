@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/redis/" />
+  <link rel="next" href="/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/" />
+  <link rel="canonical" href="/2017/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Flask简述与安装 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Flask简述与安装 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Flask简述与安装",
+    "headline" : "Flask简述与安装",
+    "description" : "Flask\nFlask诞生于2010年，是Armin ronacher（人名）用 Python 语言基于 Werkzeug 工具箱编写的轻量级Web开发框架。\nFlask 本身相当于一个内核，其他几乎所有的功能都要用到扩展（邮件扩展Flask-Mail，用户认证Flask-Login，数据库Flask-SQLAlchemy），都需要用第三方的扩展来实现。比如可以用 Flask 扩展加入ORM、窗体验证工具，文件上传、身份验证等。Flask 没有默认使用的数据库，你可以选择 MySQL，也可以用 NoSQL。\n其 WSGI 工具箱采用 Werkzeug（路由模块），模板引擎则使用 Jinja2。这两个也是 Flask 框架的核心。\nFlask 是python三大web框架之一，比之其他两大框架django和tornado而言，它更加的轻量化，开发效率更高，是入门web框架的首选。\n同类的python框架还有 bottle web.py 等\nFlask常用扩展包：\nFlask-SQLalchemy：操作数据库；\nFlask-script：插入脚本；\nFlask-migrate：管理迁移数据库；\nFlask-Session：Session存储方式指定；\nFlask-WTF：表单；\nFlask-Mail：邮件；\nFlask-Bable：提供国际化和本地化支持，翻译；\nFlask-Login：认证用户状态；\nFlask-OpenID：认证；\nFlask-RESTful：开发REST API的工具；\nFlask-Bootstrap：集成前端Twitter Bootstrap框架；\nFlask-Moment：本地化日期和时间；\nFlask-Admin：简单而可扩展的管理接口的框架\n安装flask\npip install Flask\n列出pip已经安装好的模块\npip freeze\n三种导入配置文件的方式：\n配置对象，里面定义需要给 APP 添加的一系列配置 class Config(object):\nDEBUG = True\n从配置对象中加载配置 app.config.from_object(Config)\n从配置文件中加载配置 app.config.from_pyfile(\x26lsquo;config.ini\x26rsquo;)\n#由环境变量里面来加载配置\napp.config.from_envvar(\x26lsquo;app_config\x26rsquo;)\n路由配置，指定methods方法，返回json数据\n@app.route(\x26lsquo;\/demo4\x26rsquo;,methods=[\x26lsquo;GET\x26rsquo;, \x26lsquo;POST\x26rsquo;])\ndef demo4():",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-05-02 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-05-02 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85\/",
+    "wordCount" : "148",
+    "keywords" : [ "Python","Flask", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Flask简述与安装</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-05-02 itemprop="datePublished">May 2, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/python/"> Python </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          
+
+<p><strong>Flask</strong></p>
+
+<p><strong>Flask诞生于2010年，是Armin ronacher（人名）用 Python 语言基于 Werkzeug 工具箱编写的轻量级Web开发框架。</strong></p>
+
+<p><strong>Flask 本身相当于一个内核，其他几乎所有的功能都要用到扩展（邮件扩展Flask-Mail，用户认证Flask-Login，数据库Flask-SQLAlchemy），都需要用第三方的扩展来实现。比如可以用 Flask 扩展加入ORM、窗体验证工具，文件上传、身份验证等。Flask 没有默认使用的数据库，你可以选择 MySQL，也可以用 NoSQL。</strong></p>
+
+<p><strong>其 WSGI 工具箱采用 Werkzeug（路由模块），模板引擎则使用 Jinja2。这两个也是 Flask 框架的核心。</strong></p>
+
+<p><strong>Flask</strong> <strong>是</strong>python三大web<strong>框架之一，比之其他两大框架</strong>django<strong>和</strong>tornado而言，它更加的轻量化，开发效率更高，是入门web框架的首选。</p>
+
+<p><strong>同类的</strong>python<strong>框架还有</strong> <strong>bottle  web.py</strong> <strong>等</strong></p>
+
+<p><strong>Flask常用扩展包：</strong></p>
+
+<p><strong>Flask-SQLalchemy：操作数据库；</strong></p>
+
+<p><strong>Flask-script：插入脚本；</strong></p>
+
+<p><strong>Flask-migrate：管理迁移数据库；</strong></p>
+
+<p><strong>Flask-Session：Session存储方式指定；</strong></p>
+
+<p><strong>Flask-WTF：表单；</strong></p>
+
+<p><strong>Flask-Mail：邮件；</strong></p>
+
+<p><strong>Flask-Bable：提供国际化和本地化支持，翻译；</strong></p>
+
+<p><strong>Flask-Login：认证用户状态；</strong></p>
+
+<p><strong>Flask-OpenID：认证；</strong></p>
+
+<p><strong>Flask-RESTful：开发REST API的工具；</strong></p>
+
+<p><strong>Flask-Bootstrap：集成前端Twitter Bootstrap框架；</strong></p>
+
+<p><strong>Flask-Moment：本地化日期和时间；</strong></p>
+
+<p><strong>Flask-Admin：简单而可扩展的管理接口的框架</strong></p>
+
+<p>安装flask</p>
+
+<p>pip install Flask</p>
+
+<p>列出pip已经安装好的模块</p>
+
+<p>pip freeze</p>
+
+<p>三种导入配置文件的方式：</p>
+
+<h1 id="配置对象-里面定义需要给-app-添加的一系列配置">配置对象，里面定义需要给 APP 添加的一系列配置</h1>
+
+<p>class Config(object):</p>
+
+<p>DEBUG = True</p>
+
+<h1 id="从配置对象中加载配置">从配置对象中加载配置</h1>
+
+<p>app.config.from_object(Config)</p>
+
+<h1 id="从配置文件中加载配置">从配置文件中加载配置</h1>
+
+<p>app.config.from_pyfile(&lsquo;config.ini&rsquo;)</p>
+
+<p>#由环境变量里面来加载配置</p>
+
+<p>app.config.from_envvar(&lsquo;app_config&rsquo;)</p>
+
+<p>路由配置，指定methods方法，返回json数据</p>
+
+<p>@app.route(&lsquo;/demo4&rsquo;,methods=[&lsquo;GET&rsquo;, &lsquo;POST&rsquo;])</p>
+
+<p>def demo4():</p>
+
+<p>​    json_dict = {</p>
+
+<p>​        &ldquo;user_id&rdquo;: 10,</p>
+
+<p>​        &ldquo;user_name&rdquo;: &ldquo;laowang&rdquo;</p>
+
+<p>​    }</p>
+
+<p>return jsonify(json_dict)</p>
+
+<p>统一捕获异常</p>
+
+<p>#统一捕获异常</p>
+
+<p>@app.errorhandler(500)</p>
+
+<p>def internal_server_error(e):</p>
+
+<p>return &lsquo;服务器搬家了&rsquo;</p>
+
+<p>钩子的四大方法</p>
+
+<h1 id="在第一次请求之前调用-可以在此方法内部做一些初始化操作">在第一次请求之前调用，可以在此方法内部做一些初始化操作</h1>
+
+<p>@app.before_first_request</p>
+
+<p>def before_first_request():</p>
+
+<p>​    print(&ldquo;before_first_request&rdquo;)</p>
+
+<h1 id="在每一次请求之前调用-这时候已经有请求了-可能在这个方法里面做请求的校验">在每一次请求之前调用，这时候已经有请求了，可能在这个方法里面做请求的校验</h1>
+
+<h1 id="如果请求的校验不成功-可以直接在此方法中进行响应-直接return之后那么就不会执行视图函数">如果请求的校验不成功，可以直接在此方法中进行响应，直接return之后那么就不会执行视图函数</h1>
+
+<p>@app.before_request</p>
+
+<p>def before_request():</p>
+
+<p>​    print(&ldquo;before_request&rdquo;)</p>
+
+<h1 id="在执行完视图函数之后会调用-并且会把视图函数所生成的响应传入-可以在此方法中对响应做最后一步统一的处理">在执行完视图函数之后会调用，并且会把视图函数所生成的响应传入,可以在此方法中对响应做最后一步统一的处理</h1>
+
+<p>@app.after_request</p>
+
+<p>def after_request(response):</p>
+
+<p>​    print(&ldquo;after_request&rdquo;)</p>
+
+<p>​    return response</p>
+
+<h1 id="请每一次请求之后都会调用-会接受一个参数-参数是服务器出现的错误信息">请每一次请求之后都会调用，会接受一个参数，参数是服务器出现的错误信息</h1>
+
+<p>@app.teardown_request</p>
+
+<p>def teardown_request(e):</p>
+
+<p>​    print(&ldquo;teardown_request&rdquo;)</p>
+
+<p>调试接口的两种方法</p>
+
+<p>1 编写python脚本进行调试</p>
+
+<p>2 使用postman软件进行调试</p>
+
+<p>虚拟环境概念</p>
+
+<p>为了给项目提供独立的安装环境，防止多项目依赖冲突</p>
+
+<p>虚拟环境安装</p>
+
+<p>pip install virtualenv</p>
+
+<p>进入项目安装虚拟目录</p>
+
+<p>virtualenv venv</p>
+
+<p>进入命令目录</p>
+
+<p>cd ./venv/Scripts</p>
+
+<p>激活虚拟环境</p>
+
+<p>activate</p>
+
+<p>离开虚拟环境</p>
+
+<p>deactivate</p>
+
+<p>python manage.py runserver #启动服务 -p设置端口 -h 设置ip</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85/>/2017/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            <span class="tag"><a href="/tags/flask/">
+                    #Flask</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/redis/" class="prev" rel="prev" title="redis"><i class="iconfont icon-left"></i>&nbsp;redis</a>
+         
+        
+        <a href="/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/" class="next" rel="next" title="Flask两大核心">Flask两大核心&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

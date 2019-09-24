@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>queue on 宋军亮的技术博客</title>
+    <link>/categories/queue/</link>
+    <description>Recent content in queue on 宋军亮的技术博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 18 Apr 2018 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/queue/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>简单认识下Kafka</title>
+      <link>/2018/%E7%AE%80%E5%8D%95%E8%AE%A4%E8%AF%86%E4%B8%8Bkafka/</link>
+      <pubDate>Wed, 18 Apr 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/%E7%AE%80%E5%8D%95%E8%AE%A4%E8%AF%86%E4%B8%8Bkafka/</guid>
+      <description>Kafka的消息是保存或缓存在磁盘上的，一般认为在磁盘上读写数据是会降低性能的，因为寻址会比较消耗时间，但是实际上，Kafka的特性之一就是高吞吐率。
+即使是普通的服务器，Kafka也可以轻松支持每秒百万级的写入请求，超过了大部分的消息中间件，这种特性也使得Kafka在日志处理等海量数据场景广泛应用。
+针对Kafka的基准测试可以参考，Apache Kafka基准测试：每秒写入2百万（在三台廉价机器上）
+下面从数据写入和读取两方面分析，为什么Kafka速度这么快。
+一、写入数据
+Kafka会把收到的消息都写入到硬盘中，它绝对不会丢失数据。为了优化写入速度Kafka采用了两个技术， 顺序写入和MMFile 。
+1、顺序写入
+磁盘读写的快慢取决于你怎么使用它，也就是顺序读写或者随机读写。在顺序读写的情况下，磁盘的顺序读写速度和内存持平。
+因为硬盘是机械结构，每次读写都会寻址-&amp;gt;写入，其中寻址是一个“机械动作”，它是最耗时的。所以硬盘最讨厌随机I/O，最喜欢顺序I/O。为了提高读写硬盘的速度，Kafka就是使用顺序I/O。
+而且Linux对于磁盘的读写优化也比较多，包括read-ahead和write-behind，磁盘缓存等。如果在内存做这些操作的时候，一个是JAVA对象的内存开销很大，另一个是随着堆内存数据的增多，JAVA的GC时间会变得很长，使用磁盘操作有以下几个好处：
+ 磁盘顺序读写速度超过内存随机读写 JVM的GC效率低，内存占用大。使用磁盘可以避免这一问题 系统冷启动后，磁盘缓存依然可用  下图就示了Kafka是如何写入数据的， 每一个Partition其实都是一个文件 ，收到消息后Kafka会把数据插入到文件末尾（虚框部分）：
+这种方法有一个缺陷——没有办法删除数据 ，所以Kafka是不会删除数据的，它会把所有的数据都保留下来，每个消费者（Consumer）对每个Topic都有一个offset用来表示读取到了第几条数据 。
+两个消费者：
+ Consumer1有两个offset分别对应Partition0、Partition1（假设每一个Topic一个Partition）； Consumer2有一个offset对应Partition2。  这个offset是由客户端SDK负责保存的，Kafka的Broker完全无视这个东西的存在；一般情况下SDK会把它保存到Zookeeper里面，所以需要给Consumer提供zookeeper的地址。
+如果不删除硬盘肯定会被撑满，所以Kakfa提供了两种策略来删除数据：
+ 一是基于时间； 二是基于partition文件大小。  具体配置可以参看它的配置文档。
+2、Memory Mapped Files
+即便是顺序写入硬盘，硬盘的访问速度还是不可能追上内存。所以Kafka的数据并不是实时的写入硬盘 ，它充分利用了现代操作系统分页存储来利用内存提高I/O效率。
+Memory Mapped Files(后面简称mmap)也被翻译成 内存映射文件 ，在64位操作系统中一般可以表示20G的数据文件，它的工作原理是直接利用操作系统的Page来实现文件到物理内存的直接映射。
+完成映射之后你对物理内存的操作会被同步到硬盘上（操作系统在适当的时候）。
+通过mmap，进程像读写硬盘一样读写内存（当然是虚拟机内存），也不必关心内存的大小有虚拟内存为我们兜底。
+使用这种方式可以获取很大的I/O提升，省去了用户空间到内核空间复制的开销（调用文件的read会把数据先放到内核空间的内存中，然后再复制到用户空间的内存中。）
+但也有一个很明显的缺陷——不可靠，写到mmap中的数据并没有被真正的写到硬盘，操作系统会在程序主动调用flush的时候才把数据真正的写到硬盘。
+Kafka提供了一个参数——producer.type来控制是不是主动flush，如果Kafka写入到mmap之后就立即flush然后再返回Producer叫 同步 (sync)；写入mmap之后立即返回Producer不调用flush叫异步 (async)。
+二、读取数据
+Kafka在读取磁盘时做了哪些优化？
+2、基于sendfile实现Zero Copy
+传统模式下，当需要对一个文件进行传输的时候，其具体流程细节如下：
+ 调用read函数，文件数据被copy到内核缓冲区 read函数返回，文件数据从内核缓冲区copy到用户缓冲区 write函数调用，将文件数据从用户缓冲区copy到内核与socket相关的缓冲区。 数据从socket缓冲区copy到相关协议引擎。  以上细节是传统read/write方式进行网络文件传输的方式，我们可以看到，在这个过程当中，文件数据实际上是经过了四次copy操作：
+硬盘—&amp;gt;内核buf—&amp;gt;用户buf—&amp;gt;socket相关缓冲区—&amp;gt;协议引擎
+而sendfile系统调用则提供了一种减少以上多次copy，提升文件传输性能的方法。
+在内核版本2.1中，引入了sendfile系统调用，以简化网络上和两个本地文件之间的数据传输。sendfile的引入不仅减少了数据复制，还减少了上下文切换。
+sendfile(socket, file, len);</description>
+    </item>
+    
+  </channel>
+</rss>

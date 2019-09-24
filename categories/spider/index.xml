@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>spider on 宋军亮的技术博客</title>
+    <link>/categories/spider/</link>
+    <description>Recent content in spider on 宋军亮的技术博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Wed, 28 Aug 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/spider/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>bs4</title>
+      <link>/2019/python-beautifulsoup4/</link>
+      <pubDate>Wed, 28 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/python-beautifulsoup4/</guid>
+      <description>Beautiful Soup 是一个可以从 HTML 或 XML 文件中提取数据的 Python 库.它能够通过你喜欢的转换器实现惯用的文档导航,查找,修改文档的方式.Beautiful Soup 会帮你节省数小时甚至数天的工作时间.
+ 安装 以下都是在 python2.7 中进行测试的  可以直接使用 pip 安装：
+$ pip install beautifulsoup4 BeautifulSoup 不仅支持 HTML 解析器,还支持一些第三方的解析器，如，lxml，XML，html5lib 但是需要安装相应的库。
+$ pip install lxml
+$ pip install html5lib 2. 开始使用 Beautiful Soup 的功能相当强大，但我们只介绍经常使用的功能。
+简单用法 将一段文档传入 BeautifulSoup 的构造方法,就能得到一个文档的对象, 可以传入一段字符串或一个文件句柄.
+   from bs4 import BeautifulSoup
+soup = BeautifulSoup(&amp;rdquo;data
+&amp;rdquo;)
+soup data
+
+soup(&amp;lsquo;p&amp;rsquo;) [data
+] 首先传入一个 html 文档，soup 是获得文档的对象。然后,文档被转换成 Unicode ,并且 HTML 的实例都被转换成 Unicode 编码。然后,Beautiful Soup 选择最合适的解析器来解析这段文档,如果手动指定解析器那么 Beautiful Soup 会选择指定的解析器来解析文档。但是一般最好手动指定解析器，并且使用 requests 与 BeautifulSoup 结合使用， requests 是用于爬取网页源码的一个库，此处不再介绍，requests 更多用法请参考 Requests 2.</description>
+    </item>
+    
+    <item>
+      <title>聚焦爬虫和通用爬虫</title>
+      <link>/2019/%E8%81%9A%E7%84%A6%E7%88%AC%E8%99%AB%E5%92%8C%E9%80%9A%E7%94%A8%E7%88%AC%E8%99%AB/</link>
+      <pubDate>Thu, 08 Aug 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/%E8%81%9A%E7%84%A6%E7%88%AC%E8%99%AB%E5%92%8C%E9%80%9A%E7%94%A8%E7%88%AC%E8%99%AB/</guid>
+      <description>1.通用爬虫：搜索引擎用的爬虫系统。搜索引擎和供应商提供的爬虫。
+　通用爬虫要遵循规则：Robots协议 通用爬虫工作流程： 爬取网页》存储数据》内容处理》提供检索 通用爬虫缺点： 只能提供和文本相关的内容如html、world、pdf等，不能提供多媒体文件如音乐、图片、视频和二进制文件（脚本、程序） 提供的结果千篇一律，针对不同领域提供不同内容 不能提供人类语义上的检索 通用爬虫局限性： 1.通用搜索引擎返回网页的数据内容，大概90%都无用。 2.中文搜索引擎自然语言检索理解困难。 3.信息占有量和覆盖率存在局限。 4.搜索引擎主要是以关键字搜索为主，对于图片、数据库、视频、音频等多媒体的内容用通用搜索引擎无效。 5.搜索引擎的社区化和个性化不好，未考虑实际因素如人的地域、性别、年龄等差别。 6.搜索引擎爬取动态网页效果不好
+2.聚焦爬虫：针对于某一需求编写的爬虫程序。 聚焦爬虫可分为三类： 1.积累式爬虫：从开始到结束，不断爬取，过程会进行重复操作。
+　2.增量爬虫：已下载网页采取增量式跟新，爬取更新变化的数据。 3.深度爬虫：指那些不能通过静态链接获取的、隐藏在搜索表单后的，只有用户提交一些关键词才能获取的web界面。</description>
+    </item>
+    
+    <item>
+      <title>爬虫逆向工程</title>
+      <link>/2019/%E7%88%AC%E8%99%AB%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/</link>
+      <pubDate>Sun, 14 Jul 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/2019/%E7%88%AC%E8%99%AB%E9%80%86%E5%90%91%E5%B7%A5%E7%A8%8B/</guid>
+      <description>爬虫篇：动态网页的处理方式（上）——逆向工程  https://blog.csdn.net/ha_hha/article/details/80324343
+2.简谈-Python爬虫破解JS加密的Cookie
+https://www.cnblogs.com/zccpython/p/6886634.html
+3.运用phantomjs无头浏览器破解四种反爬虫技术
+http://python.jobbole.com/86415/
+4.Python爬虫教程-16-破解js加密实例（有道在线翻译）
+https://blog.csdn.net/qq_40147863/article/details/82079649</description>
+    </item>
+    
+    <item>
+      <title>scrapy是什么</title>
+      <link>/2018/scrapy%E7%9A%84%E4%BD%BF%E7%94%A8/</link>
+      <pubDate>Sun, 09 Dec 2018 00:00:00 +0000</pubDate>
+      
+      <guid>/2018/scrapy%E7%9A%84%E4%BD%BF%E7%94%A8/</guid>
+      <description>Scrapy 是用 Python 实现的一个为了爬取网站数据、提取结构性数据而编写的应用框架。
+Scrapy 常应用在包括数据挖掘，信息处理或存储历史数据等一系列的程序中。
+通常我们可以很简单的通过 Scrapy 框架实现一个爬虫，抓取指定网站的内容或图片。
+Scrapy架构图(绿线是数据流向)
+Scrapy Engine(引擎): 负责Spider、ItemPipeline、Downloader、Scheduler中间的通讯，信号、数据传递等。
+Scheduler(调度器): 它负责接受引擎发送过来的Request请求，并按照一定的方式进行整理排列，入队，当引擎需要时，交还给引擎。
+Downloader（下载器）：负责下载Scrapy Engine(引擎)发送的所有Requests请求，并将其获取到的Responses交还给Scrapy Engine(引擎)，由引擎交给Spider来处理，
+Spider（爬虫）：它负责处理所有Responses,从中分析提取数据，获取Item字段需要的数据，并将需要跟进的URL提交给引擎，再次进入Scheduler(调度器).
+Item Pipeline(管道)：它负责处理Spider中获取到的Item，并进行进行后期处理（详细分析、过滤、存储等）的地方。
+Downloader Middlewares（下载中间件）：你可以当作是一个可以自定义扩展下载功能的组件。
+Spider Middlewares（Spider中间件）：你可以理解为是一个可以自定扩展和操作引擎和Spider中间通信的功能组件（比如进入Spider的Responses;和从Spider出去的Requests）</description>
+    </item>
+    
+  </channel>
+</rss>

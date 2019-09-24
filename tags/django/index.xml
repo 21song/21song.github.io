@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Django on 宋军亮的技术博客</title>
+    <link>/tags/django/</link>
+    <description>Recent content in Django on 宋军亮的技术博客</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 17 Nov 2017 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/django/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Django增删改查（CUSD）</title>
+      <link>/2017/djangomysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A5%E5%BF%97/</link>
+      <pubDate>Fri, 17 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/djangomysql%E6%95%B0%E6%8D%AE%E5%BA%93%E6%97%A5%E5%BF%97/</guid>
+      <description>查看mysql数据库日志可以查看对数据库的操作记录。 mysql日志文件默认没有产生，需要做如下配置：
+sudo vi /etc/mysql/mysql.conf.d/mysqld.cnf  把68，69行前面的#去除，然后保存并使用如下命令重启mysql服务。
+sudo service mysql restart  使用如下命令打开mysql日志文件。
+tail -f /var/log/mysql/mysql.log # 可以实时查看数据库的日志内容 # 如提示需要sudo权限，执行 # sudo tail -f /var/log/mysql/mysql.log  </description>
+    </item>
+    
+    <item>
+      <title>Django的定义模型类</title>
+      <link>/2017/django%E7%9A%84%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E7%B1%BB/</link>
+      <pubDate>Thu, 09 Nov 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%9A%84%E5%AE%9A%E4%B9%89%E6%A8%A1%E5%9E%8B%E7%B1%BB/</guid>
+      <description>模型类被定义在&amp;rdquo;应用/models.py&amp;rdquo;文件中。 模型类必须继承自Model类，位于包django.db.models中。  接下来首先以&amp;rdquo;图书-人物&amp;rdquo;管理为例进行演示。
+1 定义 在models.py 文件中定义模型类。
+from django.db import models # Create your models here. # 准备书籍列表信息的模型类 class BookInfo(models.Model): # 创建字段，字段类型... name = models.CharField(max_length=20, verbose_name=&#39;名称&#39;) pub_date = models.DateField(verbose_name=&#39;发布日期&#39;,null=True) readcount = models.IntegerField(default=0, verbose_name=&#39;阅读量&#39;) commentcount = models.IntegerField(default=0, verbose_name=&#39;评论量&#39;) is_delete = models.BooleanField(default=False, verbose_name=&#39;逻辑删除&#39;) class Meta: db_table = &#39;bookinfo&#39; # 指明数据库表名 verbose_name = &#39;图书&#39; # 在admin站点中显示的名称 def __str__(self): &amp;quot;&amp;quot;&amp;quot;定义每个数据对象的显示信息&amp;quot;&amp;quot;&amp;quot; return self.name # 准备人物列表信息的模型类 class PeopleInfo(models.Model): GENDER_CHOICES = ( (0, &#39;male&#39;), (1, &#39;female&#39;) ) name = models.</description>
+    </item>
+    
+    <item>
+      <title>Django项目是如何开始的</title>
+      <link>/2017/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B/</link>
+      <pubDate>Sun, 29 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B/</guid>
+      <description>1.创建项目
+ django-admin startproject bookmanager   2.创建应用  python manager.py startapp book  3.更换python解释器：按需选择
+  # 进入指定虚拟环境 which python # python2 /home/python/.virtualenvs/py_django/bin/python # python3 /home/python/.virtualenvs/py3_django/bin/python   4.安装应用  INSTALLED_APPS = [ &#39;django.contrib.admin&#39;, &#39;django.contrib.auth&#39;, &#39;django.contrib.contenttypes&#39;, &#39;django.contrib.sessions&#39;, &#39;django.contrib.messages&#39;, &#39;django.contrib.staticfiles&#39;, #添加子应用 &#39;book.apps.BookConfig&#39; ]   5.本地化  #设置中文 LANGUAGE_CODE = &#39;zh-Hans&#39; #亚洲上海时区 TIME_ZONE = &#39;Asia/Shanghai&#39;   6.模板路径
+ 在应用同级目录下,创建templates模板文件夹  TEMPLATES = [ { &#39;BACKEND&#39;: &#39;django.template.backends.django.DjangoTemplates&#39;, &#39;DIRS&#39;: [os.path.join(BASE_DIR,&#39;templates&#39;)], &#39;APP_DIRS&#39;: True, &#39;OPTIONS&#39;: { &#39;context_processors&#39;: [ &#39;django.</description>
+    </item>
+    
+    <item>
+      <title>DjangoApp应用配置</title>
+      <link>/2017/djangoapp%E5%BA%94%E7%94%A8/</link>
+      <pubDate>Sat, 21 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/djangoapp%E5%BA%94%E7%94%A8/</guid>
+      <description>在每个应用目录中都包含了apps.py文件，用于保存该应用的相关信息。
+在创建应用时，Django会向apps.py文件中写入一个该应用的配置类，如
+from django.apps import AppConfig class BookConfig(AppConfig): name = &#39;book&#39;  我们将此类添加到工程settings.py中的INSTALLED_APPS列表中，表明注册安装具备此配置属性的应用。
+ AppConfig.name属性表示这个配置类是加载到哪个应用的，每个配置类必须包含此属性，默认自动生成。
+ AppConfig.verbose_name属性用于设置该应用的直观可读的名字，此名字在Django提供的Admin管理站点中会显示，如
+  from django.apps import AppConfig class UsersConfig(AppConfig): name = &#39;book&#39; verbose_name = &#39;图书管理&#39;  </description>
+    </item>
+    
+    <item>
+      <title>Django视图和url</title>
+      <link>/2017/django%E7%9A%84%E8%A7%86%E5%9B%BE%E5%92%8Curl/</link>
+      <pubDate>Fri, 13 Oct 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%9A%84%E8%A7%86%E5%9B%BE%E5%92%8Curl/</guid>
+      <description>1. 定义视图  视图就是一个Python函数，被定义在应用的views.py中.
+ 视图的第一个参数是HttpRequest类型的对象reqeust，包含了所有请求信息.
+ 视图必须返回HttpResponse对象，包含返回给请求者的响应信息.
+ 需要导入HttpResponse模块 :from django.http import HttpResponse
+ 定义视图函数 : 响应字符串OK!给客户端
+   思考 : 如何才能让请求找到视图?
+ 2. 配置URLconf  查找视图的过程 :
+ 1.请求者在浏览器地址栏中输入URL, 请求到网站.
+ 2.网站获取URL信息.
+ 3.然后与编写好的URLconf逐条匹配.
+ 4.如果匹配成功则调用对应的视图.
+ 5.如果所有的URLconf都没有匹配成功.则返回404错误.
+   URLconf入口
+   需要两步完成URLconf配置
+ 1.在项目中定义URLconf 2.在应用中定义URLconf  在项目中定义URLconf
+   在应用中定义URLconf
+ 提示：一条URLconf包括URL规则、视图两部分
+ URL规则使用正则表达式定义.
+ 视图就是在views.py中定义的视图函数.
+   url匹配过程
+    3.</description>
+    </item>
+    
+    <item>
+      <title>Django站点管理</title>
+      <link>/2017/django%E7%AB%99%E7%82%B9%E7%AE%A1%E7%90%86/</link>
+      <pubDate>Tue, 26 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%AB%99%E7%82%B9%E7%AE%A1%E7%90%86/</guid>
+      <description>站点: 分为内容发布和公共访问两部分
+ 内容发布的部分由网站的管理员负责查看、添加、修改、删除数据
+ Django能够根据定义的模型类自动地生成管理模块
+ 使用
+  Django  的管理模块, 需要按照如下步骤操作 :
+ 1.管理界面本地化 2.创建管理员 3.注册模型类 4.发布内容到数据库  1.管理界面本地化  本地化是将显示的语言、时间等使用本地的习惯，这里的本地化就是进行中国化.
+ 中国大陆地区使用简体中文, 时区使用亚洲/上海时区, 注意这里不使用北京时区.
+  2.创建管理员  创建管理员的命令 :  python manage.py createsuperuser   按提示输入用户名、邮箱、密码
+ 重置密码
+ python manager.py changepassword 用户名   登陆站点 :http://127.0.0.1:8000/admin
+ 需要服务器是启动状态
+ 登陆站点成功
+ 站点界面中没有书籍和人物管理入口,因为没有注册模型类
+  3.注册模型类  在应用的admin.py文件中注册模型类
+ 需要导入模型模块 :from book.models import BookInfo,PeopleInfo</description>
+    </item>
+    
+    <item>
+      <title>Django创建项目</title>
+      <link>/2017/django%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/</link>
+      <pubDate>Mon, 18 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E5%88%9B%E5%BB%BA%E9%A1%B9%E7%9B%AE/</guid>
+      <description> 创建Django项目 ```python
+ django-admin startproject name
+- **创建子应用** ```python - python manager.py startapp name    </description>
+    </item>
+    
+    <item>
+      <title>Django简介</title>
+      <link>/2017/django%E7%AE%80%E4%BB%8B/</link>
+      <pubDate>Sun, 10 Sep 2017 00:00:00 +0000</pubDate>
+      
+      <guid>/2017/django%E7%AE%80%E4%BB%8B/</guid>
+      <description>1. 简介 Django，发音为[`dʒæŋɡəʊ]，是用python语言写的开源web开发框架，并遵循MVC设计。劳伦斯出版集团为了开发以新闻内容为主的网站，而开发出来了这个框架，于2005年7月在BSD许可证下发布。这个名称来源于比利时的爵士音乐家DjangoReinhardt，他是一个吉普赛人，主要以演奏吉它为主，还演奏过小提琴等。由于Django在近年来的迅速发展，应用越来越广泛，被著名IT开发杂志SDTimes评选为2013SDTimes100，位列&amp;rdquo;API、库和框架&amp;rdquo;分类第6位，被认为是该领域的佼佼者。
+Django的主要目的是简便、快速的开发数据库驱动的网站。它强调代码复用，多个组件可以很方便的以&amp;rdquo;插件&amp;rdquo;形式服务于整个框架，Django有许多功能强大的第三方插件，你甚至可以很方便的开发出自己的工具包。这使得Django具有很强的可扩展性。它还强调快速开发和DRY(DoNotRepeatYourself)原则。
+2. 特点 1） 重量级框架 对比Flask框架，Django原生提供了众多的功能组件，让开发更简便快速。
+ 提供项目工程管理的自动化脚本工具 数据库ORM支持（对象关系映射，英语：Object Relational Mapping） 模板 表单 Admin管理站点 文件管理 认证权限 session机制 缓存  2）MVT模式 有一种程序设计模式叫MVC，其核心思想是分工、解耦，让不同的代码块之间降低耦合，增强代码的可扩展性和可移植性，实现向后兼容。
+ MVC的全拼为Model-View-Controller，最早由TrygveReenskaug在1978年提出，是施乐帕罗奥多研究中心(Xerox PARC)在20世纪80年代为程序语言Smalltalk发明的一种软件设计模式，是为了将传统的输入（input）、处理（processing）、输出（output）任务运用到图形化用户交互模型中而设计的。随着标准输入输出设备的出现，开发人员只需要将精力集中在业务逻辑的分析与实现上。后来被推荐为Oracle旗下Sun公司Java EE平台的设计模式，并且受到越来越多的使用ColdFusion和PHP的开发者的欢迎。现在虽然不再使用原来的分工方式，但是这种分工的思想被沿用下来，广泛应用于软件工程中，是一种典型并且应用广泛的软件架构模式。后来，MVC的思想被应用在了Ｗeb开发方面，被称为Ｗeb MVC框架。
+ MVC模式说明  M全拼为Model，主要封装对数据库层的访问，对数据库中的数据进行增、删、改、查操作。 V全拼为View，用于封装结果，生成页面展示的html内容。 C全拼为Controller，用于接收请求，处理业务逻辑，与Model和View交互，返回结果。  Django的MVT  M全拼为Model，与MVC中的M功能相同，负责和数据库交互，进行数据处理。 V全拼为View，与MVC中的C功能相同，接收请求，进行业务处理，返回应答。 T全拼为Template，与MVC中的V功能相同，负责封装构造要返回的html。  注：差异就在于黑线黑箭头标识出来的部分</description>
+    </item>
+    
+  </channel>
+</rss>

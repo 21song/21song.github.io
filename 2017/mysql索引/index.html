@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/djangoapp%E5%BA%94%E7%94%A8/" />
+  <link rel="next" href="/2017/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B/" />
+  <link rel="canonical" href="/2017/mysql%E7%B4%A2%E5%BC%95/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Mysql索引 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Mysql索引 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Mysql索引",
+    "headline" : "Mysql索引",
+    "description" : "索引是什么\n索引是一种特殊的文件(InnoDB数据表上的索引是表空间的一个组成部分)，它们包含着对数据表里所有记录的引用指针。\n更通俗的说，数据库索引好比是一本书前面的目录，能加快数据库的查询速度\n索引目的\n索引的目的在于提高查询效率，可以类比字典，如果要查“mysql”这个单词，我们肯定需要定位到m字母，然后从下往下找到y字母，再找到剩下的sql。如果没有索引，那么你可能需要把所有单词看一遍才能找到你想要的，如果我想找到m开头的单词呢？或者ze开头的单词呢？是不是觉得如果没有索引，这个事情根本无法完成？\n索引原理\n除了词典，生活中随处可见索引的例子，如火车站的车次表、图书的目录等。它们的原理都是一样的，通过不断的缩小想要获得数据的范围来筛选出最终想要的结果，同时把随机的事件变成顺序的事件，也就是我们总是通过同一种查找方式来锁定数据。\n数据库也是一样，但显然要复杂许多，因为不仅面临着等值查询，还有范围查询(\x26gt;、\x26lt;、between、in)、模糊查询(like)、并集查询(or)等等。数据库应该选择怎么样的方式来应对所有的问题呢？我们回想字典的例子，能不能把数据分成段，然后分段查询呢？最简单的如果1000条数据，1到100分成第一段，101到200分成第二段，201到300分成第三段……这样查第250条数据，只要找第三段就可以了，一下子去除了90%的无效数据。\n普通索引\n创建索引\n这是最基本的索引，它没有任何限制。它有以下几种创建方式：\nCREATE INDEX indexName ON mytable(username(length));\n如果是CHAR，VARCHAR类型，length可以小于字段实际长度；如果是BLOB和TEXT类型，必须指定 length。\n修改表结构(添加索引)\nALTER table tableName ADD INDEX indexName(columnName)\n创建表的时候直接指定\nCREATE TABLE mytable( ID INT NOT NULL, username VARCHAR(16) NOT NULL, INDEX indexName );\n删除索引的语法\nDROP INDEX [indexName] ON mytable;\n查看索引\nshow index from 表名;\n用来查看某个表都具备哪些索引\n联合索引\n为两个或者两个以上的字段创建普通索引，适用于多个字段联合查询的优化\n创建联合索引\nALTER TABLE test_index\nADD INDEX s_index (id, name) ;",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-10-26 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-10-26 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/mysql%E7%B4%A2%E5%BC%95\/",
+    "wordCount" : "64",
+    "keywords" : [ "Mysql", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Mysql索引</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-10-26 itemprop="datePublished">October 26, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/database/"> Database </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p><strong>索引是什么</strong></p>
+
+<p><strong>索引是一种特殊的文件(InnoDB数据表上的索引是表空间的一个组成部分)，它们包含着对数据表里所有记录的引用指针。</strong></p>
+
+<p><strong>更通俗的说，数据库索引好比是一本书前面的目录，能加快数据库的查询速度</strong></p>
+
+<p><strong>索引目的</strong></p>
+
+<p><strong>索引的目的在于提高查询效率，可以类比字典，如果要查“mysql”这个单词，我们肯定需要定位到m字母，然后从下往下找到y字母，再找到剩下的sql。如果没有索引，那么你可能需要把所有单词看一遍才能找到你想要的，如果我想找到m开头的单词呢？或者ze开头的单词呢？是不是觉得如果没有索引，这个事情根本无法完成？</strong></p>
+
+<p><strong>索引原理</strong></p>
+
+<p><strong>除了词典，生活中随处可见索引的例子，如火车站的车次表、图书的目录等。它们的原理都是一样的，通过不断的缩小想要获得数据的范围来筛选出最终想要的结果，同时把随机的事件变成顺序的事件，也就是我们总是通过同一种查找方式来锁定数据。</strong></p>
+
+<p><strong>数据库也是一样，但显然要复杂许多，因为不仅面临着等值查询，还有范围查询(&gt;、&lt;、between、in)、模糊查询(like)、并集查询(or)等等。数据库应该选择怎么样的方式来应对所有的问题呢？我们回想字典的例子，能不能把数据分成段，然后分段查询呢？最简单的如果1000条数据，1到100分成第一段，101到200分成第二段，201到300分成第三段……这样查第250条数据，只要找第三段就可以了，一下子去除了90%的无效数据。</strong></p>
+
+<p><strong>普通索引</strong></p>
+
+<p><strong>创建索引</strong></p>
+
+<p>这是最基本的索引，它没有任何限制。它有以下几种创建方式：</p>
+
+<p>CREATE INDEX indexName ON mytable(username(length));</p>
+
+<p>如果是CHAR，VARCHAR类型，length可以小于字段实际长度；如果是BLOB和TEXT类型，必须指定 length。</p>
+
+<p><strong>修改表结构(添加索引)</strong></p>
+
+<p>ALTER table tableName ADD INDEX indexName(columnName)</p>
+
+<p><strong>创建表的时候直接指定</strong></p>
+
+<p>CREATE TABLE mytable(     ID INT NOT NULL,      username VARCHAR(16) NOT NULL,     INDEX <a href="username(length)" rel="nofollow noreferrer" target="_blank">indexName</a>     );</p>
+
+<p><strong>删除索引的语法</strong></p>
+
+<p>DROP INDEX [indexName] ON mytable;</p>
+
+<p><strong>查看索引</strong></p>
+
+<p>show index from 表名;</p>
+
+<p>用来查看某个表都具备哪些索引</p>
+
+<p>联合索引</p>
+
+<p>为两个或者两个以上的字段创建普通索引，适用于多个字段联合查询的优化</p>
+
+<p>创建联合索引</p>
+
+<p>ALTER TABLE <code>test_index</code></p>
+
+<p>ADD INDEX <code>s_index</code> (<code>id</code>, <code>name</code>) ;</p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/mysql%E7%B4%A2%E5%BC%95/>/2017/mysql%E7%B4%A2%E5%BC%95/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/mysql/">
+                    #Mysql</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/djangoapp%E5%BA%94%E7%94%A8/" class="prev" rel="prev" title="DjangoApp应用配置"><i class="iconfont icon-left"></i>&nbsp;DjangoApp应用配置</a>
+         
+        
+        <a href="/2017/django%E9%A1%B9%E7%9B%AE%E5%BC%80%E5%A7%8B/" class="next" rel="next" title="Django项目是如何开始的">Django项目是如何开始的&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>

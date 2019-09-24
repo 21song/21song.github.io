@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en-us">
+  <head>
+  <meta http-equiv="content-type" content="text/html;charset=utf-8">
+  <meta http-equiv="X-UA-Compatible" content="chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noodp"/>
+  <meta name="author" content="21song">
+  
+  
+  
+  <link rel="prev" href="/2017/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85/" />
+  <link rel="next" href="/2017/flask%E7%9A%84cookie%E4%B8%8Esession/" />
+  <link rel="canonical" href="/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+  <title>
+       
+       
+           Flask两大核心 | 宋军亮的技术博客
+       
+  </title>
+  <meta name="title" content="Flask两大核心 | 宋军亮的技术博客">
+    
+  
+  <link rel="stylesheet" href="/font/iconfont.css">
+  <link rel="stylesheet" href="/css/main.min.css">
+
+
+  
+  
+ 
+
+<script type="application/ld+json">
+ "@context" : "http://schema.org",
+    "@type" : "BlogPosting",
+    "mainEntityOfPage": {
+         "@type": "WebPage",
+         "@id": "\/"
+    },
+    "articleSection" : "posts",
+    "name" : "Flask两大核心",
+    "headline" : "Flask两大核心",
+    "description" : "Flask有两大核心：Werkzeug和Jinja2\n- Werkzeug实现路由、调试和Web服务器网关接口\n- Jinja2实现了模板。\nWerkzeug是一个遵循WSGI协议的python函数库\n- 其内部实现了很多Web框架底层的东西，比如request和response对象；\n- 与WSGI规范的兼容；支持Unicode；\n- 支持基本的会话管理和签名Cookie；\n- 集成URL请求路由等。\nWerkzeug库的 routing 模块负责实现 URL 解析。不同的 URL 对应不同的视图函数，routing模块会对请求信息的URL进行解析，匹配到URL对应的视图函数，执行该函数以此生成一个响应信息。\nrouting模块内部有：\nRule类\n用来构造不同的URL模式的对象，路由URL规则\nMap类\n存储所有的URL规则和一些配置参数\nBaseConverter的子类\n负责定义匹配规则\nMapAdapter类\n负责协调Rule做具体的匹配的工作\n简而言之 Werkzeug实现了路由功能 Jinja2实现了模板功能",
+    "inLanguage" : "en-us",
+    "author" : "Song",
+    "creator" : "Song",
+    "publisher": "Song",
+    "accountablePerson" : "Song",
+    "copyrightHolder" : "Song",
+    "copyrightYear" : "2017",
+    "datePublished": "2017-05-13 00:00:00 \x2b0000 UTC",
+    "dateModified" : "2017-05-13 00:00:00 \x2b0000 UTC",
+    "url" : "\/2017\/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83\/",
+    "wordCount" : "33",
+    "keywords" : [ "Python","Flask", "宋军亮的技术博客"]
+}
+</script>
+
+</head>
+
+  
+
+
+  <body class="">
+    <div class="wrapper">
+        <nav class="navbar">
+    <div class="container">
+        <div class="navbar-header header-logo">
+        	<a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a>
+        </div>
+        <div class="menu navbar-right">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+<nav class="navbar-mobile" id="nav-mobile" style="display: none">
+     <div class="container">
+        <div class="navbar-header">
+            <div>  <a href="javascript:void(0);" class="theme-switch"><i class="iconfont icon-xihuan"></i></a>&nbsp;<a href="/">宋军亮的技术博客</a></div>
+            <div class="menu-toggle">
+                <span></span><span></span><span></span>
+            </div>
+        </div>
+     
+          <div class="menu" id="mobile-menu">
+                
+                
+                <a class="menu-item" href="/posts/" title="">Blog</a>
+                
+                <a class="menu-item" href="/categories/" title="">Categories</a>
+                
+                <a class="menu-item" href="/tags/" title="">Tags</a>
+                
+                <a class="menu-item" href="/about/" title="">About</a>
+                
+        </div>
+    </div>
+</nav>
+    	 <main class="main">
+          <div class="container">
+      		
+<article class="post-warp" itemscope itemtype="http://schema.org/Article">
+    <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">Flask两大核心</h1>
+        <div class="post-meta">
+                Written by <a itemprop="name" href="/" rel="author">Song</a> with ♥ 
+                <span class="post-time">
+                on <time datetime=2017-05-13 itemprop="datePublished">May 13, 2017</time>
+                </span>
+                in
+                <i class="iconfont icon-folder"></i>
+                <span class="post-category">
+                        <a href="/categories/python/"> Python </a>
+                        
+                </span>
+        </div>
+    </header>
+    <div class="post-content">
+        
+
+        
+
+        
+        
+     
+          
+          
+          
+
+          
+          
+          
+
+          <p><strong>Flask有两大核心：Werkzeug和Jinja2</strong></p>
+
+<p><strong>- Werkzeug实现路由、调试和Web服务器网关接口</strong></p>
+
+<p><strong>- Jinja2实现了模板。</strong></p>
+
+<p><strong>Werkzeug是一个遵循WSGI协议的python函数库</strong></p>
+
+<p><strong>- 其内部实现了很多Web框架底层的东西，比如request和response对象；</strong></p>
+
+<p><strong>- 与WSGI规范的兼容；支持Unicode；</strong></p>
+
+<p><strong>- 支持基本的会话管理和签名Cookie；</strong></p>
+
+<p><strong>- 集成URL请求路由等。</strong></p>
+
+<p><strong>Werkzeug库的 routing 模块负责实现 URL 解析。不同的 URL 对应不同的视图函数，routing模块会对请求信息的URL进行解析，匹配到URL对应的视图函数，执行该函数以此生成一个响应信息。</strong></p>
+
+<p><strong>routing模块内部有：</strong></p>
+
+<p><strong>Rule类</strong></p>
+
+<p><strong>用来构造不同的URL模式的对象，路由URL规则</strong></p>
+
+<p><strong>Map类</strong></p>
+
+<p><strong>存储所有的URL规则和一些配置参数</strong></p>
+
+<p><strong>BaseConverter的子类</strong></p>
+
+<p><strong>负责定义匹配规则</strong></p>
+
+<p><strong>MapAdapter类</strong></p>
+
+<p><strong>负责协调Rule做具体的匹配的工作</strong></p>
+
+<p><strong>简而言之</strong>  <strong>Werkzeug</strong><strong>实现了路由功能</strong>   <strong>Jinja2</strong><strong>实现了模板功能</strong></p>
+
+    </div>
+
+    <div class="post-copyright">
+             
+            <p class="copyright-item">
+                <span>Author:</span>
+                <span>21song </span>
+                </p>
+            
+           
+             
+            <p class="copyright-item">
+                    <span>Link:</span>
+                    <a href=/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/>/2017/flask%E4%B8%A4%E5%A4%A7%E6%A0%B8%E5%BF%83/</span>
+            </p>
+            
+            
+    </div>
+
+  
+    <div class="post-tags">
+        
+            <section>
+            <i class="iconfont icon-tag"></i>Tag(s): 
+            
+            <span class="tag"><a href="/tags/python/">
+                    #Python</a></span>
+            
+            <span class="tag"><a href="/tags/flask/">
+                    #Flask</a></span>
+            
+            </section>
+        
+        <section>
+                <a href="javascript:window.history.back();">back</a></span> · 
+                <span><a href="/">home</a></span>
+        </section>
+    </div>
+
+    <div class="post-nav">
+        
+        <a href="/2017/flask%E7%AE%80%E8%BF%B0%E4%B8%8E%E5%AE%89%E8%A3%85/" class="prev" rel="prev" title="Flask简述与安装"><i class="iconfont icon-left"></i>&nbsp;Flask简述与安装</a>
+         
+        
+        <a href="/2017/flask%E7%9A%84cookie%E4%B8%8Esession/" class="next" rel="next" title="Flask的cookie与session">Flask的cookie与session&nbsp;<i class="iconfont icon-right"></i></a>
+        
+    </div>
+
+    <div class="post-comment">
+          
+                 
+          
+    </div>
+</article>
+          </div>
+		   </main>
+      <footer class="footer">
+    <div class="copyright">
+        &copy;
+        
+        <span itemprop="copyrightYear">2016 - 2019</span>
+        
+        <span class="with-love">
+    	 <i class="iconfont icon-love"></i> 
+         </span>
+         
+            <span class="author" itemprop="copyrightHolder"><a href="/">21song</a> | </span> 
+         
+
+         
+		  <span>Powered by <a href="https://gohugo.io/" target="_blank" rel="external nofollow">Hugo</a> & <a href="https://github.com/liuzc/leaveit" target="_blank" rel="external nofollow">LeaveIt</a></span> 
+    </div>
+</footer>
+
+
+
+
+
+
+
+
+
+
+
+
+    
+    
+    <script src="/js/vendor_no_gallery.min.js" async=""></script>
+    
+  
+
+
+
+     </div>
+  </body>
+</html>
